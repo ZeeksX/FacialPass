@@ -6,9 +6,9 @@ const MobileSidebar = ({ toggleSidebar, sidebarOpen }) => {
 
     useEffect(() => {
         if (sidebarOpen) {
-            setShouldRender(true); // Show sidebar immediately
+            setShouldRender(true); 
         } else {
-            setTimeout(() => setShouldRender(false), 500); // Wait for animation to finish
+            setTimeout(() => setShouldRender(false), 500); 
         }
     }, [sidebarOpen]);
 
