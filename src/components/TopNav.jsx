@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo.svg";
 import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
 
 const TopNav = () => {

@@ -9,7 +9,7 @@ import ForgotPassword from '../components/ForgotPassword';
 import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
 import loginImage from "../assets/login-image.jpg"
-import logo from "../assets/logo.jpg"
+import logo from "../assets/logo.svg"
 
 const Login = () => {
   const [email, setEmail] = useState("");
