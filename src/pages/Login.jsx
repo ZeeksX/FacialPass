@@ -128,7 +128,7 @@ const Login = () => {
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="login flex flex-col w-full lg:w-3/5 rounded-xl sm:rounded-r-xl bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-4 py-8">
+          <div className="login flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-24" src={logo} alt="Facial Pass logo" />
