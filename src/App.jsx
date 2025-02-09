@@ -6,7 +6,8 @@ import Login from "./pages/Login";
 import { AuthProvider, useAuth } from './components/Auth';
 import SignUp from './pages/SignUp';
 import Onboarding from './pages/Onboarding';
-
+import ParticlesReact from './pages/ParticlesReact';
+import "./App.css"
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
