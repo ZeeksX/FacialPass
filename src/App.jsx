@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from './pages/HomePage';
@@ -7,7 +6,7 @@ import { AuthProvider, useAuth } from './components/Auth';
 import SignUp from './pages/SignUp';
 import Onboarding from './pages/Onboarding';
 import ParticlesReact from './pages/ParticlesReact';
-import "./App.css"
+import "./App.css";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -15,8 +14,8 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false); 
-  const [isMobile, setIsMobile] = useState(false); 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
@@ -28,11 +27,11 @@ const App = () => {
   };
 
   useEffect(() => {
-    checkIfMobile(); 
-    window.addEventListener('resize', checkIfMobile); 
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
 
     return () => {
-      window.removeEventListener('resize', checkIfMobile); 
+      window.removeEventListener('resize', checkIfMobile);
     };
   }, []);
 
@@ -44,7 +43,7 @@ const App = () => {
           <Route path="/login" element={<Login isMobile={isMobile} />} />
           <Route path="/dashboard" element={
             // <ProtectedRoute>
-              <HomePage sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
+            <HomePage sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} isMobile={isMobile} />
             // </ProtectedRoute>
           } />
           <Route path="/signup" element={

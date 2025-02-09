@@ -4,7 +4,7 @@ import logo from "../assets/logo.jpg";
 import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined';
 
 
-const TopNav = () => {
+const TopNav = (isMobile) => {
     const navLinks = ["Home", "About", "Contact"];
     const navigate = useNavigate();
     const handleLoginClick = () => {

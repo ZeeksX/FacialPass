@@ -1,17 +1,19 @@
-import React from 'react'
-import TopNav from '../components/TopNav'
-import HeroSection from '../components/HeroSection'
-import About from '../components/About'
+import React from 'react';
+import TopNav from '../components/TopNav';
+import HeroSection from '../components/HeroSection';
+import About from '../components/About';
+import MobileNavigation from '../components/MobileNavigation';
+import { useMediaQuery } from '@mui/material';
 
-const HomePage = () => {
+const HomePage = ({ sidebarOpen, toggleSidebar }) => {
+    const isMobile = useMediaQuery('(max-width:768px)');
     return (
         <>
-          <TopNav/>
-          <HeroSection/>
-          <About/>
+            {isMobile ? <MobileNavigation toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} /> : <TopNav />}
+            <HeroSection />
+            <About />
         </>
-
-    )
+    );
 }
 
-export default HomePage
+export default HomePage;
