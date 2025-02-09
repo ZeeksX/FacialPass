@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import HomePage from './pages/HomePage';
 import Login from "./pages/Login";
 import { AuthProvider, useAuth } from './components/Auth';
-import SignUp from './pages/SignUp';
+import SignUp from './pages/Signup';
 import Onboarding from './pages/Onboarding';
 import ParticlesReact from './pages/ParticlesReact';
 import "./App.css";
