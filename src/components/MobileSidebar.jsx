@@ -19,7 +19,7 @@ const MobileSidebar = ({ toggleSidebar, sidebarOpen }) => {
     }
     return (
         <div className={`mobile-sidebar ${sidebarOpen ? 'open' : 'close'}`}>
-            <CloseOutlinedIcon onClick={handleClose} sx={{ color: "#3653A2" }} />
+            <CloseOutlinedIcon onClick={handleClose} sx={{ color: "#0061A2" }} />
         </div>
 
     )

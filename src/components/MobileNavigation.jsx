@@ -15,11 +15,11 @@ const MobileNavigation = () => {
                 <div className='flex flex-row'>
                     <img className="w-16" src={logo} alt="Logo" />
                     <div className="flex flex-col justify-center">
-                        <h1 className="text-3xl font-bold leading-5 text-[#3653A2]">FacialPass</h1>
+                        <h1 className="text-3xl font-bold leading-5 text-[#0061A2]">FacialPass</h1>
                     </div>
                 </div>
                 <div onClick={toggleSidebar} className="cursor-pointer">
-                    <DensityMediumOutlinedIcon sx={{ color: "#3653A2" }} />
+                    <DensityMediumOutlinedIcon sx={{ color: "#0061A2" }} />
                 </div>
             </div>
 

@@ -6,7 +6,7 @@ import UserFriendlyInterface from "../assets/user-friendly-interface.jpg"
 
 const About = () => {
     return (
-        <div className='bg-[#f6f6f7] w-full pb-12 text-[#3653A2]'>
+        <div className='bg-[#f6f6f7] w-full pb-12 text-[#0061A2]'>
             <h1 className='text-5xl font-bold flex justify-center text-center mt-10'>Our Features</h1>
             <div className='features max-w-6xl flex justify-center mx-auto gap-12 flex-wrap mt-10'>
                 <div className="flex flex-col w-96 rounded-2xl gap-1.5 shadow-md p-6">

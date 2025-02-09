@@ -1,25 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import logo from "../assets/logo.jpg";
-import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined';
+import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
 
-
-const TopNav = (isMobile) => {
+const TopNav = () => {
     const navLinks = ["Home", "About", "Contact"];
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleLoginClick = () => {
+        setIsLoading(true)
         navigate("/login");
     };
+
     const handleSignupClick = () => {
         navigate("/signup");
-    }
+    };
 
     return (
         <div className="top-nav w-[90vw] mx-auto flex flex-row items-center justify-between h-12 my-3">
             <div className="flex flex-row items-center">
                 <img className="w-16" src={logo} alt="FacialPass logo" />
                 <div className="flex flex-col justify-center">
-                    <h1 className="text-3xl font-bold leading-5 text-[#3653A2]">FacialPass</h1>
+                    <h1 className="text-3xl font-bold leading-5 text-[#0061A2]">FacialPass</h1>
                 </div>
             </div>
             <div className="flex flex-row w-1/4 items-center justify-between">
@@ -27,18 +30,19 @@ const TopNav = (isMobile) => {
                     {navLinks.map((link, index) => (
                         <li
                             key={index}
-                            className=" cursor-pointer font-medium text-sm text-[#3653A2]"
+                            className=" cursor-pointer font-medium text-sm text-[#0061A2]"
                         >
                             {link}
-                        </li> 
+                        </li>
                     ))}
                 </ul>
             </div>
             <div className="flex gap-4 items-center">
-                <BedtimeOutlinedIcon/>
+                <BedtimeOutlinedIcon />
                 <button
                     onClick={handleLoginClick}
                     className="flex flex-row cursor-pointer w-20 rounded-lg py-2 px-3 font-medium text-sm text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                    disabled={isLoading}
                 >
                     Login
                 </button>
@@ -48,7 +52,6 @@ const TopNav = (isMobile) => {
                     Sign up
                 </button>
             </div>
-
         </div>
     );
 };
