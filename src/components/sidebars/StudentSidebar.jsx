@@ -13,7 +13,9 @@ const StudentSidebar = () => {
           </h1>
         </div>
         <div>
-          <h1 className="text-[#B3B3B3] text-center mt-[30px]">Select courses</h1>
+          <h1 className="text-[#B3B3B3] text-center mt-[30px]">
+            Select courses
+          </h1>
         </div>
       </div>
     </div>
