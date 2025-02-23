@@ -13,7 +13,10 @@ import Onboarding from "./pages/Onboarding";
 import ParticlesReact from "./pages/ParticlesReact";
 import "./App.css";
 import Student from "./pages/Student";
+import Admin from "./pages/Admin";
+import SelectCourses from "./pages/SelectCourses";
 
+  
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/" />;
@@ -51,6 +54,13 @@ const App = () => {
             path="/studentDashboard"
             element={<Student isMobile={isMobile} />}
           />
+          <Route
+            path="/adminDashboard"
+            element={<Admin isMobile={isMobile} />}
+          />
+
+          <Route path="/" element={<ParticlesReact />} />
+          <Route path="/SelectCourses" element={<SelectCourses isMobile={isMobile} />} />
           <Route
             path="/dashboard"
             element={

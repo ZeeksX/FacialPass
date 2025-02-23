@@ -7,13 +7,13 @@ const StudentSidebar = () => {
         <h1 className="  text-3xl font-bold  ">FacialPass</h1>
       </div>
       <div className="">
-        <div className=" rounded-[20px] bg-[#0061A2] w-[200px] h-[59px]  flex items-center justify-center mt-[-16px]">
-          <h1 className="text-white text-center text-[16px] font-medium leading-[20px]">
+        <div className=" ">
+          <h1 className="text-[#B3B3B3] text-center text-[16px] font-medium leading-[20px] cursor-pointer hover:bg-[#0061A2] hover:text-white hover:rounded-[20px] p-5">
             Your information
           </h1>
         </div>
         <div>
-          <h1 className="text-[#B3B3B3] text-center mt-[30px]">
+          <h1 className="text-[#B3B3B3] text-center mt-[30px] cursor-pointer hover:bg-[#0061A2] hover:text-white hover:rounded-[20px] p-5 ">
             Select courses
           </h1>
         </div>
