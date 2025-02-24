@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import PersonIcon from '@mui/icons-material/Person';
 import Visibility from '@mui/icons-material/Visibility';
@@ -136,7 +136,7 @@ const Login = () => {
               </div>
 
               <h3 className="text-[#0061A2]  font-bold text-2xl">Welcome Back</h3>
-              <p className="text-[#0061A2] text-xl text-center italic">Sign in to access your secure portal</p>
+              <p className="text-[#0061A2] text-xl text-center">Sign in to access your secure portal</p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
               <ThemeProvider theme={theme}>
@@ -191,6 +191,7 @@ const Login = () => {
                 </button>
                 <h3 onClick={handleForgotPasswordOpen} className="text-[#0061A2] hover:text-gray-600 text-center cursor-pointer">Forgot Password?</h3>
               </div>
+              <h3 className="w-full text-center text-xl">Or <Link className="underline italic" to="/signup">Sign up here</Link></h3>
             </form>
             <ForgotPassword open={forgotPasswordOpen} onClose={handleForgotPasswordClose} />
           </div>

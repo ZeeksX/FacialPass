@@ -18,6 +18,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmShowPassword, setConfirmShowPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -26,6 +27,7 @@ const Signup = () => {
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickConfirmShowPassword = () => setConfirmShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
@@ -133,14 +135,13 @@ const Signup = () => {
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${signupImage})` }}
           ></div>
-          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-2 py-4">
+          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4">
             <div className="flex flex-col justify-center items-center gap-1">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-16" src={logo} alt="Facial Pass logo" />
-                <h1 className="text-sm font-bold leading-4 text-[#0061A2]">FacialPass</h1>
               </div>
               <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
-              <p className="text-[#0061A2] text-base text-center">Already have an account?
+              <p className="text-[#0061A2] text-xl text-center">Already have an account?
                 <Link className="ml-2 italic underline" to="/">Sign In</Link>
               </p>
             </div>
@@ -148,9 +149,9 @@ const Signup = () => {
               <div className="flex flex-wrap justify-between flex-row w-full gap-2">
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[45%]"
+                    className="w-[49%]"
                     variant="outlined"
-                    placeholder="FirstName"
+                    placeholder="First Name"
                     value={firstname}
                     onChange={(event) => setfirstname(event.target.value)}
                     sx={{
@@ -169,11 +170,12 @@ const Signup = () => {
                     }}
                   />
                 </ThemeProvider>
+
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[45%]"
+                    className="w-[49%]"
                     variant="outlined"
-                    placeholder="LastName"
+                    placeholder="Surname"
                     value={lastname}
                     onChange={(event) => setlastname(event.target.value)}
                     sx={{
@@ -192,11 +194,12 @@ const Signup = () => {
                     }}
                   />
                 </ThemeProvider>
+
                 <ThemeProvider theme={theme}>
                   <TextField
                     fullWidth
                     variant="outlined"
-                    placeholder="MatricNumber"
+                    placeholder="Matric Number"
                     value={matricNum}
                     onChange={(event) => setMatricNum(event.target.value)}
                     sx={{
@@ -216,7 +219,6 @@ const Signup = () => {
                   />
                 </ThemeProvider>
               </div>
-
 
               <ThemeProvider theme={theme}>
                 <TextField
@@ -241,6 +243,7 @@ const Signup = () => {
                   }}
                 />
               </ThemeProvider>
+
               <ThemeProvider theme={theme}>
                 <FormControl variant="outlined" fullWidth>
                   <OutlinedInput
@@ -267,26 +270,27 @@ const Signup = () => {
                   />
                 </FormControl>
               </ThemeProvider>
+
               <ThemeProvider theme={theme}>
                 <FormControl variant="outlined" fullWidth>
                   <OutlinedInput
                     id="outlined-adornment-confirm-password"
                     placeholder="Confirm Password"
-                    value={confirmPassword}
+                    value={confirmShowPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    type={showPassword ? "text" : "password"}
+                    type={confirmShowPassword ? "text" : "password"}
                     sx={{
                       height: "2.75rem", // Ensure height is applied
                     }}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                          onClick={handleClickShowPassword}
+                          aria-label={confirmShowPassword ? "Hide password" : "Show password"}
+                          onClick={handleClickConfirmShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="start"
                         >
-                          {showPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
+                          {confirmShowPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
                         </IconButton>
                       </InputAdornment>
                     }
@@ -296,7 +300,7 @@ const Signup = () => {
 
               <div className="flex flex-row justify-between gap-4 lg:gap-0 items-center w-full">
                 <button
-                  className="w-full h-9 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                  className="w-full h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                   type="submit"
                 >
                   Sign Up
