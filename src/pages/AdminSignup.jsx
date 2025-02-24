@@ -11,7 +11,7 @@ import { createTheme } from "@mui/material";
 import signupImage from "../assets/login-image.jpg";
 import logo from "../assets/logo.svg";
 
-const Signup = () => {
+const AdminSignup = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [matricNum, setMatricNum] = useState("");
@@ -47,14 +47,7 @@ const Signup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          firstname,
-          lastname,
-          matricNum,
-          email,
-          password,
-          role: "student",
-        }),
+        body: JSON.stringify({ firstname, lastname, matricNum, email, password }),
       });
 
       const data = await res.json();
@@ -296,4 +289,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default AdminSignup;

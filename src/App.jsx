@@ -15,8 +15,9 @@ import "./App.css";
 import Student from "./pages/Student";
 import Admin from "./pages/Admin";
 import SelectCourses from "./pages/SelectCourses";
+import AdminSignup from "./pages/AdminSignUp";
+import AdminLogin from "./pages/AdminLogin";
 
-  
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/" />;
@@ -50,6 +51,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<ParticlesReact />} />
           <Route path="/login" element={<Login isMobile={isMobile} />} />
+          <Route path="/admin/login" element={<AdminLogin isMobile={isMobile} />} />
           <Route
             path="/studentDashboard"
             element={<Student isMobile={isMobile} />}
@@ -58,8 +60,6 @@ const App = () => {
             path="/adminDashboard"
             element={<Admin isMobile={isMobile} />}
           />
-
-          <Route path="/" element={<ParticlesReact />} />
           <Route path="/SelectCourses" element={<SelectCourses isMobile={isMobile} />} />
           <Route
             path="/dashboard"
@@ -77,6 +77,16 @@ const App = () => {
             path="/signup"
             element={
               <SignUp
+                sidebarOpen={sidebarOpen}
+                toggleSidebar={toggleSidebar}
+                isMobile={isMobile}
+              />
+            }
+          />
+          <Route
+            path="/admin/signup"
+            element={
+              <AdminSignup
                 sidebarOpen={sidebarOpen}
                 toggleSidebar={toggleSidebar}
                 isMobile={isMobile}
