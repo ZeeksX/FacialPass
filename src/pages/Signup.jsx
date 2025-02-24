@@ -1,9 +1,314 @@
-import React from 'react'
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../components/Auth";
+import PersonIcon from '@mui/icons-material/Person';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import EmailIcon from '@mui/icons-material/Email';
+import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider } from "@mui/material";
+import Toast from '../components/Toast';
+import { createTheme } from "@mui/material";
+import signupImage from "../assets/login-image.jpg";
+import logo from "../assets/logo.svg";
 
 const Signup = () => {
-  return (
-    <div>Signup</div>
-  )
-}
+  const [firstname, setfirstname] = useState("");
+  const [lastname, setlastname] = useState("");
+  const [matricNum, setMatricNum] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const auth = useAuth();
+  const { setUser } = auth;
+  const navigate = useNavigate();
 
-export default Signup
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setToastMessage("Passwords do not match.");
+      setToastOpen(true);
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:3000/api/v1/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ firstname, email, password }),
+      });
+
+      const data = await res.json();
+      console.log("API Response:", data);
+
+      if (res.ok) {
+        // Set the user in the Auth context
+        setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
+
+        setToastMessage(data.message); // Set the toast message
+        setToastOpen(true); // Show the toast
+        navigate("/dashboard");
+      } else {
+        console.error("Signup failed:", data.message || res.statusText);
+        setToastMessage(data.message || "Signup failed. Please try again.");
+        setToastOpen(true); // Show the toast
+      }
+    } catch (error) {
+      console.error("Error during signup:", error.message);
+    }
+  };
+
+  const handleToastClose = () => {
+    setToastOpen(false);
+  };
+
+  const theme = createTheme({
+    components: {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            color: "#0061A2", // Text color
+            "& fieldset": {
+              borderColor: "#0061A2", // Default outline color
+            },
+            "&:hover fieldset": {
+              borderColor: "#0061A2", // Hover outline color
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#0061A2", // Focus outline color
+            },
+            height: "2.75rem", // Set height for OutlinedInput
+          },
+          input: {
+            color: "#0061A2", // Input text color
+            padding: "8.5px 12px", // Adjust padding to fit the height
+            "&::placeholder": {
+              color: "#0061A2", // Placeholder color
+              opacity: 0.5, // Ensure full visibility
+            },
+          },
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          root: {
+            color: "#0061A2", // Text color for InputBase components (like TextField)
+            height: "2.75rem", // Set height for InputBase
+          },
+          input: {
+            color: "#0061A2", // Input text color
+            padding: "8.5px 12px", // Adjust padding to fit the height
+            "&::placeholder": {
+              color: "#0061A2", // Placeholder color
+              opacity: 1,
+            },
+          },
+        },
+      },
+      MuiInputAdornment: {
+        styleOverrides: {
+          root: {
+            color: "#0061A2", // Ensures adornment icons match the theme
+          },
+        },
+      },
+    },
+  });
+
+  return (
+    <>
+      <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
+        <div className="flex flex-row lg:w-[70%] lg:h-[94vh]">
+          <div
+            className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
+            style={{ backgroundImage: `url(${signupImage})` }}
+          ></div>
+          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-2 py-4">
+            <div className="flex flex-col justify-center items-center gap-1">
+              <div className="flex flex-col justify-center items-center">
+                <img className="w-16" src={logo} alt="Facial Pass logo" />
+                <h1 className="text-sm font-bold leading-4 text-[#0061A2]">FacialPass</h1>
+              </div>
+              <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
+              <p className="text-[#0061A2] text-base text-center">Already have an account?
+                <Link className="ml-2 italic underline" to="/">Sign In</Link>
+              </p>
+            </div>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
+              <div className="flex flex-wrap justify-between flex-row w-full gap-2">
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    className="w-[45%]"
+                    variant="outlined"
+                    placeholder="FirstName"
+                    value={firstname}
+                    onChange={(event) => setfirstname(event.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "2.75rem", // Ensure height is applied
+                      },
+                    }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonIcon sx={{ color: "#0061A2" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    className="w-[45%]"
+                    variant="outlined"
+                    placeholder="LastName"
+                    value={lastname}
+                    onChange={(event) => setlastname(event.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "2.75rem", // Ensure height is applied
+                      },
+                    }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonIcon sx={{ color: "#0061A2" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="MatricNumber"
+                    value={matricNum}
+                    onChange={(event) => setMatricNum(event.target.value)}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        height: "2.75rem", // Ensure height is applied
+                      },
+                    }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonIcon sx={{ color: "#0061A2" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+              </div>
+
+
+              <ThemeProvider theme={theme}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      height: "2.75rem", // Ensure height is applied
+                    },
+                  }}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon sx={{ color: "#0061A2" }} />
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              </ThemeProvider>
+              <ThemeProvider theme={theme}>
+                <FormControl variant="outlined" fullWidth>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    sx={{
+                      height: "2.75rem", // Ensure height is applied
+                    }}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <IconButton
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="start"
+                        >
+                          {showPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </ThemeProvider>
+              <ThemeProvider theme={theme}>
+                <FormControl variant="outlined" fullWidth>
+                  <OutlinedInput
+                    id="outlined-adornment-confirm-password"
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    sx={{
+                      height: "2.75rem", // Ensure height is applied
+                    }}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <IconButton
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="start"
+                        >
+                          {showPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+              </ThemeProvider>
+
+              <div className="flex flex-row justify-between gap-4 lg:gap-0 items-center w-full">
+                <button
+                  className="w-full h-9 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                  type="submit"
+                >
+                  Sign Up
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <Toast open={toastOpen} message={toastMessage} onClose={handleToastClose} /> {/* Add the Toast component here */}
+    </>
+  );
+};
+
+export default Signup;
