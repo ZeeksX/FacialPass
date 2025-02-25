@@ -5,6 +5,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider } from "@mui/material";
 import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
@@ -15,6 +16,7 @@ const Signup = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [matricNum, setMatricNum] = useState("");
+  const [department, setDepartment] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -51,6 +53,7 @@ const Signup = () => {
           firstname,
           lastname,
           matricNum,
+          department,
           email,
           password,
           role: "student",
@@ -82,6 +85,7 @@ const Signup = () => {
       firstname,
       lastname,
       matricNum,
+      department,
       email,
       password,
     };
@@ -206,7 +210,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    fullWidth
+                    className="w-[49%] max-w-md:w-full"
                     variant="outlined"
                     placeholder="Matric Number"
                     value={matricNum}
@@ -216,6 +220,25 @@ const Signup = () => {
                         startAdornment: (
                           <InputAdornment position="start">
                             <PersonIcon sx={{ color: "#0061A2" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    className="w-[49%] max-w-md:w-full"
+                    variant="outlined"
+                    placeholder="Department"
+                    value={department}
+                    onChange={(event) => setDepartment(event.target.value)}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationCityIcon sx={{ color: "#0061A2" }} />
                           </InputAdornment>
                         ),
                       },
@@ -300,10 +323,11 @@ const Signup = () => {
                   Next
                 </button>
               </div>
+
             </form>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
       <Toast open={toastOpen} message={toastMessage} onClose={handleToastClose} />
     </>
   );
