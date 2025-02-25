@@ -65,7 +65,7 @@ const AdminSignup = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/signup", {
+      const res = await fetch("http://localhost:5000/api/admins/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +166,7 @@ const AdminSignup = () => {
               </div>
               <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
               <p className="text-[#0061A2] text-xl text-center">Already have an account?
-                <Link className="ml-2 italic underline" to="/">Sign In</Link>
+                <Link className="ml-2 italic underline" to="/login">Sign In</Link>
               </p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
