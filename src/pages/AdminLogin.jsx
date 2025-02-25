@@ -29,45 +29,33 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setToastMessage("Passwords do not match.");
-      setToastOpen(true);
-      return;
-    }
-
     try {
-      const res = await fetch("http://localhost:3000/api/v1/users/signup", {
+      const res = await fetch("http://localhost:5000/api/v1/users/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          firstname,
-          lastname,
-          matricNum,
-          email,
-          password,
-          role: "admin", // Explicitly set the role to "admin"
-        }),
+        body: JSON.stringify({ email, password}),
       });
 
       const data = await res.json();
       console.log("API Response:", data);
+      console.log("User email: ", data.user)
 
       if (res.ok) {
+        // Set the user in the Auth context
         setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
-        setToastMessage(data.message);
-        setToastOpen(true);
+
+        setToastMessage(data.message); // Set the toast message
+        setToastOpen(true); // Show the toast
         navigate("/dashboard");
       } else {
-        console.error("Signup failed:", data.message || res.statusText);
-        setToastMessage(data.message || "Signup failed. Please try again.");
-        setToastOpen(true);
+        console.error("Login failed:", data.message || res.statusText);
+        setToastMessage(data.message || "Login failed. Please try again.");
+        setToastOpen(true); // Show the toast
       }
     } catch (error) {
-      console.error("Error during signup:", error.message);
-      setToastMessage("An error occurred. Please try again.");
-      setToastOpen(true);
+      console.error("Error during login:", error.message);
     }
   };
 
@@ -144,11 +132,11 @@ const AdminLogin = () => {
             <div className="flex flex-col justify-center items-center gap-2">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-24" src={logo} alt="Facial Pass logo" />
-                <h1 className="text-sm font-bold leading-5 text-[#0061A2]">FacialPass</h1>
               </div>
 
               <h3 className="text-[#0061A2]  font-bold text-2xl">Welcome Back</h3>
               <p className="text-[#0061A2] text-xl text-center">Sign in to access your secure portal</p>
+              <h3 className="w-full text-center text-xl">No account? <Link className="underline italic" to="/signup">Sign up here</Link></h3>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
               <ThemeProvider theme={theme}>
@@ -203,7 +191,7 @@ const AdminLogin = () => {
                 </button>
                 <h3 onClick={handleForgotPasswordOpen} className="text-[#0061A2] hover:text-gray-600 text-center cursor-pointer">Forgot Password?</h3>
               </div>
-              <h3 className="w-full text-center text-xl">Or <Link className="underline italic" to="/signup">Sign up here</Link></h3>
+
             </form>
             <ForgotPassword open={forgotPasswordOpen} onClose={handleForgotPasswordClose} />
           </div>

@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import PersonIcon from '@mui/icons-material/Person';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider } from "@mui/material";
 import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
@@ -14,7 +16,6 @@ import logo from "../assets/logo.svg";
 const AdminSignup = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
-  const [matricNum, setMatricNum] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,9 +23,31 @@ const AdminSignup = () => {
   const [confirmShowPassword, setConfirmShowPassword] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [office, setOffice] = useState('');
+  const [staffId, setStaffId] = useState(""); // State for staff_id
+
   const auth = useAuth();
   const { setUser } = auth;
   const navigate = useNavigate();
+
+  // Fetch the next staff_id when the component mounts
+  useEffect(() => {
+    const fetchNextStaffId = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/admins/next-staff-id");
+        const data = await res.json();
+        if (res.ok) {
+          setStaffId(data.nextStaffId);
+        } else {
+          console.error("Failed to fetch next staff ID:", data.message || res.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching next staff ID:", error.message);
+      }
+    };
+
+    fetchNextStaffId();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickConfirmShowPassword = () => setConfirmShowPassword((show) => !show);
@@ -42,12 +65,12 @@ const AdminSignup = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/v1/users/signup", {
+      const res = await fetch("http://localhost:5000/api/users/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstname, lastname, matricNum, email, password }),
+        body: JSON.stringify({ firstname, lastname, office, email, password, role: "admin" }),
       });
 
       const data = await res.json();
@@ -134,7 +157,8 @@ const AdminSignup = () => {
           <div
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${signupImage})` }}
-          ></div>
+          >
+          </div>
           <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4">
             <div className="flex flex-col justify-center items-center gap-1">
               <div className="flex flex-col justify-center items-center">
@@ -187,22 +211,41 @@ const AdminSignup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    fullWidth
+                    className="w-[49%]"
                     variant="outlined"
-                    placeholder="Matric Number"
-                    value={matricNum}
-                    onChange={(event) => setMatricNum(event.target.value)}
+                    placeholder="Staff ID"
+                    value={staffId} // Display the staff_id here
+                    disabled // Disable the input field
                     slotProps={{
                       input: {
                         startAdornment: (
                           <InputAdornment position="start">
-                            <PersonIcon sx={{ color: "#0061A2" }} />
+                            <AccountCircleIcon sx={{ color: "#0061A2" }} />
                           </InputAdornment>
                         ),
                       },
                     }}
                   />
                 </ThemeProvider>
+                <ThemeProvider theme={theme}>
+                  <TextField
+                    className="w-[49%]"
+                    variant="outlined"
+                    placeholder="Office"
+                    value={office}
+                    onChange={(event) => setOffice(event.target.value)}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationOnIcon sx={{ color: "#0061A2" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
+                  />
+                </ThemeProvider>
+
               </div>
 
               <ThemeProvider theme={theme}>
@@ -275,7 +318,7 @@ const AdminSignup = () => {
               <div className="flex flex-row justify-between gap-4 lg:gap-0 items-center w-full">
                 <button
                   className="w-full h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                  type="button"
+                  type="submit"
                 >
                   Next
                 </button>
