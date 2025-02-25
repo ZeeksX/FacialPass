@@ -42,7 +42,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/users/register", {
+      const res = await fetch("http://localhost:5000/api/students/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,6 +75,18 @@ const Signup = () => {
       setToastMessage("An error occurred. Please try again.");
       setToastOpen(true);
     }
+  };
+
+  const handleNext = () => {
+    const userData = {
+      firstname,
+      lastname,
+      matricNum,
+      email,
+      password,
+    };
+    localStorage.setItem('userData', JSON.stringify(userData));
+    navigate("/signup/facial-recognition");
   };
 
   const handleToastClose = () => {
@@ -175,7 +187,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                   className="w-[49%] max-md:w-full"
+                    className="w-[49%] max-md:w-full"
                     variant="outlined"
                     placeholder="Surname"
                     value={lastname}
@@ -281,8 +293,9 @@ const Signup = () => {
 
               <div className="flex flex-row justify-between gap-4 lg:gap-0 items-center w-full">
                 <button
-                  className="w-full h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                   type="button"
+                  onClick={handleNext}
+                  className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                 >
                   Next
                 </button>

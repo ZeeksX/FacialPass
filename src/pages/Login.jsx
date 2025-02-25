@@ -182,16 +182,17 @@ const Login = () => {
                 </FormControl>
               </ThemeProvider>
 
-              <div className="flex flex-row justify-between gap-4 lg:gap-0 items-center w-full">
-                <button
-                  className="w-24 h-9 font-semibold rounded bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                  type="submit"
-                >
-                  Log in
-                </button>
-                <h3 onClick={handleForgotPasswordOpen} className="text-[#0061A2] hover:text-gray-600 text-center cursor-pointer">Forgot Password?</h3>
+              <div className="flex flex-col justify-between gap-4 lg:gap-0 items-center w-full">
+                <Link className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2" to="/signup/facial-recognition">
+                  <button
+                    type="button"
+                  >
+                    Next
+                  </button>
+                </Link>
+                <h3 onClick={handleForgotPasswordOpen} className="mt-2 text-[#0061A2] hover:text-gray-600 text-center cursor-pointer">Forgot Password?</h3>
               </div>
-              
+
             </form>
             <ForgotPassword open={forgotPasswordOpen} onClose={handleForgotPasswordClose} />
           </div>

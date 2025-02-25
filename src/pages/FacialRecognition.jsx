@@ -1,11 +1,71 @@
-import React from 'react'
+import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const FacialRecognition = () => {
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const [image, setImage] = useState(null);
+    const navigate = useNavigate();
+
+    const startCamera = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoRef.current.srcObject = stream;
+        } catch (err) {
+            console.error("Error accessing the camera", err);
+        }
+    };
+
+    const captureImage = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL('image/png');
+        setImage(imageData);
+    };
+
+    const handleSubmit = async () => {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const formData = {
+            ...userData,
+            facial_image: image,
+        };
+
+        try {
+            const res = await fetch("http://localhost:5000/api/students/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('token', data.token);
+                navigate("/dashboard");
+            } else {
+                console.error("Registration failed:", data.message || res.statusText);
+            }
+        } catch (error) {
+            console.error("Error during registration:", error.message);
+        }
+    };
+
     return (
         <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
-        
+            <div className="flex flex-col items-center gap-4">
+                <video ref={videoRef} autoPlay className="w-full max-w-lg"></video>
+                <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+                <button onClick={startCamera}>Start Camera</button>
+                <button onClick={captureImage}>Capture Image</button>
+                {image && <img src={image} alt="Captured" className="w-full max-w-lg" />}
+                <button onClick={handleSubmit}>Submit</button>
+            </div>
         </div>
     )
 }
 
-export default FacialRecognition
+export default FacialRecognition;

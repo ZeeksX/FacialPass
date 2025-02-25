@@ -15,8 +15,9 @@ import "./App.css";
 import Student from "./pages/Student";
 import Admin from "./pages/Admin";
 import SelectCourses from "./pages/SelectCourses";
-import AdminSignup from "./pages/AdminSignUp";
+import AdminSignup from "./pages/AdminSignup";
 import AdminLogin from "./pages/AdminLogin";
+import FacialRecognition from "./pages/FacialRecognition";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -52,6 +53,7 @@ const App = () => {
           <Route path="/" element={<ParticlesReact />} />
           <Route path="/login" element={<Login isMobile={isMobile} />} />
           <Route path="/admin/login" element={<AdminLogin isMobile={isMobile} />} />
+          <Route path="/signup/facial-recognition" element={<FacialRecognition isMobile={isMobile} />} />
           <Route
             path="/studentDashboard"
             element={<Student isMobile={isMobile} />}
