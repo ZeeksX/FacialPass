@@ -209,7 +209,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-w-md:w-full"
+                    className="w-[49%] max-md:w-full"
                     variant="outlined"
                     placeholder="Matric Number"
                     value={matricNum}
@@ -228,7 +228,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-w-md:w-full"
+                    className="w-[49%] max-md:w-full"
                     variant="outlined"
                     placeholder="Department"
                     value={department}
