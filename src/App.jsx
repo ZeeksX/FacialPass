@@ -20,6 +20,7 @@ import AdminSignup from "./pages/AdminSignup";
 import AdminLogin from "./pages/AdminLogin";
 import FacialRecognition from "./pages/FacialRecognition";
 import UploadImage from "./pages/UploadImage";
+import Loader from "./components/Loader";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -28,7 +29,7 @@ const ProtectedRoute = ({ children }) => {
   console.log(loading);
 
   if (loading) {
-    return <div>Loading...</div>; // Show a loading state while checking authentication
+    return <Loader />;
   }
 
   return isAuthenticated ? children : <Navigate to="/" />;
