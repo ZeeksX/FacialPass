@@ -30,7 +30,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/v1/users/login", {
+      const res = await fetch("http://localhost:5000/api/students/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +44,13 @@ const Login = () => {
 
       if (res.ok) {
         // Set the user in the Auth context
-        setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
+        const { token, user } = data;
+
+        // Store the token in localStorage
+        localStorage.setItem("token", token);
+
+        // Set the user in the Auth context
+        setUser({ id: user.id, email: user.email, role: user.role, token });
 
         setToastMessage(data.message); // Set the toast message
         setToastOpen(true); // Show the toast
@@ -183,13 +189,12 @@ const Login = () => {
               </ThemeProvider>
 
               <div className="flex flex-col justify-between gap-4 lg:gap-0 items-center w-full">
-                <Link className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2" to="/signup/facial-recognition">
-                  <button
-                    type="button"
-                  >
-                    Next
-                  </button>
-                </Link>
+                <button
+                  className="w-full cursor-pointer flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                  type="submit"
+                >
+                  Login
+                </button>
                 <h3 onClick={handleForgotPasswordOpen} className="mt-2 text-[#0061A2] hover:text-gray-600 text-center cursor-pointer">Forgot Password?</h3>
               </div>
 

@@ -5,9 +5,9 @@ const Toast = ({ open, message, onClose, severity = "info" }) => {
     return (
         <Snackbar
             open={open}
-            autoHideDuration={1000}
+            autoHideDuration={3000}
             onClose={onClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
             <Alert
                 onClose={onClose}

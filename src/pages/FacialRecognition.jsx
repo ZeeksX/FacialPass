@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
 
 const FacialRecognition = () => {
     const videoRef = useRef(null);
@@ -23,10 +24,18 @@ const FacialRecognition = () => {
         const canvas = canvasRef.current;
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL('image/png');
-        setImage(imageData);
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Convert canvas to Base64
+        const base64data = canvas.toDataURL("image/png"); // Store as PNG format
+
+        // Remove the `data:image/png;base64,` prefix to store only the Base64 data in the database
+        const base64String = base64data.replace(/^data:image\/(png|jpeg);base64,/, "");
+
+        setImage(base64String);
     };
+
 
     const handleSubmit = async () => {
         const userData = JSON.parse(localStorage.getItem('userData'));
@@ -60,7 +69,6 @@ const FacialRecognition = () => {
         <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-gradient-to-b from-white to-[#0061A2]">
             <div className="flex flex-col w-4/5 items-center gap-4">
                 <div className="flex flex-row gap-8 w-[90%] justify-between">
-
                     {/* Video Placeholder */}
                     <div className="w-1/2 h-80 bg-gray-200 rounded flex items-center justify-center overflow-hidden relative">
                         {!cameraActive && (

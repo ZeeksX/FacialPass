@@ -90,7 +90,7 @@ const Signup = () => {
       password,
     };
     localStorage.setItem('userData', JSON.stringify(userData));
-    navigate("/signup/facial-recognition");
+    navigate("/signup/upload-image");
   };
 
   const handleToastClose = () => {

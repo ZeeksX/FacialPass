@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -18,9 +19,15 @@ import SelectCourses from "./pages/SelectCourses";
 import AdminSignup from "./pages/AdminSignup";
 import AdminLogin from "./pages/AdminLogin";
 import FacialRecognition from "./pages/FacialRecognition";
+import UploadImage from "./pages/UploadImage";
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading state while checking authentication
+  }
+
   return isAuthenticated ? children : <Navigate to="/" />;
 };
 
@@ -32,7 +39,6 @@ const App = () => {
     setSidebarOpen((prev) => !prev);
   };
 
-  // Method to check if the screen is mobile
   const checkIfMobile = () => {
     setIsMobile(window.innerWidth <= 768);
   };
@@ -54,25 +60,34 @@ const App = () => {
           <Route path="/login" element={<Login isMobile={isMobile} />} />
           <Route path="/admin/login" element={<AdminLogin isMobile={isMobile} />} />
           <Route path="/signup/facial-recognition" element={<FacialRecognition isMobile={isMobile} />} />
+          <Route path="/signup/upload-image" element={<UploadImage isMobile={isMobile} />} />
+          <Route path="/SelectCourses" element={<SelectCourses isMobile={isMobile} />} />
           <Route
             path="/studentDashboard"
-            element={<Student isMobile={isMobile} />}
+            element={
+              <ProtectedRoute>
+                <Student isMobile={isMobile} />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/adminDashboard"
-            element={<Admin isMobile={isMobile} />}
+            element={
+              <ProtectedRoute>
+                <Admin isMobile={isMobile} />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/SelectCourses" element={<SelectCourses isMobile={isMobile} />} />
           <Route
             path="/dashboard"
             element={
-              // <ProtectedRoute>
-              <HomePage
-                sidebarOpen={sidebarOpen}
-                toggleSidebar={toggleSidebar}
-                isMobile={isMobile}
-              />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <HomePage
+                  sidebarOpen={sidebarOpen}
+                  toggleSidebar={toggleSidebar}
+                  isMobile={isMobile}
+                />
+              </ProtectedRoute>
             }
           />
           <Route
