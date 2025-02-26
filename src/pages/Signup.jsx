@@ -67,7 +67,6 @@ const Signup = () => {
         setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
         setToastMessage(data.message);
         setToastOpen(true);
-        navigate("/dashboard");
       } else {
         console.error("Signup failed:", data.message || res.statusText);
         setToastMessage(data.message || "Signup failed. Please try again.");
@@ -318,7 +317,7 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                  className="w-full flex cursor-pointer items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                 >
                   Next
                 </button>

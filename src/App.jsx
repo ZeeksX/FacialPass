@@ -79,7 +79,7 @@ const App = () => {
             }
           />
           <Route
-            path="/dashboard"
+            path="/landing"
             element={
               <ProtectedRoute>
                 <HomePage

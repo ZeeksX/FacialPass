@@ -6,13 +6,15 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import loginImage from "../assets/login-image.jpg";
 import logo from "../assets/logo.svg";
 import Toast from "../components/Toast";
+import Loader from "../components/Loader";
 
 const UploadImage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [toastSeverity, setToastSeverity] = useState("success"); // "success" | "error"
+  const [toastSeverity, setToastSeverity] = useState("success");
+  const [loader, setLoader] = useState(false);
 
   const navigate = useNavigate();
 
@@ -66,7 +68,7 @@ const UploadImage = () => {
     try {
       const res = await fetch("http://localhost:5000/api/students/register", {
         method: "POST",
-        body: formData, 
+        body: formData, // No need to set Content-Type
       });
 
       const data = await res.json();
@@ -75,18 +77,21 @@ const UploadImage = () => {
         setToastSeverity("success");
         setToastOpen(true);
         localStorage.setItem("token", data.token);
-        setTimeout(() => navigate("/studentDashboard"), 2000);
+        setLoader(true);
+        setTimeout(() => {
+          navigate("/studentDashboard");
+        }, 3000);
       } else {
-        setToastMessage(
-          data.message || "Registration failed. Please try again."
-        );
+        setToastMessage(data.message || "Registration failed. Please try again.");
         setToastSeverity("error");
         setToastOpen(true);
+        setLoader(false);
       }
     } catch (error) {
       setToastMessage("An error occurred. Please try again.");
       setToastSeverity("error");
       setToastOpen(true);
+      setLoader(false);
     }
   };
 
@@ -98,7 +103,7 @@ const UploadImage = () => {
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded-none bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
+          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded -none bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
               <img className="w-24" src={logo} alt="Facial Pass logo" />
               <p className="text-[#0061A2] text-xl font-medium text-center">
@@ -150,6 +155,7 @@ const UploadImage = () => {
         severity={toastSeverity}
         onClose={handleToastClose}
       />
+      {loader && <Loader />}
     </>
   );
 };
