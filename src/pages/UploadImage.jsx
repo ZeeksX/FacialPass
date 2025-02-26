@@ -77,10 +77,11 @@ const UploadImage = () => {
         setToastSeverity("success");
         setToastOpen(true);
         localStorage.setItem("token", data.token);
+        localStorage.removeItem("userData");
         setLoader(true);
         setTimeout(() => {
-          navigate("/studentDashboard");
-        }, 3000);
+          navigate("/login");
+        }, 2000);
       } else {
         setToastMessage(data.message || "Registration failed. Please try again.");
         setToastSeverity("error");

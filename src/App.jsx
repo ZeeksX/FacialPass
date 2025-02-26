@@ -24,6 +24,9 @@ import UploadImage from "./pages/UploadImage";
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
+  console.log(isAuthenticated);
+  console.log(loading);
+
   if (loading) {
     return <div>Loading...</div>; // Show a loading state while checking authentication
   }

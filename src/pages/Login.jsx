@@ -9,22 +9,21 @@ import ForgotPassword from '../components/ForgotPassword';
 import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
 import loginImage from "../assets/login-image.jpg"
-import logo from "../assets/logo.svg"
+import logo from "../assets/logo.svg";
+import Loader from "../components/Loader";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [matricNumber, setMatricNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
+  const [toastSeverity, setToastSeverity] = useState("success");
   const [toastMessage, setToastMessage] = useState("");
+  const [loader, setLoader] = useState("");
   const auth = useAuth();
-  const { setUser } = auth;
+  const { login } = auth; // Use login function from auth context
   const navigate = useNavigate();
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,36 +34,45 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ matricNumber, password }),
       });
 
       const data = await res.json();
-      console.log("API Response:", data);
-      console.log("User email: ", data.user)
 
       if (res.ok) {
-        // Set the user in the Auth context
-        const { token, user } = data;
+        const { token, ...user } = data;
 
         // Store the token in localStorage
         localStorage.setItem("token", token);
 
         // Set the user in the Auth context
-        setUser({ id: user.id, email: user.email, role: user.role, token });
+        login(token, user.student.role, user.student); // Use the login function
 
-        setToastMessage(data.message); // Set the toast message
-        setToastOpen(true); // Show the toast
-        navigate("/dashboard");
+        setToastMessage(data.message);
+        setToastOpen(true);
+        setToastSeverity("success");
+        setLoader(true);
+        setTimeout(() => {
+          navigate("/studentDashboard");
+        }, 2000);
+
       } else {
-        console.error("Login failed:", data.message || res.statusText);
-        setToastMessage(data.message || "Login failed. Please try again.");
-        setToastOpen(true); // Show the toast
+        setLoader(false);
+        setToastSeverity("error");
+        setToastMessage(data.message || "Login failed . Please try again.");
+        setToastOpen(true);
       }
     } catch (error) {
-      console.error("Error during login:", error.message);
+      setToastMessage("An error occurred. Please try again.");
+      setToastOpen(true);
+      setToastSeverity("error");
+      setLoader(false);
     }
   };
-
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
   const handleToastClose = () => {
     setToastOpen(false);
   };
@@ -128,7 +136,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
+      <div className="overflow-hidden flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
         <div className="flex flex-row lg:w-3/5 lg:h-[90vh]">
           <div
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
@@ -149,9 +157,9 @@ const Login = () => {
                 <TextField
                   fullWidth
                   variant="outlined"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Matric Number"
+                  value={matricNumber}
+                  onChange={(event) => setMatricNumber(event.target.value)}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -204,9 +212,14 @@ const Login = () => {
         </div>
 
       </div>
-      <Toast open={toastOpen} message={toastMessage} onClose={handleToastClose} /> {/* Add the Toast component here */}
+      {loader && <Loader />}
+      <Toast  severity={toastSeverity} open={toastOpen} message={toastMessage} onClose={handleToastClose} /> {/* Add the Toast component here */}
     </>
   );
 };
 
 export default Login;
+
+
+
+
