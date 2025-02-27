@@ -32,7 +32,7 @@ const Student = () => {
   return (
     <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
       <StudentSidebar />
-      <div className="flex flex-col max-ml-60 ml-[20%] w-4/5 p-6">
+      <div className="flex flex-col max-ml-60 ml-[20%] w-full p-6">
         <h1 className="text-2xl font-bold mb-4">Student Dashboard</h1>
        
         {/* Registered Courses Section */}

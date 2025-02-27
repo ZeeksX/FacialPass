@@ -23,7 +23,7 @@ const StudentSidebar = ({ toggleSidebar }) => {
   ];
   return (
     <>
-      <div className="fixed flex-col max-w-60 w-1/5 shadow-lg min-h-screen bg-white items-center hidden sm:flex">
+      <div className="fixed flex-col max-w-64 w-1/5 shadow-lg min-h-screen bg-white items-center hidden sm:flex">
         <div className="flex flex-row items-center mt-8">
           <img className="w-16" src={logo} alt="FacialPass logo" />
           <div className="flex flex-col justify-center">
@@ -41,7 +41,7 @@ const StudentSidebar = ({ toggleSidebar }) => {
           ))}
         </ul>
         <Link to="/">
-          <h3 className="fixed left-6 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2]">
+          <h3 className="fixed left-8 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2]">
             <span className="mr-2"><LogoutIcon /></span>Logout </h3>
         </Link>
       </div >
