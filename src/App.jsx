@@ -71,9 +71,9 @@ const App = () => {
           <Route
             path="/studentDashboard"
             element={
-              // <ProtectedRoute>
+              <ProtectedRoute>
                 <Student isMobile={isMobile} />
-              // </ProtectedRoute>
+              </ProtectedRoute>
             }
           />
           <Route
