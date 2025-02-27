@@ -22,6 +22,8 @@ import FacialRecognition from "./pages/FacialRecognition";
 import UploadImage from "./pages/UploadImage";
 import Loader from "./components/Loader";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings"
+import SelectedCourse from "./pages/SelectedCourse"
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -61,6 +63,8 @@ const App = () => {
           <Route path="/" element={<ParticlesReact />} />
           <Route path="/login" element={<Login isMobile={isMobile} />} />
           <Route path="/student/profile" element={<Profile isMobile={isMobile} />} />
+          <Route path="/settings" element={<Settings isMobile={isMobile} />} />
+          <Route path="/selected-courses" element={<SelectedCourse isMobile={isMobile} />} />
           <Route path="/admin/login" element={<AdminLogin isMobile={isMobile} />} />
           <Route path="/signup/facial-recognition" element={<FacialRecognition isMobile={isMobile} />} />
           <Route path="/signup/upload-image" element={<UploadImage isMobile={isMobile} />} />
