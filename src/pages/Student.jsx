@@ -84,7 +84,7 @@ const Student = () => {
       <StudentSidebar />
       <div className="flex flex-col max-ml-60 ml-[20%] w-full p-6">
         <div className="flex flex-row justify-between items-center">
-          <div className="flex items-center w-1/2 rounded-3xl">
+          <div className="flex items-center w-4/5 rounded-3xl">
             <ThemeProvider theme={theme}>
               <TextField
                 fullWidth
