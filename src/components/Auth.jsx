@@ -14,12 +14,12 @@ export const AuthProvider = ({ children }) => {
             const token = localStorage.getItem("token");
 
             if (!token) {
-                setLoading(false); // Set loading to false if no token
+                setLoading(false);
                 return;
             }
 
             try {
-                const response = await fetch("http://localhost:5000/api/validate-token", {
+                const response = await fetch("http://localhost:5000/api/auth/validate-token", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -31,15 +31,14 @@ export const AuthProvider = ({ children }) => {
                     const data = await response.json();
                     setIsAuthenticated(true);
                     setUserRole(data.role);
-                    setUser(data.user); // Set user details
+                    setUser({ id: data.userId, role: data.role }); // Store user data properly
                 } else {
-                    logout();
+                    console.warn("Token validation failed, but not logging out immediately.");
                 }
             } catch (error) {
                 console.error("Error validating token:", error);
-                logout();
             } finally {
-                setLoading(false); // Set loading to false after validation
+                setLoading(false);
             }
         };
 
@@ -47,11 +46,11 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     // Login function to store the token and set authentication state
-    const login = (token, role, user) => {
+    const login = (token, role, userData) => {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
         setUserRole(role);
-        setUser(user); // Set user details
+        setUser(userData);
     };
 
     // Logout function to remove the token and reset authentication state
@@ -59,7 +58,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setUserRole(null);
-        setUser(null); // Clear user details
+        setUser(null);
     };
 
     return (
