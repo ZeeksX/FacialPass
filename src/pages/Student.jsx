@@ -1,94 +1,126 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StudentSidebar from "../components/sidebars/StudentSidebar";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import { TextField, InputAdornment, ThemeProvider, createTheme } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import Loader from "../components/Loader";
 
 const Student = () => {
-  // Sample student data (to be fetched dynamically in a real app)
-  const student = {
-    name: "John Doe",
-    id: "CS202540",
-    email: "johndoe@example.com",
-    course: "Computer Science",
-    department: "Computing and Engineering Science",
-    level: "400 level (Final Year)",
-    courses: [
-      "Artificial Intelligence",
-      "Machine Learning",
-      "Computer Vision",
-      "Cybersecurity",
-      "Cloud Computing",
-      "Data Science",
-    ],
-    facialRecognitionEnrolled: true,
-    examSchedule: [
-      { course: "Artificial Intelligence", date: "March 10, 2025", time: "10:00 AM" },
-      { course: "Cybersecurity", date: "March 12, 2025", time: "1:00 PM" },
-    ],
-    authLogs: [
-      { date: "Feb 20, 2025", status: "Success" },
-      { date: "Feb 18, 2025", status: "Failed" },
-    ],
-  };
+  const [search, setSearch] = useState("");
+  const [student, setStudent] = useState(null);
+
+  // Fetch student data on component mount
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/students/me", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed if required
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch student data");
+        }
+
+        const data = await response.json();
+        setStudent(data); // Store the fetched student data in state
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+      }
+    };
+
+    fetchStudent();
+  }, []); // Empty dependency array ensures it runs once when the component mounts
+
+  // Log student data whenever it changes
+  useEffect(() => {
+    if (student) {
+      console.log("Student data:", student);
+    }
+  }, [student]); // This effect runs whenever `student` changes
+
+  const theme = createTheme({
+    components: {
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            color: "#0061A2",
+            borderRadius: "24px", // Increase border radius
+            "& fieldset": {
+              borderColor: "#0061A2",
+              borderRadius: "24px", // Ensure fieldset also has the same border radius
+            },
+            "&:hover fieldset": {
+              borderColor: "#0061A2",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#0061A2",
+            },
+            height: "3rem",
+          },
+          input: {
+            color: "#0061A2",
+            padding: "8.5px 12px",
+            "&::placeholder": {
+              color: "#0061A2",
+              opacity: 0.5,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!student) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
       <StudentSidebar />
       <div className="flex flex-col max-ml-60 ml-[20%] w-full p-6">
-        <h1 className="text-2xl font-bold mb-4">Student Dashboard</h1>
-       
-        {/* Registered Courses Section */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-2">Registered Courses</h2>
-          <ul className="list-disc ml-6">
-            {student.courses.map((course, index) => (
-              <li key={index} className="p-2">{course}</li>
-            ))}
-          </ul>
-        </div>
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex items-center w-1/2 rounded-3xl">
+            <ThemeProvider theme={theme}>
+              <TextField
+                fullWidth
+                className="flex rounded-3xl bg-white items-center"
+                variant="outlined"
+                placeholder="Search for course, exam or date"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: "#0061A2" }} />
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </ThemeProvider>
+          </div>
 
-        {/* Exam Schedule Section */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <h2 className="text-lg font-semibold mb-2">Exam Schedule</h2>
-          <table className="w-full border border-gray-300">
-            <thead>
-              <tr className="border-b border-gray-300 bg-gray-200">
-                <th className="p-3 text-left">Course</th>
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {student.examSchedule.map((exam, index) => (
-                <tr key={index} className="border-b border-gray-300">
-                  <td className="p-3">{exam.course}</td>
-                  <td className="p-3">{exam.date}</td>
-                  <td className="p-3">{exam.time}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Authentication Logs Section */}
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Authentication Logs</h2>
-          <table className="w-full border border-gray-300">
-            <thead>
-              <tr className="border-b border-gray-300 bg-gray-200">
-                <th className="p-3 text-left">Date</th>
-                <th className="p-3 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {student.authLogs.map((log, index) => (
-                <tr key={index} className="border-b border-gray-300">
-                  <td className="p-3">{log.date}</td>
-                  <td className={`p-3 font-semibold ${log.status === "Success" ? "text-green-600" : "text-red-600"}`}>
-                    {log.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="flex flex-row items-center justify-end gap-4 w-1/2">
+            <div className="border h-10 w-10 p-2 rounded-[50%] flex items-center justify-center">
+              <NotificationsIcon sx={{ height: "24px", width: "24px", cursor: "pointer" }} />
+            </div>
+            <div className="w-0.5 bg-[#0061A2] h-10"></div>
+            <Avatar
+              alt="Profile-photo"
+              src={student.student.facial_image}
+              className="flex items-center justify-center border p-2 rounded-[50%]"
+              sx={{ backgroundColor: "#0061A2", color: "white" }}
+            >
+              {student.student.firstname ? student.student.firstname.charAt(0) : "E"} {/* Display the first letter of the student's name */}
+            </Avatar>
+            <h1 className="text-xl font-bold leading-10">{`${student.student.firstname} ${student.student.lastname}`}</h1>
+          </div>
         </div>
       </div>
     </div>

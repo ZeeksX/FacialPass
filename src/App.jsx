@@ -26,9 +26,6 @@ import Profile from "./pages/Profile";
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
-  console.log(isAuthenticated);
-  console.log(loading);
-
   if (loading) {
     return <Loader />;
   }
