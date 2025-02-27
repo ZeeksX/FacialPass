@@ -65,13 +65,13 @@ const App = () => {
           <Route path="/admin/login" element={<AdminLogin isMobile={isMobile} />} />
           <Route path="/signup/facial-recognition" element={<FacialRecognition isMobile={isMobile} />} />
           <Route path="/signup/upload-image" element={<UploadImage isMobile={isMobile} />} />
-          <Route path="/SelectCourses" element={<SelectCourses isMobile={isMobile} />} />
+          <Route path="/select-courses" element={<SelectCourses isMobile={isMobile} />} />
           <Route
             path="/studentDashboard"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <Student isMobile={isMobile} />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
