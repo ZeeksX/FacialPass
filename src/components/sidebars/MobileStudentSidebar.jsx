@@ -13,7 +13,7 @@ const MobileStudentSidebar = ({ showSidebar, toggleSidebar }) => {
         { name: "Dashboard", icon: <HomeIcon />, link: "/studentDashboard" },
         { name: "Select Courses", icon: <LibraryBooksIcon />, link: "/select-courses" },
         { name: "Selected Courselist", icon: <BeenhereIcon />, link: "/selected-courses" },
-        { name: "Profile", icon: <AccountCircleIcon />, link: "/student/profile" },
+        { name: "Profile", icon: <AccountCircleIcon />, link: "/profile" },
         { name: "Settings", icon: <Settings />, link: "/settings" },
     ];
 
