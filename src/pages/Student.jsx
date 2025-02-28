@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import StudentSidebar from "../components/sidebars/StudentSidebar";
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import SearchIcon from '@mui/icons-material/Search';
-import { TextField, InputAdornment, ThemeProvider, createTheme } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import { createTheme } from "@mui/material";
 import Loader from "../components/Loader";
+import TopNav from "../components/topnav/TopNav";
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import MobileNav from "../components/topnav/MobileNav";
 
 const Student = () => {
-  const [search, setSearch] = useState("");
   const [student, setStudent] = useState(null);
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   // Fetch student data on component mount
   useEffect(() => {
     const fetchStudent = async () => {
@@ -78,49 +81,43 @@ const Student = () => {
   if (!student) {
     return <Loader />;
   }
+  const getTodayDate = () => {
+    return dayjs(new Date()).format('YYYY-MM-DD');
+  };
 
   return (
     <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
       <StudentSidebar />
-      <div className="flex flex-col max-ml-60 ml-[20%] w-full p-6">
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex items-center w-4/5 rounded-3xl">
-            <ThemeProvider theme={theme}>
-              <TextField
-                fullWidth
-                className="flex rounded-3xl bg-white items-center"
-                variant="outlined"
-                placeholder="Search for course, exam or date"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon sx={{ color: "#0061A2" }} />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </ThemeProvider>
+      <div className="flex flex-col max-ml-60 lg:ml-[20%] w-full px-6 py-4">
+        <MobileNav theme={theme} student={student} />
+        <TopNav theme={theme} student={student} />
+        <div className="flex flex-col max-lg:items-center lg:flex-row justify-between w-full lg:w-full mt-8">
+          <div className="flex flex-col w-full lg:w-[61%]">
+            <div className="flex items-center h-30 bg-gradient-to-r from-[#0061A2] to-[#0061a263] rounded-2xl">
+              <h1 className="flex text-2xl text-white font-medium ml-4">Welcome back, {student.student.firstname}</h1>
+            </div>
+            <div className="flex md:flex-row flex-col gap-8 items-center justify-between lg:h-20 my-8">
+              <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
+                <span className="text-5xl font-bold">{student.totalCourses}</span>
+                <h1 className="font-bold text-[18px] leading-7 lg:text-xl">Total Courses Registered</h1>
+              </div>
+              <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
+                <span className="text-5xl font-bold">{student.totalCourses}</span>
+                <h1 className="font-bold text-[18px] leading-7 lg:text-xl">Total Exams Authenticated</h1>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-row items-center justify-end gap-4 w-1/2">
-            <div className="border h-10 w-10 p-2 rounded-[50%] flex items-center justify-center">
-              <NotificationsIcon sx={{ height: "24px", width: "24px", cursor: "pointer" }} />
-            </div>
-            <div className="w-0.5 bg-[#0061A2] h-10"></div>
-            <Avatar
-              alt="Profile-photo"
-              src={student.student.facial_image}
-              className="flex items-center justify-center border p-2 rounded-[50%]"
-              sx={{ backgroundColor: "#0061A2", color: "white" }}
-            >
-              {student.student.firstname ? student.student.firstname.charAt(0) : "E"} {/* Display the first letter of the student's name */}
-            </Avatar>
-            <h1 className="text-xl font-bold leading-10">{`${student.student.firstname} ${student.student.lastname}`}</h1>
+          <div className="flex flex-col justify-center items-center max-w-sm rounded-md shadow-md lg:min-h-[50vh]">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DateCalendar', 'DateCalendar']}>
+                <DemoItem label="">
+                  <DateCalendar defaultValue={dayjs(getTodayDate())} />
+                </DemoItem>
+              </DemoContainer>
+            </LocalizationProvider>
           </div>
+
         </div>
       </div>
     </div>
