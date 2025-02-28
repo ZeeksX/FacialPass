@@ -34,7 +34,7 @@
   z-index: 50;
 }
 
-.mobile-sidebar.open {
+.mobile-sidebar {
   animation: slide-in 0.5s ease-out forwards;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
 }
