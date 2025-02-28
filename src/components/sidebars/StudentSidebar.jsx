@@ -6,7 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Settings } from '@mui/icons-material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BeenhereIcon from '@mui/icons-material/Beenhere';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';;
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 const StudentSidebar = ({ toggleSidebar }) => {
   const navItems = [
@@ -18,9 +18,6 @@ const StudentSidebar = ({ toggleSidebar }) => {
 
   ];
 
-  const profileItems = [
-
-  ];
   return (
     <>
       <div className="fixed flex-col max-w-64 w-1/5 shadow-lg min-h-screen bg-white items-center hidden lg:flex">
