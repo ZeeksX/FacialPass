@@ -23,7 +23,7 @@ const StudentSidebar = ({ toggleSidebar }) => {
   ];
   return (
     <>
-      <div className="fixed flex-col max-w-64 w-1/5 shadow-lg min-h-screen bg-white items-center hidden sm:flex">
+      <div className="fixed flex-col max-w-64 w-1/5 shadow-lg min-h-screen bg-white items-center hidden lg:flex">
         <div className="flex flex-row items-center mt-8">
           <img className="w-12" src={logo} alt="FacialPass logo" />
           <div className="flex flex-col justify-center">
