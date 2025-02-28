@@ -9,7 +9,7 @@ const TopNav = ({ theme, student }) => {
 
   return (
     <div className="flex flex-row justify-between items-center">
-      <div className="flex items-center w-full md:w-4/5 rounded-3xl">
+      <div className="flex items-center w-full lg:w-4/5 rounded-3xl">
         <ThemeProvider theme={theme}>
           <TextField
             fullWidth
@@ -31,7 +31,7 @@ const TopNav = ({ theme, student }) => {
         </ThemeProvider>
       </div>
 
-      <div className="hidden md:flex flex-row items-center justify-end gap-4 w-1/2">
+      <div className="hidden lg:flex flex-row items-center justify-end gap-4 w-1/2">
         <div className="border h-10 w-10 p-2 rounded-[50%] flex items-center justify-center">
           <NotificationsIcon sx={{ height: "24px", width: "24px", cursor: "pointer" }} />
         </div>

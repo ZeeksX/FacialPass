@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import DensityMediumOutlined from '@mui/icons-material/DensityMediumOutlined';
 import Avatar from "@mui/material/Avatar";
+import MobileStudentSidebar from '../sidebars/MobileStudentSidebar';
 
 const MobileNav = ({ student }) => {
     const [showSidebar, setShowSidebar] = useState(false)
@@ -18,6 +19,11 @@ const MobileNav = ({ student }) => {
         setIsScrolled(window.scrollY > 0);
     };
 
+    const toggleSidebar = () => {
+        setShowSidebar(!showSidebar)
+        console.log(showSidebar)
+    }
+
     useEffect(() => {
         window.addEventListener("resize", handleResize);
         window.addEventListener("scroll", handleScroll);
@@ -30,12 +36,14 @@ const MobileNav = ({ student }) => {
 
     return (
         <>
-            <div className={`${(isScrolled && isMobile) ? "w-full bg-white fixed z-10 left-0 top-0 px-2 flex items-center justify-center" : "bg-transparent"}  transition-colors duration-1000`}>
+            <div className={`${(isScrolled && isMobile) ? "w-full bg-white fixed z-10 left-0 -top-0.5 px-2 flex items-center justify-center shadow-md" : "bg-transparent"}  transition-colors duration-1000`}>
                 <div
                     className={`flex lg:hidden flex-row w-full items-center justify-between mb-4 ${(isScrolled && isMobile) ? "my-1 mb-1" : ""}`}>
                     <DensityMediumOutlined onClick={handleClick} />
                     <div className="flex flex-row items-center justify-end gap-4 w-1/2">
-                        <h1 className="text-xl font-bold leading-10">{`${student.student.firstname}`}</h1>
+                        <h1 className="flex flex-row text-xl font-bold leading-10">{`${student.student.firstname}`}
+                            <span className='ml-2 hidden md:flex text-xl font-bold leading-10'>{`${student.student.lastname}`}</span>
+                        </h1>
                         <Avatar
                             alt="Profile-photo"
                             src={student.student.facial_image}
@@ -47,6 +55,7 @@ const MobileNav = ({ student }) => {
                     </div>
                 </div>
             </div>
+            <MobileStudentSidebar showSidebar={showSidebar} toggleSidebar={toggleSidebar} />
         </>
     )
 }
