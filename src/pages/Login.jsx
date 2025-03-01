@@ -136,13 +136,13 @@ const Login = () => {
 
   return (
     <>
-      <div className="overflow-hidden flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
-        <div className="flex flex-row lg:w-3/5 lg:h-[90vh]">
+      <div className="overflow-hidden flex flex-col items-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
+        <div className="flex flex-row justify-center w-4/5 max-lg:max-w-md md:w-4/5 lg:w-3/5 lg:h-[90vh]">
           <div
-            className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
+            className="md:w-1/2 hidden lg:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="login flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-4 py-8">
+          <div className="login flex flex-col w-full justify-center items-center lg:w-3/5 rounded-xl lg:rounded-r-xl lg:rounded-none bg-[white] text-[#0061A2]  px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-24" src={logo} alt="Facial Pass logo" />

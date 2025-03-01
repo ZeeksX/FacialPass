@@ -152,26 +152,34 @@ const Signup = () => {
   return (
     <>
       <div className="flex flex-col overflow-hidden items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
-        <div className="flex flex-row lg:w-[70%] lg:h-[94vh]">
+        <div className="flex flex-row justify-center lg:w-[70%] lg:h-[94vh]">
           <div
-            className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
+            className="lg:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${signupImage})` }}
           ></div>
-          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4">
+          <div className="signup flex flex-col w-full md:w-[70%] lg:w-4/5 rounded-xl lg:rounded-r-xl lg:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4 pb-6">
             <div className="flex flex-col justify-center items-center gap-1">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-16" src={logo} alt="Facial Pass logo" />
               </div>
-              <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
-              <p className="text-[#0061A2] text-xl text-center">Already have an account?
-                <Link className="ml-2 italic underline" to="/login">Sign In</Link>
+              <h3 className="text-[#0061A2] font-bold text-2xl">
+                Create Your Account
+              </h3>
+              <p className="text-[#0061A2] text-xl text-center">
+                Already have an account?
+                <Link className="ml-2 italic underline" to="/login">
+                  Sign In
+                </Link>
               </p>
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto"
+            >
               <div className="flex flex-wrap justify-between flex-row w-full gap-2">
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-md:w-full"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="First Name"
                     value={firstname}
@@ -190,7 +198,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-md:w-full"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Surname"
                     value={lastname}
@@ -209,7 +217,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-md:w-full"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Matric Number"
                     value={matricNum}
@@ -228,7 +236,7 @@ const Signup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%] max-md:w-full"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Department"
                     value={department}
@@ -276,12 +284,18 @@ const Signup = () => {
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
-                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          aria-label={
+                            showPassword ? "Hide password" : "Show password"
+                          }
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="start"
                         >
-                          {showPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
+                          {showPassword ? (
+                            <VisibilityOff sx={{ color: "#0061A2" }} />
+                          ) : (
+                            <Visibility sx={{ color: "#0061A2" }} />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     }
@@ -300,12 +314,20 @@ const Signup = () => {
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
-                          aria-label={confirmShowPassword ? "Hide password" : "Show password"}
+                          aria-label={
+                            confirmShowPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
                           onClick={handleClickConfirmShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="start"
                         >
-                          {confirmShowPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
+                          {confirmShowPassword ? (
+                            <VisibilityOff sx={{ color: "#0061A2" }} />
+                          ) : (
+                            <Visibility sx={{ color: "#0061A2" }} />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     }
@@ -322,12 +344,15 @@ const Signup = () => {
                   Next
                 </button>
               </div>
-
             </form>
           </div>
-        </div >
-      </div >
-      <Toast open={toastOpen} message={toastMessage} onClose={handleToastClose} />
+        </div>
+      </div>
+      <Toast
+        open={toastOpen}
+        message={toastMessage}
+        onClose={handleToastClose}
+      />
     </>
   );
 };
