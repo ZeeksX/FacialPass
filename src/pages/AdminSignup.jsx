@@ -12,6 +12,7 @@ import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
 import signupImage from "../assets/login-image.jpg";
 import logo from "../assets/logo.svg";
+import Loader from "../components/Loader";
 
 const AdminSignup = () => {
   const [firstname, setFirstname] = useState("");
@@ -22,12 +23,13 @@ const AdminSignup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [confirmShowPassword, setConfirmShowPassword] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
+  const [toastSeverity, setToastSeverity] = useState("success");
   const [toastMessage, setToastMessage] = useState("");
+  const [loader, setLoader] = useState("");
   const [office, setOffice] = useState('');
   const [staffId, setStaffId] = useState(""); // State for staff_id
 
-  const auth = useAuth();
-  const { setUser } = auth;
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   // Fetch the next staff_id when the component mounts
@@ -60,6 +62,7 @@ const AdminSignup = () => {
 
     if (password !== confirmPassword) {
       setToastMessage("Passwords do not match.");
+      setToastSeverity("error");
       setToastOpen(true);
       return;
     }
@@ -70,26 +73,36 @@ const AdminSignup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstname, lastname, office, email, password, role: "admin" }),
+        body: JSON.stringify({ firstname, lastname, office, email, staff_id: staffId, password, role: "admin" }),
       });
 
       const data = await res.json();
       console.log("API Response:", data);
 
       if (res.ok) {
-        setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
-        setToastMessage(data.message);
+        setUser({ id: data.admin.id, email: data.admin.email, role: data.admin.role });
+        setLoader(true);
+
+        // Ensure success toast message is set correctly
+        setToastSeverity("success");
+        setToastMessage(data.message || "Signup successful! Redirecting...");
         setToastOpen(true);
-        navigate("/dashboard");
+
+        setTimeout(() => {
+          navigate("/admin/login");
+        }, 2000);
       } else {
-        console.error("Signup failed:", data.message || res.statusText);
+        setLoader(false);
+        setToastSeverity("error");
         setToastMessage(data.message || "Signup failed. Please try again.");
         setToastOpen(true);
       }
     } catch (error) {
-      console.error("Error during signup:", error.message);
+      console.log(error)
+      setToastSeverity("error");
       setToastMessage("An error occurred. Please try again.");
       setToastOpen(true);
+      setLoader(false);
     }
   };
 
@@ -166,14 +179,14 @@ const AdminSignup = () => {
               </div>
               <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
               <p className="text-[#0061A2] text-xl text-center">Already have an account?
-                <Link className="ml-2 italic underline" to="/login">Sign In</Link>
+                <Link className="ml-2 italic underline" to="/admin/login">Sign In</Link>
               </p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
               <div className="flex flex-wrap justify-between flex-row w-full gap-2">
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%]"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="First Name"
                     value={firstname}
@@ -192,7 +205,7 @@ const AdminSignup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%]"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Surname"
                     value={lastname}
@@ -211,7 +224,7 @@ const AdminSignup = () => {
 
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%]"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Staff ID"
                     value={staffId} // Display the staff_id here
@@ -229,7 +242,7 @@ const AdminSignup = () => {
                 </ThemeProvider>
                 <ThemeProvider theme={theme}>
                   <TextField
-                    className="w-[49%]"
+                    className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Office"
                     value={office}
@@ -320,14 +333,15 @@ const AdminSignup = () => {
                   className="w-full h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                   type="submit"
                 >
-                  Next
+                  Sign up
                 </button>
               </div>
             </form>
           </div>
         </div>
       </div>
-      <Toast open={toastOpen} message={toastMessage} onClose={handleToastClose} />
+      <Toast severity={toastSeverity} open={toastOpen} message={toastMessage} onClose={handleToastClose} />
+      {loader && <Loader />}
     </>
   );
 };

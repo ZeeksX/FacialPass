@@ -6,9 +6,8 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [userRole, setUserRole] = useState(null);
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
 
-    // Check for a valid token on initial load
     useEffect(() => {
         const validateToken = async () => {
             const token = localStorage.getItem("token");
@@ -31,9 +30,9 @@ export const AuthProvider = ({ children }) => {
                     const data = await response.json();
                     setIsAuthenticated(true);
                     setUserRole(data.role);
-                    setUser({ id: data.userId, role: data.role }); // Store user data properly
+                    setUser({ id: data.userId, role: data.role });
                 } else {
-                    console.warn("Token validation failed, but not logging out immediately.");
+                    console.warn("Token validation failed.");
                 }
             } catch (error) {
                 console.error("Error validating token:", error);
@@ -45,7 +44,6 @@ export const AuthProvider = ({ children }) => {
         validateToken();
     }, []);
 
-    // Login function to store the token and set authentication state
     const login = (token, role, userData) => {
         localStorage.setItem("token", token);
         setIsAuthenticated(true);
@@ -53,7 +51,6 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
-    // Logout function to remove the token and reset authentication state
     const logout = () => {
         localStorage.removeItem("token");
         setIsAuthenticated(false);
@@ -62,12 +59,11 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, userRole, user, login, logout, loading }}>
+        <AuthContext.Provider value={{ isAuthenticated, userRole, user, setUser, login, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
 export const useAuth = () => {
     return useContext(AuthContext);
 };

@@ -15,6 +15,7 @@ import ParticlesReact from "./pages/ParticlesReact";
 import "./App.css";
 import Student from "./pages/Student";
 import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/AdminDashboard";
 import SelectCourses from "./pages/SelectCourses";
 import AdminSignup from "./pages/AdminSignup";
 import AdminLogin from "./pages/AdminLogin";
@@ -83,13 +84,17 @@ const App = () => {
           </Route>
 
           <Route
-            path="/adminDashboard"
             element={
               <ProtectedRoute>
-                <Admin isMobile={isMobile} />
+                <AdminDashboard isMobile={isMobile} />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="AdminDashboard" element={<Admin isMobile={isMobile} />} />
+            <Route path="profile" element={<Profile isMobile={isMobile} />} />
+            <Route path="settings" element={<Settings isMobile={isMobile} />} />
+          </Route>
+
           <Route
             path="/landing"
             element={
