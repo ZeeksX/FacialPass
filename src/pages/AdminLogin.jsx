@@ -39,7 +39,7 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoader(true);
+
     try {
       const res = await fetch("http://localhost:5000/api/admins/login", {
         method: "POST",
@@ -57,15 +57,17 @@ const AdminLogin = () => {
         login(token, user.admin.role, user.admin);
         setToastMessage("Login successful");
         setToastSeverity("success");
+        setLoader(true);
         setTimeout(() => navigate("/adminDashboard"), 2000);
       } else {
         setToastMessage(data.message || "Login failed. Please try again.");
         setToastSeverity("error");
+        setLoader(false);
+        setToastOpen(true);
       }
     } catch (error) {
       setToastMessage("An error occurred. Please try again.");
       setToastSeverity("error");
-    } finally {
       setLoader(false);
       setToastOpen(true);
     }

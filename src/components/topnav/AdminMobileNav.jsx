@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DensityMediumOutlined from "@mui/icons-material/DensityMediumOutlined";
 import Avatar from "@mui/material/Avatar";
-import MobileStudentSidebar from "../sidebars/MobileStudentSidebar";
+import MobileAdminSidebar from "../sidebars/MobileAdminSidebar";
 
 const AdminMobileNav
  = ({ admin }) => {
@@ -69,7 +69,7 @@ const AdminMobileNav
           </div>
         </div>
       </div>
-      <MobileStudentSidebar
+      <MobileAdminSidebar
         showSidebar={showSidebar}
         toggleSidebar={toggleSidebar}
       />
