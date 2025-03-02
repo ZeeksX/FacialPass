@@ -1,52 +1,59 @@
 import React from "react";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import AdminSidebar from "../components/sidebars/AdminSidebar";
+import dayjs from "dayjs";
+import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { useOutletContext } from "react-router-dom";
+import AdminMobileNav from "../components/topnav/AdminMobileNav";
+import AdminTopNav from "../components/topnav/AdminTopNav";
 
 const Admin = () => {
+  const { admin, theme } = useOutletContext();
+
+  const getTodayDate = () => {
+    return dayjs(new Date()).format("YYYY-MM-DD");
+  };
+
   return (
-    <div>
-      {" "}
+    <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
       <AdminSidebar />
-      <div>
-        <div className="flex justify-center items-center gap-[300px] mt-">
-          <div className="bg-gradient-to-r from-[#0061A2] to-[rgba(0,97,162,0.39)]  w-255 h-40 rounded-3xl flex   mt-[80px] ml-[250px]">
-            <h1 className="text-3xl text-white mt-5 ml-4">
-              Good morning, Dr. Eze{" "}
-            </h1>
-            <WbSunnyIcon
-              style={{ fontSize: "50px" }}
-              className="text-yellow-400 mt-5  "
-            />
+      <div className="flex flex-col max-ml-60 lg:ml-[20%] w-full px-6 py-4">
+        <AdminMobileNav theme={theme} admin={admin} />
+        <AdminTopNav theme={theme} admin={admin} />
+        <div className="flex flex-col max-lg:items-center lg:flex-row justify-between w-full lg:w-full mt-8">
+          <div className="flex flex-col w-full lg:w-[61%]">
+            <div className="flex items-center h-30 bg-gradient-to-r from-[#0061A2] to-[#0061a263] rounded-2xl">
+              <h1 className="flex text-2xl text-white font-medium ml-4">
+                Welcome back, {admin.admin.firstname}
+              </h1>
+            </div>
+            <div className="flex md:flex-row flex-col gap-8 items-center justify-between lg:h-20 my-8">
+              <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
+                <span className="text-5xl font-bold">{admin.totalCourses}</span>
+                <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
+                  Total Courses Registered
+                </h1>
+              </div>
+              <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
+                <span className="text-5xl font-bold">{admin.totalCourses}</span>
+                <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
+                  Total Exams Authenticated
+                </h1>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className=" flex flex-col items-start absolute left-[420px] top-[300px]">
-          <AccountCircleIcon style={{ fontSize: "100px" }} className="" />
-          <p className="text-[15px]">Change Profile</p>
-        </div>
-
-        <div className="absolute left-[420px] bottom-16  flex">
-          <table className="w- border border-gray-300">
-            <tbody>
-              <tr className="border-b border-gray-300">
-                <td className="p-4 font-semibold">Course:</td>
-                <td className="p-4">SENG 400</td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="p-4 font-semibold">Department:</td>
-                <td className="p-4">Computing and Engineering Science</td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="p-4 font-semibold">Emial:</td>
-                <td className="p-4">example@gmail.com</td>
-              </tr>
-              <tr className="border-b border-gray-300">
-                <td className="p-4 font-semibold">Amount of students:</td>
-                <td className="p-4">142</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="flex flex-col justify-center items-center max-w-sm rounded-md shadow-md lg:min-h-[50vh]">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={["DateCalendar", "DateCalendar"]}>
+                <DemoItem label="">
+                  <DateCalendar defaultValue={dayjs(getTodayDate())} />
+                </DemoItem>
+              </DemoContainer>
+            </LocalizationProvider>
+          </div>
         </div>
       </div>
     </div>

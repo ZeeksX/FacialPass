@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
-import PersonIcon from "@mui/icons-material/Person";
+import EmailIcon from "@mui/icons-material/Email";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
@@ -100,12 +100,12 @@ const AdminLogin = () => {
   return (
     <>
       <div className="overflow-hidden flex flex-col items-center justify-center gap-2 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2]">
-        <div className="flex flex-row justify-center w-4/5 lg:w-3/5 lg:h-[90vh]">
+        <div className="flex flex-row justify-center max-md:max-w-96 max-md:w-[90%] max-lg:w-1/2 lg:w-3/5 lg:h-[90vh]">
           <div
             className="hidden lg:flex md:w-1/2 bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="login flex flex-col w-full justify-center items-center lg:w-3/5 rounded-xl bg-white text-[#0061A2] px-4 gap-4 py-8">
+          <div className="login flex flex-col w-full justify-center items-center lg:w-3/5 rounded-xl lg:rounded-r-xl lg:rounded-none bg-white text-[#0061A2] px-4 gap-4 py-8">
             <img className="w-24" src={logo} alt="Facial Pass logo" />
             <h3 className="text-[#0061A2] font-bold text-2xl">Welcome Back</h3>
             <p className="text-[#0061A2] text-xl text-center">
