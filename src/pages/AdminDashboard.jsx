@@ -5,6 +5,7 @@ import { Outlet } from "react-router";
 
 const AdminDashboard = () => {
   const [admin, setAdmin] = useState(null);
+  const [students, setStudents] = useState([]);
   // Fetch admin data on component mount
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -37,6 +38,31 @@ const AdminDashboard = () => {
       console.log("Admin data:", admin);
     }
   }, [admin]); // This effect runs whenever `admin` changes
+
+  useEffect(() => {
+    const fetchAllStudents = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/admins/students", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed if required
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch all students");
+        }
+
+        const data = await response.json();
+        setStudents(data);
+      } catch (error) {
+        console.error("Error fetching students data:", error);
+      }
+    };
+
+    fetchAllStudents();
+  }, []);
 
   const theme = createTheme({
     components: {
@@ -76,7 +102,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <Outlet context={{ admin, theme }} />
+      <Outlet context={{ admin, theme, students }} />
     </>
   );
 };

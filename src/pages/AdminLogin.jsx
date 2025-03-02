@@ -170,7 +170,7 @@ const AdminLogin = () => {
               </button>
               <h3
                 onClick={handleForgotPasswordOpen}
-                className="text-[#0061A2] cursor-pointer"
+                className="text-[#0061A2] cursor-pointer text-center"
               >
                 Forgot Password?
               </h3>

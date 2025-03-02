@@ -10,8 +10,8 @@ import AdminMobileNav from "../components/topnav/AdminMobileNav";
 import AdminTopNav from "../components/topnav/AdminTopNav";
 
 const Admin = () => {
-  const { admin, theme } = useOutletContext();
-
+  const { admin, theme, students } = useOutletContext();
+  console.log("Admins: ", admin)
   const getTodayDate = () => {
     return dayjs(new Date()).format("YYYY-MM-DD");
   };
@@ -31,15 +31,15 @@ const Admin = () => {
             </div>
             <div className="flex md:flex-row flex-col gap-8 items-center justify-between lg:h-20 my-8">
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{admin.totalCourses}</span>
+                <span className="text-5xl font-bold">{students ? students.length : 0}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
-                  Total Courses Registered
+                  Total Students Registered
                 </h1>
               </div>
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{admin.totalCourses}</span>
+                <span className="text-5xl font-bold">{admin.admin.length}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
-                  Total Exams Authenticated
+                  Total Courses
                 </h1>
               </div>
             </div>
