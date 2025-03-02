@@ -26,6 +26,8 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import SelectedCourse from "./pages/SelectedCourse";
 import StudentDashboard from "./pages/StudentDashboard";
+import Exams from "./pages/Exams";
+import Students from "./pages/Students"
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -91,8 +93,8 @@ const App = () => {
             }
           >
             <Route path="AdminDashboard" element={<Admin isMobile={isMobile} />} />
-            {/* <Route path="Exams" element={<Exams isMobile={isMobile} />} />
-            <Route path="Students" element={<Students isMobile={isMobile} />} /> */}
+            <Route path="Exams" element={<Exams isMobile={isMobile} />} />
+            <Route path="Students" element={<Students isMobile={isMobile} />} />
             <Route path="profile" element={<Profile isMobile={isMobile} />} />
             <Route path="settings" element={<Settings isMobile={isMobile} />} />
           </Route>
