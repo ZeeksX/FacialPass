@@ -10,7 +10,7 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
   const navItems = [
-    { name: "Dashboard", icon: <HomeIcon />, link: "/studentDashboard" },
+    { name: "Dashboard", icon: <HomeIcon />, link: "/adminDashboard" },
     {
       name: "Exams",
       icon: <LibraryBooksIcon />,
@@ -21,8 +21,8 @@ const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
       icon: <Person2Icon />,
       link: "/Students",
     },
-    { name: "Profile", icon: <AccountCircleIcon />, link: "/profile" },
-    { name: "Settings", icon: <Settings />, link: "/settings" },
+    { name: "Profile", icon: <AccountCircleIcon />, link: "/admin/profile" },
+    { name: "Settings", icon: <Settings />, link: "/admin/settings" },
   ];
 
   return (
