@@ -5,7 +5,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Settings } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import BeenhereIcon from "@mui/icons-material/Beenhere";
+import Person2Icon from "@mui/icons-material/Person2";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
@@ -18,7 +18,7 @@ const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
     },
     {
       name: "Students",
-      icon: <BeenhereIcon />,
+      icon: <Person2Icon />,
       link: "/Students",
     },
     { name: "Profile", icon: <AccountCircleIcon />, link: "/profile" },

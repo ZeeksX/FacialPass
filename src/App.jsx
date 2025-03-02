@@ -91,6 +91,8 @@ const App = () => {
             }
           >
             <Route path="AdminDashboard" element={<Admin isMobile={isMobile} />} />
+            {/* <Route path="Exams" element={<Exams isMobile={isMobile} />} />
+            <Route path="Students" element={<Students isMobile={isMobile} />} /> */}
             <Route path="profile" element={<Profile isMobile={isMobile} />} />
             <Route path="settings" element={<Settings isMobile={isMobile} />} />
           </Route>
