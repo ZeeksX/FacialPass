@@ -5,6 +5,7 @@ import { Outlet } from 'react-router'
 
 const StudentDashboard = () => {
     const [student, setStudent] = useState(null);
+    const [courses, setCourses] = useState([]);
     // Fetch student data on component mount
     useEffect(() => {
         const fetchStudent = async () => {
@@ -29,7 +30,32 @@ const StudentDashboard = () => {
         };
 
         fetchStudent();
-    }, []); // Empty dependency array ensures it runs once when the component mounts
+    }, []);
+
+    useEffect(() => {
+        const getCourses = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/students/get-courses", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed if required
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch student data");
+                }
+
+                const data = await response.json();
+                setCourses(data); // Store the fetched student data in state
+            } catch (error) {
+                console.error("Error fetching student data:", error);
+            }
+        };
+
+        getCourses();
+    }, []);
 
     // Log student data whenever it changes
     useEffect(() => {
@@ -76,7 +102,7 @@ const StudentDashboard = () => {
 
     return (
         <>
-            <Outlet context={{ student, theme }} />
+            <Outlet context={{ student, theme, courses }} />
         </>
 
     )
