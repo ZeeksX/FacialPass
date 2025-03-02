@@ -1,30 +1,71 @@
-import React, { useState } from "react";
+import React from "react";
+import logo from "../../assets/logo.svg";
+import { Link } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Settings } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import BeenhereIcon from "@mui/icons-material/Beenhere";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ toggleSidebar }) => {
+  const navItems = [
+    { name: "Dashboard", icon: <HomeIcon />, link: "/studentDashboard" },
+    {
+      name: "Select Courses",
+      icon: <LibraryBooksIcon />,
+      link: "/select-courses",
+    },
+    {
+      name: "Selected Courselist",
+      icon: <BeenhereIcon />,
+      link: "/selected-courses",
+    },
+    { name: "Profile", icon: <AccountCircleIcon />, link: "/profile" },
+    { name: "Settings", icon: <Settings />, link: "/settings" },
+  ];
+
   return (
-    <div className="flex gap-[100px] flex-col fixed left-0 top-0 p-7 pt-[70px] shadow-xl shadow-gray-150 h-screen">
-      <div>
-        <h1 className="text-3xl font-bold">FacialPass</h1>
-      </div>
-
-      <div>
-        {/* "Your information" with Hover Event */}
-        <div className="relative inline-block">
-          <h1 className="text-[#B3B3B3] text-center text-[16px] p-5 font-medium leading-[20px] cursor-pointer focus:bg-[#0061A2]  hover:bg-[#0061A2] hover:text-white hover:rounded-[20px]">
-            Your information
-          </h1>
+    <>
+      <div className="fixed flex-col max-w-64 w-1/5 shadow-lg min-h-screen bg-white items-center hidden lg:flex">
+        <div className="flex flex-row items-center mt-8">
+          <img className="w-12" src={logo} alt="FacialPass logo" />
+          <div className="flex flex-col justify-center">
+            <h1 className="text-3xl font-bold leading-5 text-[#0061A2]">
+              FacialPass
+            </h1>
+          </div>
         </div>
-
-        {/* Home Text */}
-        <div>
-          <h1 className="text-[#B3B3B3] text-center mt-[30px] cursor-pointer hover:bg-[#0061A2] hover:text-white hover:rounded-[20px] p-5">
-            Home
-          </h1>
-        </div>
+        <ul className="mt-8 md:mt-8 max-w-52 flex flex-col gap-3">
+          {navItems.map((item) => (
+            <li
+              key={item.name}
+              className="flex items-center py-2 px-4 text-[#0061A2] hover:text-white hover:bg-[#0061A2] rounded-lg"
+            >
+              <Link
+                to={item.link}
+                className="flex items-center w-full"
+                onClick={toggleSidebar}
+              >
+                {" "}
+                {/* Call toggleSidebar on click */}
+                <span className="mr-2">{item.icon}</span>
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <Link to="/">
+          <h3 className="fixed left-8 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2]">
+            <span className="mr-2">
+              <LogoutIcon />
+            </span>
+            Logout{" "}
+          </h3>
+        </Link>
       </div>
-    </div>
+    </>
   );
 };
 
-// Correct export statement
 export default AdminSidebar;
