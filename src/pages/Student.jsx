@@ -33,7 +33,7 @@ const Student = () => {
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">Total Courses Registered</h1>
               </div>
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{student.totalCourses}</span>
+                <span className="text-5xl font-bold">{student.authenticated ? student.authenticated : 0}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">Total Exams Authenticated</h1>
               </div>
             </div>
