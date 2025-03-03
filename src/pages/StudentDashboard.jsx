@@ -6,6 +6,7 @@ import { Outlet } from 'react-router'
 const StudentDashboard = () => {
     const [student, setStudent] = useState(null);
     const [courses, setCourses] = useState([]);
+    const [selectedCourses, setSelectedCourses] = useState([]);
     // Fetch student data on component mount
     useEffect(() => {
         const fetchStudent = async () => {
@@ -102,7 +103,7 @@ const StudentDashboard = () => {
 
     return (
         <>
-            <Outlet context={{ student, theme, courses }} />
+            <Outlet context={{ student, theme, courses, selectedCourses, setSelectedCourses }} />
         </>
 
     )

@@ -4,11 +4,17 @@ import TopNav from "../components/topnav/TopNav";
 import MobileNav from "../components/topnav/MobileNav";
 import { useOutletContext } from "react-router-dom";
 import CustomPagination from "../components/Pagination";
+import Toast from "../components/Toast"; // Import the Toast component
 
 const SelectCourses = () => {
-  const { student, theme, courses } = useOutletContext();
+  const { student, theme, courses, selectedCourses, setSelectedCourses } = useOutletContext();
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
+
+  // State for toast notifications
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastSeverity, setToastSeverity] = useState("info");
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(courses.length / coursesPerPage);
@@ -21,6 +27,43 @@ const SelectCourses = () => {
   // Handle page change
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
+  };
+
+  // Handle course selection
+  const handleSelectCourse = async (course) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/students/select-course", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ courseId: course.id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to select course");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+
+      // Update the selected courses state
+      setSelectedCourses((prev) => [...prev, course]);
+
+      // Show success toast
+      setToastMessage("Course selected successfully!");
+      setToastSeverity("success");
+      setToastOpen(true);
+    } catch (error) {
+      console.error("Error selecting course:", error);
+
+      // Show error toast
+      setToastMessage(error.message); // Use the error message from the backend
+      setToastSeverity("error");
+      setToastOpen(true);
+    }
   };
 
   return (
@@ -57,7 +100,12 @@ const SelectCourses = () => {
                 </div>
 
                 <div className="flex flex-row mt-2 items-center justify-end">
-                  <button className="w-20 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white">Select</button>
+                  <button
+                    onClick={() => handleSelectCourse(item)}
+                    className="w-20 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white"
+                  >
+                    Select
+                  </button>
                 </div>
               </div>
             ))}
@@ -69,6 +117,14 @@ const SelectCourses = () => {
           />
         </div>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        open={toastOpen}
+        message={toastMessage}
+        onClose={() => setToastOpen(false)}
+        severity={toastSeverity}
+      />
     </div>
   );
 };
