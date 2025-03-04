@@ -81,8 +81,3 @@
 
 }
 
-@media (max-width: 600px) {
-  .features {
-    width: 90%;
-  }
-}

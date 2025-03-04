@@ -4,46 +4,44 @@ import MemoryIcon from "@mui/icons-material/Memory";
 import LockIcon from "@mui/icons-material/Lock";
 
 const About = () => {
+  const features = [
+    {
+      title: "Secure Authentication",
+      icon: <AdminPanelSettingsIcon />,
+      description:
+        "Leverages cutting-edge facial recognition technology to accurately verify student identities before exams ensuring only authorized individuals gain access, reducing the risk of impersonation.",
+    },
+    {
+      title: "Real-Time Processing",
+      icon: <MemoryIcon />,
+      description:
+        "Utilizes high-speed AI models to analyze and authenticate faces in real time, minimizing delays ensuring a seamless and efficient verification process for large student groups.",
+    },
+    {
+      title: "Data Protection",
+      icon: <LockIcon />,
+      description:
+        "Implements robust encryption and compliance with data privacy regulations to safeguard student biometric data ensuring sensitive information remains confidential and secure.",
+    },
+  ];
+
   return (
     <div className="bg-[#f6f6f7] w-full pb-12 text-[#0061A2] px-4 md:px-12">
-      <h1 className="text-5xl font-bold flex mt-10 ml-4 md:ml-12">
-        Our Features
-      </h1>
-      <h1 className="flex mt-8 w-full text-xl md:text-2xl ml-4 md:ml-12 text-center md:text-center">
-        Discover our powerful features designed to enhance your experience. From
-        seamless navigation to top-notch performance, we've got everything you
-        need!
-      </h1>
-      <div className="features flex flex-wrap justify-center gap-8 w-full mt-10">
-        <div className="flex flex-col w-full sm:w-80 md:w-96 lg:w-[420px] rounded-2xl gap-1.5 p-5 shadow bg-white">
-          <AdminPanelSettingsIcon sx={{ fontSize: 50 }} />
-          <h1 className="font-bold text-2xl md:text-3xl">
-            Secure Authentication
-          </h1>
-          <p className="text-lg md:text-xl mt-4 leading-relaxed">
-            This feature employs advanced facial recognition technology to
-            accurately verify student identities. Examining unique facial traits
-            ensures a secure and seamless authentication process.
-          </p>
-        </div>
-        <div className="flex flex-col w-full sm:w-80 md:w-96 lg:w-[420px] rounded-2xl gap-1.5 p-6 shadow bg-white">
-          <MemoryIcon sx={{ fontSize: 50 }} />
-          <h1 className="font-bold text-2xl md:text-3xl">Quick Processing</h1>
-          <p className="text-lg md:text-xl mt-4 leading-relaxed">
-            This feature significantly reduces waiting times by enabling quick
-            and efficient authentication. It utilizes advanced facial
-            recognition to verify identities within seconds.
-          </p>
-        </div>
-        <div className="flex flex-col w-full sm:w-80 md:w-96 lg:w-[420px] rounded-2xl gap-1.5 p-6 shadow bg-white">
-          <LockIcon sx={{ fontSize: 50 }} />
-          <h1 className="font-bold text-2xl md:text-3xl">Data Privacy</h1>
-          <p className="text-lg md:text-xl mt-4 leading-relaxed">
-            This system strictly complies with data protection regulations to
-            ensure the security and privacy of student information. Advanced
-            encryption safeguards sensitive data.
-          </p>
-        </div>
+      <h1 className="text-5xl max-md:text-4xl font-bold mt-10 ml-4 md:ml-12">Our Features</h1>
+      <h2 className="mt-8 w-full max-md:w-[85vw] text-xl mx-auto md:text-2xl text-center max-md:text-left">
+        Discover our advanced facial recognition system designed to enhance security, improve efficiency, and protect student privacy during exams.
+      </h2>
+      <div className="flex flex-col lg:flex-row max-lg:items-center justify-between gap-6 w-[90vw] mt-10 mx-auto">
+        {features.map((feature, index) => (
+          <div
+            key={index}
+            className="flex flex-col gap-4 p-6 shadow-lg max-md:items-center rounded-lg max-lg:max-w-[450px] max-lg:w-[85vw] bg-white w-full text-center"
+          >
+            <span className="text-5xl max-md:text-4xl text-[#0061A2]">{feature.icon}</span>
+            <h3 className="text-3xl max-md:text-2xl font-bold">{feature.title}</h3>
+            <p className="text-xl max-md:text-base text-left">{feature.description}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
