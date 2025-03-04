@@ -38,9 +38,9 @@ const TopNav = ({ theme, student }) => {
         <div className="w-0.5 bg-[#0061A2] h-10"></div>
         <Avatar
           alt="Profile-photo"
-          src={student.student.facial_image}
-          className="flex items-center justify-center border p-2 rounded-[50%]"
-          sx={{ backgroundColor: "#0061A2", color: "white" }}
+          src={student.student.facialImage}
+          className="flex items-center justify-center border rounded-[50%]"
+          sx={{ backgroundColor: "#0061A2", color: "white", width: "40px", height: "40px", borderRadius: "50%" }}
         >
           {student.student.firstname ? student.student.firstname.charAt(0) : "E"} {/* Display the first letter of the student's name */}
         </Avatar>
