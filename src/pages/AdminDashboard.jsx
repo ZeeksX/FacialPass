@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { createTheme } from "@mui/material";
 import Loader from "../components/Loader";
 import { Outlet } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [admin, setAdmin] = useState(null);
   const [students, setStudents] = useState([]);
+  const navigate = useNavigate();
   // Fetch admin data on component mount
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -19,6 +21,11 @@ const AdminDashboard = () => {
         });
 
         if (!response.ok) {
+          setTimeout(() => {
+            <Loader />
+            navigate("/login")
+          }, 2000)
+
           throw new Error("Failed to fetch admin data");
         }
 

@@ -5,7 +5,7 @@ import imageCompression from 'browser-image-compression';
 const FacialRecognition = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const [image, setImage] = useState(null);
+    const [imageBlob, setImageBlob] = useState(null);
     const [cameraActive, setCameraActive] = useState(false);
     const navigate = useNavigate();
 
@@ -19,38 +19,52 @@ const FacialRecognition = () => {
         }
     };
 
-    const captureImage = () => {
+    const captureImage = async () => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Convert canvas to Base64
-        const base64data = canvas.toDataURL("image/png"); // Store as PNG format
+        if (video && canvas) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        // Remove the `data:image/png;base64,` prefix to store only the Base64 data in the database
-        const base64String = base64data.replace(/^data:image\/(png|jpeg);base64,/, "");
+            // Convert canvas to Blob
+            canvas.toBlob(async (blob) => {
+                if (blob) {
+                    // Optionally compress the image
+                    const compressedBlob = await imageCompression(blob, {
+                        maxSizeMB: 1, // Set max size to 1MB
+                        maxWidthOrHeight: 1920, // Set max width or height
+                    });
 
-        setImage(base64String);
+                    setImageBlob(compressedBlob); // Store the compressed Blob
+                }
+            }, "image/png");
+        }
     };
-
 
     const handleSubmit = async () => {
         const userData = JSON.parse(localStorage.getItem('userData'));
-        const formData = {
-            ...userData,
-            facial_image: image,
-        };
+        const formData = new FormData();
+
+        // Append user data
+        Object.keys(userData).forEach(key => {
+            formData.append(key, userData[key]);
+        });
+
+        // Append the image Blob
+        if (imageBlob) {
+            formData.append('facial_image', imageBlob, 'facial_image.png'); // Append the image blob
+        } else {
+            console.error("No image captured");
+            return;
+        }
 
         try {
             const res = await fetch("http://localhost:5000/api/students/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
+                body: formData, // Send FormData directly
             });
 
             const data = await res.json();
@@ -81,8 +95,10 @@ const FacialRecognition = () => {
 
                     {/* Image Placeholder */}
                     <div className="w-1/2 h-80 bg-gray-200 rounded flex items-center justify-center overflow-hidden relative">
-                        {!image && <span className="text-gray-500 absolute">Captured Image</span>}
-                        {image && <img src={image} alt="Captured" className="absolute object-fill inset-0 w-full h-full" />}
+                        {imageBlob && (
+                            <img src={URL.createObjectURL(imageBlob)} alt="Captured" className="absolute object-fill inset-0 w-full h-full" />
+                        )}
+                        {!imageBlob && <span className="text-gray-500 absolute">Captured Image</span>}
                     </div>
                 </div>
 
@@ -101,7 +117,7 @@ const FacialRecognition = () => {
                     <button
                         className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                         onClick={handleSubmit}
-                        disabled={!image}>
+                        disabled={!imageBlob}>
                         Submit
                     </button>
                 </div>
