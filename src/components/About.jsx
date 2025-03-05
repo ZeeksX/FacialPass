@@ -27,10 +27,7 @@ const About = () => {
 
   return (
     <div className="bg-[#f6f6f7] w-full pb-12 text-[#0061A2] px-4 md:px-12">
-      <h1 className="text-5xl max-md:text-4xl font-bold mt-10 ml-4 md:ml-12">Our Features</h1>
-      <h2 className="mt-8 w-full max-md:w-[85vw] text-xl mx-auto md:text-2xl text-center max-md:text-left">
-        Discover our advanced facial recognition system designed to enhance security, improve efficiency, and protect student privacy during exams.
-      </h2>
+      <h1 className="text-5xl max-md:text-4xl font-bold mt-10 w-[85vw]">Our Features</h1>
       <div className="flex flex-col lg:flex-row max-lg:items-center justify-between gap-6 w-[90vw] mt-10 mx-auto">
         {features.map((feature, index) => (
           <div

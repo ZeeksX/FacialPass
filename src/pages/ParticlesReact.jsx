@@ -100,7 +100,7 @@ const ParticlesReact = () => {
         />
       )}
       <div className="flex flex-col gap-2 lg:gap-0 w-full relative z-10">
-        <div className="flex flex-col min-h-screen w-full mb-6 ">
+        <div className="flex flex-col min-h-screen w-full">
           <HomePage />
         </div>
       </div>
