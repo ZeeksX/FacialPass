@@ -6,6 +6,7 @@ import MobileNavigation from '../components/MobileNavigation';
 import { useMediaQuery } from '@mui/material';
 import Footer from '../components/Footer';
 import HowItWorks from "../components/HowItWorks";
+import Faq from '../components/Faq';
 
 const HomePage = ({ sidebarOpen, toggleSidebar }) => {
     const isMobile = useMediaQuery('(max-width:768px)');
@@ -15,6 +16,7 @@ const HomePage = ({ sidebarOpen, toggleSidebar }) => {
             <HeroSection />
             <About />
             <HowItWorks />
+            <Faq/>
             <Footer />
         </>
     );
