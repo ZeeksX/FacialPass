@@ -5,7 +5,6 @@ import About from '../components/About';
 import MobileNavigation from '../components/MobileNavigation';
 import { useMediaQuery } from '@mui/material';
 import Footer from '../components/Footer';
-import HowItWorks from "../components/HowItWorks";
 import Faq from '../components/Faq';
 
 const HomePage = ({ sidebarOpen, toggleSidebar }) => {
@@ -15,7 +14,6 @@ const HomePage = ({ sidebarOpen, toggleSidebar }) => {
             {isMobile ? <MobileNavigation toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} /> : <TopNav />}
             <HeroSection />
             <About />
-            <HowItWorks />
             <Faq/>
             <Footer />
         </>

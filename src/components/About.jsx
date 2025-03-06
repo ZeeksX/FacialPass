@@ -2,6 +2,7 @@ import React from "react";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import MemoryIcon from "@mui/icons-material/Memory";
 import LockIcon from "@mui/icons-material/Lock";
+import HowItWorks from "./HowItWorks";
 
 const About = () => {
   const features = [
@@ -40,6 +41,7 @@ const About = () => {
           </div>
         ))}
       </div>
+      <HowItWorks/>
     </div>
   );
 };
