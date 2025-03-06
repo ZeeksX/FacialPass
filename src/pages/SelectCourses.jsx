@@ -78,7 +78,7 @@ const SelectCourses = () => {
             {currentCourses.map((item) => (
               <div
                 key={item.id}
-                className="card p-4 gap-2 flex flex-col mt-2 max-w-56 w-1/4 h-[330px] rounded-xl shadow-md"
+                className="card p-4 gap-2 flex flex-col mt-2 max-w-80 md:max-w-52 w-1/4 max-md:w-full min-w-52 h-[330px] rounded-xl shadow-md"
               >
                 <div className="h-60">
                   <h1 className="text-xl font-bold flex flex-col">
