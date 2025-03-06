@@ -43,33 +43,35 @@
   animation: slide-out 0.5s ease-in forwards;
 }
 
-.image-preview{
- box-shadow: 0px 0px 5px rgb(178, 178, 178);
+.image-preview {
+  box-shadow: 0px 0px 5px rgb(178, 178, 178);
 }
 
-.card{
+.card {
   box-shadow: 0px 0px 3px lightgray;
 }
 
-.card:hover{
+.card:hover {
   box-shadow: 0px 0px 5px rgb(167, 166, 166);
 }
 
 @keyframes slide-in {
   0% {
-    transform: translateX(100%); 
+    transform: translateX(100%);
   }
+
   100% {
-    transform: translateX(0%); 
+    transform: translateX(0%);
   }
 }
 
 @keyframes slide-out {
   0% {
-    transform: translateX(0%); 
+    transform: translateX(0%);
   }
+
   100% {
-    transform: translateX(100%); 
+    transform: translateX(100%);
   }
 }
 
@@ -80,4 +82,3 @@
   }
 
 }
-
