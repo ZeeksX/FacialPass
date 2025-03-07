@@ -12,10 +12,10 @@ const Exams = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 10;
 
-  // Calculate the total number of pages
+  // Calculate total pages
   const totalPages = Math.ceil(courses.length / coursesPerPage);
 
-  // Get the courses for the current page
+  // Get courses for the current page
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
   const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
@@ -25,9 +25,9 @@ const Exams = () => {
     setCurrentPage(page);
   };
 
-  // Handle navigation to authentication page
-  const handleStartExam = () => {
-    navigate("/authenticate");
+  // Navigate to authentication page with selected exam details
+  const handleStartExam = (selectedExam) => {
+    navigate("/authenticate", { state: { selectedExam } });
   };
 
   return (
@@ -37,7 +37,7 @@ const Exams = () => {
         <AdminMobileNav theme={theme} admin={admin} students={students} />
         <AdminTopNav theme={theme} admin={admin} students={students} />
         <div className="mt-8">
-          <h1 className="flex text-2xl font-bold ">All Courses</h1>
+          <h1 className="flex text-2xl font-bold">All Courses</h1>
           <div className="flex flex-wrap gap-4 justify-center flex-row w-full">
             {currentCourses.map((item) => (
               <div
@@ -64,7 +64,7 @@ const Exams = () => {
                 </div>
                 <div className="flex flex-row mt-2 items-center justify-end">
                   <button
-                    onClick={handleStartExam}
+                    onClick={() => handleStartExam(item)} // Pass exam details when clicked
                     className="w-28 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white"
                   >
                     Start Exam
@@ -73,6 +73,8 @@ const Exams = () => {
               </div>
             ))}
           </div>
+
+          {/* Pagination Component */}
           <CustomPagination
             count={totalPages}
             page={currentPage}
