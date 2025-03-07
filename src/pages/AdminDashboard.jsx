@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const AdminDashboard = () => {
   const [admin, setAdmin] = useState(null);
   const [students, setStudents] = useState([]);
+  const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
   // Fetch admin data on component mount
   useEffect(() => {
@@ -71,6 +72,31 @@ const AdminDashboard = () => {
     fetchAllStudents();
   }, []);
 
+  useEffect(() => {
+    const fetchAllCourses = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/admins/courses", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed if required
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch all students");
+        }
+
+        const data = await response.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Error fetching students data:", error);
+      }
+    };
+
+    fetchAllCourses();
+  }, []);
+
   const theme = createTheme({
     components: {
       MuiOutlinedInput: {
@@ -109,7 +135,7 @@ const AdminDashboard = () => {
 
   return (
     <>
-      <Outlet context={{ admin, theme, students }} />
+      <Outlet context={{ admin, theme, students, courses }} />
     </>
   );
 };
