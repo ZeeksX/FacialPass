@@ -30,7 +30,10 @@ const Students = () => {
         <AdminTopNav theme={theme} admin={admin} students={students} />
 
         <div className="mt-6">
-          <Typography variant="h4" className="text-[#0061A2] text-4xl font-semibold mb-4">
+          <Typography
+            variant="h4"
+            className="text-[#0061A2] text-4xl font-semibold mb-4"
+          >
             Students List
           </Typography>
 
@@ -56,13 +59,24 @@ const Students = () => {
                       )}
 
                       <Typography variant="h6" className="font-bold">
-                        {student.name}
+                        {`${student?.firstname || "Guest"} ${
+                          student?.lastname || ""
+                        }`}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Full Name:{" "}
+                        {`${student?.firstname || "Guest"} ${
+                          student?.lastname || ""
+                        }`}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        Matric Number: {student.matricNumber}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
                         Email: {student.email}
                       </Typography>
                       <Typography variant="body2" color="textSecondary">
-                        ID: {student.id}
+                        Department: {student.department}
                       </Typography>
                     </CardContent>
                   </Card>
