@@ -30,18 +30,18 @@ import {
 
 const Profile = () => {
   const { student, theme } = useOutletContext();
+  console.log(student)
 
-  // Mock data for the profile
   const profileData = {
-    fullName: "John Doe",
-    studentId: "123456",
-    university: "University of Example",
-    department: "Computer Science",
-    level: "Year 3",
-    email: "john.doe@example.com",
+    fullName: `${student.student.firstname} ${student.student.lastname}`,
+    studentId: `${student.student.matricNumber}`,
+    university: "Babcock University",
+    department: `${student.student.department}`,
+    level: "400",
+    email: `${student.student.email}`,
     phone: "+123 456 7890",
     address: "123 Main St, Example City",
-    facialScanPreview: "https://via.placeholder.com/150", // Placeholder image
+    facialScanPreview: `${student.student.facialImage}`,// Placeholder image
     lastAuthenticationDate: "2023-10-01",
     lastAuthenticationStatus: "Success",
   };
@@ -55,13 +55,13 @@ const Profile = () => {
 
         {/* Main Content */}
         <Box sx={{ mt: 4 }}>
-          <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
+          <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold", color: "#0061A2" }}>
             Profile
           </Typography>
 
           {/* 1️⃣ Basic Information */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
               Basic Information
             </Typography>
             <Grid container spacing={3}>
@@ -80,7 +80,7 @@ const Profile = () => {
                   disabled
                 />
                 <TextField
-                  label="Student ID"
+                  label="Matric Number"
                   value={profileData.studentId}
                   fullWidth
                   sx={{ mb: 2 }}
@@ -102,7 +102,7 @@ const Profile = () => {
                 />
                 <TextField
                   label="Level/Year of Study"
-                  value={profileData.level}
+                  value="400"
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
@@ -113,34 +113,37 @@ const Profile = () => {
 
           {/* 2️⃣ Contact Information */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
               Contact Information
             </Typography>
-            <List>
-              <ListItem>
+            <List sx={{ color: "#0061A2" }}>
+              <ListItem sx={{ color: "#0061A2" }}>
                 <ListItemIcon>
-                  <EmailIcon />
+                  <EmailIcon sx={{ color: "#0061A2" }} />
                 </ListItemIcon>
-                <ListItemText primary="Email Address" secondary={profileData.email} />
+                <ListItemText primary="Email Address" secondary={profileData.email} sx={{ color: "#0061A2" }} />
               </ListItem>
-              <ListItem>
+              <ListItem sx={{ color: "#0061A2" }}>
                 <ListItemIcon>
-                  <PhoneIcon />
+                  <PhoneIcon sx={{ color: "#0061A2" }} />
                 </ListItemIcon>
-                <ListItemText primary="Phone Number" secondary={profileData.phone} />
+                <ListItemText primary="Phone Number" secondary={profileData.phone} sx={{ color: "#0061A2" }} />
               </ListItem>
-              <ListItem>
+              <ListItem sx={{ color: "#0061A2" }}>
                 <ListItemIcon>
-                  <HomeIcon />
+                  <HomeIcon sx={{ color: "#0061A2" }} />
                 </ListItemIcon>
-                <ListItemText primary="Home Address" secondary={profileData.address} />
+                <ListItemText
+                  primary="Home Address"
+                  secondary={profileData.address}
+                />
               </ListItem>
             </List>
           </Paper>
 
           {/* 4️⃣ Facial Authentication Details */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
               Facial Authentication Details
             </Typography>
             <Grid container spacing={3}>
@@ -152,53 +155,15 @@ const Profile = () => {
               </Grid>
               <Grid xs={12} md={6}>
                 <Typography variant="body1" sx={{ mb: 2 }}>
-                  <strong>Last Authentication Date:</strong> {profileData.lastAuthenticationDate}
+                  <strong className="text-[#0061A2]">Last Authentication Date:</strong> {profileData.lastAuthenticationDate}
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Status:</strong> {profileData.lastAuthenticationStatus}
+                  <strong className="text-[#0061A2]">Status:</strong> {profileData.lastAuthenticationStatus}
                 </Typography>
               </Grid>
             </Grid>
           </Paper>
-
-          {/* 6️⃣ Settings & Actions */}
-          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-              Settings & Actions
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemIcon>
-                  <EditIcon />
-                </ListItemIcon>
-                <ListItemText primary="Edit Profile" />
-                <Button variant="outlined">Edit</Button>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <LockIcon />
-                </ListItemIcon>
-                <ListItemText primary="Change Password" />
-                <Button variant="outlined">Change</Button>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <FaceIcon />
-                </ListItemIcon>
-                <ListItemText primary="Update Facial Scan" />
-                <Button variant="outlined" disabled>
-                  Request Update
-                </Button>
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <NotificationsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Notification Preferences" />
-                <Switch defaultChecked />
-              </ListItem>
-            </List>
-          </Paper>
+          
         </Box>
       </div>
     </div>
