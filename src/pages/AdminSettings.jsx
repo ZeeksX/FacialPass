@@ -29,7 +29,7 @@ import {
   ExitToApp as ExitToAppIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
-import ChangePasswordModal from "../components/modals/ChangePassword";
+import ChangePasswordModal from "../components/modals/AdminChangePassword";
 
 const AdminSettings = () => {
   const {

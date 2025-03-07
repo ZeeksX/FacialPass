@@ -25,25 +25,17 @@ import {
 } from "@mui/icons-material";
 
 const AdminProfile = () => {
-  const { admin, theme, students = [] } = useOutletContext() || {}; // ✅ Ensure students is always an array
-
-  const student = students?.[0] || {}; // ✅ Prevent crash if students is empty
-
+  const { admin, theme, students = [] } = useOutletContext();
   console.log("Admin Data:", admin);
-  console.log("Student Data:", student);
 
   const profileData = {
-    fullName: `${student.firstname || "N/A"} ${student.lastname || "N/A"}`,
-    studentId: student.matricNumber || "N/A",
-    university: "Babcock University",
-    department: student.department || "N/A",
-    level: student.level || "N/A",
-    email: student.email || "N/A",
-    phone: student.phone || "+123 456 7890",
-    address: student.address || "Unknown Address",
-    facialScanPreview: student.facialImage || "/default-avatar.png",
-    lastAuthenticationDate: student.lastAuthenticationDate || "Unknown",
-    lastAuthenticationStatus: student.lastAuthenticationStatus || "N/A",
+    email: `${admin.admin.email}`,
+    fullname: `${admin.admin.firstname} ${admin.admin.lastname}`,
+    office: `${admin.admin.office}`,
+    staff_id: `${admin.admin.staff_id}`,
+    department: "Computer Science",
+    phone: "+2349064048598",
+    address: "131 Zeeks Avenue, Orlando, Florida, United States"
   };
 
   return (
@@ -78,21 +70,21 @@ const AdminProfile = () => {
               <Grid xs={12} md={9}>
                 <TextField
                   label="Full Name"
-                  value={profileData.fullName}
+                  value={profileData.fullname}
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
                 />
                 <TextField
-                  label="Matric Number"
-                  value={profileData.studentId}
+                  label="Staff ID"
+                  value={profileData.staff_id}
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
                 />
                 <TextField
                   label="University/Institution Name"
-                  value={profileData.university}
+                  value="Babcock University"
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
@@ -105,8 +97,8 @@ const AdminProfile = () => {
                   disabled
                 />
                 <TextField
-                  label="Level/Year of Study"
-                  value={profileData.level}
+                  label="Office"
+                  value={profileData.office}
                   fullWidth
                   sx={{ mb: 2 }}
                   disabled
