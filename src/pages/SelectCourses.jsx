@@ -73,7 +73,7 @@ const SelectCourses = () => {
         <MobileNav theme={theme} student={student} />
         <TopNav theme={theme} student={student} />
         <div className="mt-8">
-          <h1 className="flex text-2xl font-bold ">All Courses</h1>
+          <h1 className="flex inter text-2xl font-bold ">All Courses</h1>
           <div className="flex flex-wrap gap-8 justify-between flex-row w-full">
             {currentCourses.map((item) => (
               <div
