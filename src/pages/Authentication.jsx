@@ -95,32 +95,33 @@ const Authentication = () => {
       } else if (type === "file") {
         img = await faceapi.bufferToImage(imageSrc);
       }
-
+  
       // Detect faces in the image using tinyFaceDetector
       const detections = await faceapi
         .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
         .withFaceDescriptors();
-
+  
       if (detections.length === 0) {
         setStatus("No face detected");
         return;
       }
-
+  
       console.log("Detected faces:", detections.length);
-
+  
       // Compare the detected face with known faces
       const recognizedName = await recognizeFace(detections[0].descriptor, knownFaces);
-
+  
       if (!recognizedName) {
         setStatus("Face not recognized");
         return;
       }
-
+  
       // Extract first name and last name
       const [firstName, lastName] = recognizedName.split("-");
-      console.log(firstName, lastName)
-      // Send the extracted names to the backend for verification
+      console.log("Recognized student:", firstName, lastName);
+  
+      // Send the extracted names and course ID to the backend for verification
       const response = await fetch("http://localhost:5000/api/auth/authenticate", {
         method: "POST",
         headers: {
@@ -132,12 +133,36 @@ const Authentication = () => {
           courseId: selectedExam.id,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.success) {
-        setStatus("Authenticated");
-        setStudent(data.student);
+        if (data.isRegistered) {
+          setStatus("Authenticated");
+          setStudent(data.student);
+  
+          // Send authentication details to the backend
+          const saveAuthResponse = await fetch("http://localhost:5000/api/auth/save-authentication", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              matricNumber: data.student.matricNumber,
+              courseCode: selectedExam.course_code,
+              courseName: selectedExam.course_name,
+            }),
+          });
+  
+          const saveAuthData = await saveAuthResponse.json();
+          if (saveAuthData.success) {
+            console.log("Authentication details saved successfully:", saveAuthData);
+          } else {
+            console.error("Failed to save authentication details:", saveAuthData.message);
+          }
+        } else {
+          setStatus("Student not registered for this course");
+        }
       } else {
         setStatus("Not Authenticated");
       }
@@ -146,7 +171,7 @@ const Authentication = () => {
       setStatus("Error");
     }
   };
-
+  
   // Recognize a face
   const recognizeFace = async (descriptor, knownFaces) => {
     let minDistance = Infinity;
