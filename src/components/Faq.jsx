@@ -9,8 +9,8 @@ const Faq = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       {/* Heading */}
-      <h1 className="text-[#0061A2] text-4xl md:text-5xl font-bold text-center mb-8">
-        Still Have Questions? Reach <br /> Out To Us At
+      <h1 className="text-[#0061A2] inter text-4xl md:text-5xl font-bold text-center mb-8">
+        FAQs
       </h1>
 
       {/* FAQ Accordions */}
@@ -59,7 +59,7 @@ const Faq = () => {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion defaultExpanded className="shadow-md rounded-xl">
+        <Accordion className="shadow-md rounded-xl">
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel3-content"

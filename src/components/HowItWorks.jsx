@@ -35,7 +35,7 @@ const steps = [
 const HowItWorks = () => {
   return (
     <section className="mt-12 w-full text-[#0061A2]">
-      <h2 className="text-3xl font-bold mb-6 text-center">How It Works</h2>
+      <h2 className="inter text-5xl font-bold mb-6 text-center">How It Works</h2>
       <Carousel
         navButtonsAlwaysVisible
         navButtonsProps={{

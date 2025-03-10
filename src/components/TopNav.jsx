@@ -22,7 +22,7 @@ const TopNav = () => {
             <div className="flex flex-row items-center">
                 <img className="w-16" src={logo} alt="FacialPass logo" />
                 <div className="flex flex-col justify-center">
-                    <h1 className="text-3xl font-bold leading-5 text-[#0061A2]">FacialPass</h1>
+                    <h1 className="inter text-3xl font-bold leading-5 text-[#0061A2]">FacialPass</h1>
                 </div>
             </div>
             <div className="flex flex-row w-1/4 items-center justify-between">

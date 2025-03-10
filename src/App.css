@@ -1,3 +1,8 @@
+.inter{
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
 .hero-section {
   position: relative;
   overflow: hidden;

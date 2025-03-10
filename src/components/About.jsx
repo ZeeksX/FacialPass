@@ -28,7 +28,7 @@ const About = () => {
 
   return (
     <div className="bg-[#f6f6f7] w-full pb-12 text-[#0061A2] px-4 md:px-12">
-      <h1 className="text-5xl max-md:text-4xl font-bold mt-10 w-[85vw]">Our Features</h1>
+      <h1 className="inter text-5xl max-md:text-4xl font-bold mt-10 w-[85vw]">Our Features</h1>
       <div className="flex flex-col lg:flex-row max-lg:items-center justify-between gap-6 w-[90vw] mt-10 mx-auto">
         {features.map((feature, index) => (
           <div

@@ -27,7 +27,7 @@ const Footer = () => {
                 {/* Logo Section */}
                 <div className="flex flex-row items-center h-20">
                     <img className="w-16 md:w-20" src={footerLogo} alt="FacialPass-logo" />
-                    <h3 className="text-2xl md:text-3xl font-semibold">FacialPass</h3>
+                    <h3 className="text-2xl inter md:text-3xl font-semibold">FacialPass</h3>
                 </div>
 
                 {/* Company Section */}

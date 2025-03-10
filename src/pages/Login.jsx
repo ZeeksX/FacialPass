@@ -148,7 +148,7 @@ const Login = () => {
                 <img className="w-24" src={logo} alt="Facial Pass logo" />
               </div>
 
-              <h3 className="text-[#0061A2]  font-bold text-2xl">Welcome Back</h3>
+              <h3 className="text-[#0061A2] inter font-bold text-2xl">Welcome Back</h3>
               <p className="text-[#0061A2] text-xl text-center">Sign in to access your secure portal</p>
               <h3 className="w-full text-center text-xl">No account? <Link className="underline italic" to="/signup">Sign up here</Link></h3>
             </div>

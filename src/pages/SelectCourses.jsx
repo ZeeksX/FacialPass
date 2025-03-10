@@ -74,11 +74,11 @@ const SelectCourses = () => {
         <TopNav theme={theme} student={student} />
         <div className="mt-8">
           <h1 className="flex text-2xl font-bold ">All Courses</h1>
-          <div className="flex flex-wrap gap-4 justify-center flex-row w-full">
+          <div className="flex flex-wrap gap-8 justify-between flex-row w-full">
             {currentCourses.map((item) => (
               <div
                 key={item.id}
-                className="card p-4 gap-2 flex flex-col mt-2 max-w-80 md:max-w-52 w-1/4 max-md:w-full min-w-52 h-[330px] rounded-xl shadow-md"
+                className="card p-4 gap-2 flex flex-col mt-2 max-w-80 md:max-w-64 w-1/4 max-md:w-full min-w-52 h-[330px] rounded-xl shadow-md"
               >
                 <div className="h-60">
                   <h1 className="text-xl font-bold flex flex-col">

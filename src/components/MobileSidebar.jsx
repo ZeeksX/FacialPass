@@ -48,7 +48,7 @@ const MobileSidebar = ({ toggleSidebar, sidebarOpen }) => {
                     <div className='flex flex-row '>
                         <img className="w-12" src={logo} alt="FacialPass logo" />
                         <div className="flex flex-col justify-center">
-                            <h1 className="text-3xl font-bold leading-5 text-[#0061A2]">FacialPass</h1>
+                            <h1 className="text-3xl inter font-bold leading-5 text-[#0061A2]">FacialPass</h1>
                         </div>
                     </div>
                     <CloseIcon sx={{ color: "#0061A2" }} onClick={toggleSidebar} />
