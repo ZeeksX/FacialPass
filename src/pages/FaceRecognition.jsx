@@ -3,12 +3,15 @@ import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import spinner from '../assets/spinner.svg'; // Import the spinner image
 
 const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
     const [status, setStatus] = useState(null);
     const [knownFaces, setKnownFaces] = useState([]);
+    const [isCameraOn, setIsCameraOn] = useState(false); // State to control camera start/stop
+    const [isLoading, setIsLoading] = useState(false); // State to handle loading spinner
 
     // Load models and known faces on mount
     useEffect(() => {
@@ -49,6 +52,17 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
 
         loadModelsAndKnownFaces();
     }, []);
+
+    // Start the camera
+    const startCamera = () => {
+        setIsLoading(true); // Show spinner while camera is loading
+        setIsCameraOn(true); // Turn on the camera
+    };
+
+    // Stop the camera
+    const stopCamera = () => {
+        setIsCameraOn(false); // Turn off the camera
+    };
 
     // Capture image from webcam
     const capture = () => {
@@ -144,28 +158,56 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
 
     return (
         <div className="flex w-full flex-col items-center">
-            <Webcam
-                className="rounded-lg w-full"
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints} />
+            {/* Webcam with spinner overlay */}
+            <div className="relative rounded-lg h-[328px] w-full bg-black">
+                {isCameraOn && (
+                    <Webcam
+                        className="rounded-lg w-full object-fill"
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                        videoConstraints={videoConstraints}
+                        onUserMedia={() => setIsLoading(false)} // Hide spinner when camera is ready
+                    />
+                )}
+                {isLoading && (
+                    <div className="absolute inset-0 flex justify-center items-center">
+                        <img src={spinner} alt="Loading..." className="w-12 h-12" />
+                    </div>
+                )}
+            </div>
+
+            {/* Buttons for camera control */}
             <div className="flex flex-row justify-center items-center gap-8 mt-2 w-full">
-                <button
-                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]">
-                    <span className="mr-2"><CameraAltIcon /></span>
-                    Start Camera
-                </button>
+                {!isCameraOn ? (
+                    <button
+                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                        onClick={startCamera}
+                    >
+                        <span className="mr-2"><CameraAltIcon /></span>
+                        Start Camera
+                    </button>
+                ) : (
+                    <button
+                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                        onClick={stopCamera}
+                    >
+                        <span className="mr-2"><CameraAltIcon /></span>
+                        Stop Camera
+                    </button>
+                )}
                 <button
                     className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                    onClick={capture}>
+                    onClick={capture}
+                    disabled={!isCameraOn} // Disable capture button if camera is off
+                >
                     <span className="mr-2"><CenterFocusStrongIcon /></span>
-                    Capture Photo
+                    Authenticate Now
                 </button>
             </div>
 
+            {/* File upload input */}
             <input type="file" accept="image/*" onChange={handleFileChange} />
-            {/* {image && <img src={image} alt="Captured or Uploaded" width={320} height={240} />} */}
             {status && <h3>Authentication Status: {status}</h3>}
         </div>
     );
