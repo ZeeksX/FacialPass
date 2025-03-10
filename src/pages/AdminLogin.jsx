@@ -55,6 +55,7 @@ const AdminLogin = () => {
         const { token, ...user } = data;
         localStorage.setItem("token", token);
         login(token, user.admin.role, user.admin);
+        setToastOpen(true);
         setToastMessage("Login successful");
         setToastSeverity("success");
         setLoader(true);
