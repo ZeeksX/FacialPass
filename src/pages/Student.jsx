@@ -91,7 +91,7 @@ const Student = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[65vh]">
+            <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[50vh]">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={["DateCalendar", "DateCalendar"]}>
                   <DemoItem label="">
