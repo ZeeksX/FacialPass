@@ -4,14 +4,16 @@ import * as faceapi from "face-api.js";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import spinner from '../assets/spinner.svg'; // Import the spinner image
+import Toast from "../components/Toast"; // Import Toast component
 
 const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
     const [status, setStatus] = useState(null);
     const [knownFaces, setKnownFaces] = useState([]);
-    const [isCameraOn, setIsCameraOn] = useState(false); // State to control camera start/stop
-    const [isLoading, setIsLoading] = useState(false); // State to handle loading spinner
+    const [isCameraOn, setIsCameraOn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
 
     // Load models and known faces on mount
     useEffect(() => {
@@ -47,21 +49,26 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 setKnownFaces(knownFacesWithDescriptors.filter((face) => face !== null));
             } catch (error) {
                 console.error("Error loading models or known faces:", error);
+                setToast({ open: true, message: "Failed to load face models.", severity: "error" });
             }
         };
 
         loadModelsAndKnownFaces();
     }, []);
 
+    const handleCloseToast = () => {
+        setToast({ ...toast, open: false });
+    };
+
     // Start the camera
     const startCamera = () => {
-        setIsLoading(true); // Show spinner while camera is loading
-        setIsCameraOn(true); // Turn on the camera
+        setIsLoading(true);
+        setIsCameraOn(true);
     };
 
     // Stop the camera
     const stopCamera = () => {
-        setIsCameraOn(false); // Turn off the camera
+        setIsCameraOn(false);
     };
 
     // Capture image from webcam
@@ -100,12 +107,14 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
 
             if (detections.length === 0) {
                 setStatus("No face detected");
+                setToast({ open: true, message: "No face detected in the image.", severity: "warning" });
                 return;
             }
 
             const recognizedName = await recognizeFace(detections[0].descriptor);
             if (!recognizedName) {
                 setStatus("Face not recognized");
+                setToast({ open: true, message: "Face not recognized. Please try again.", severity: "error" });
                 return;
             }
 
@@ -124,16 +133,20 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
             if (data.success) {
                 if (data.isRegistered) {
                     setStatus("Authenticated");
-                    onAuthenticate(data.student); // Pass student data to parent component
+                    onAuthenticate(data.student);
+                    setToast({ open: true, message: "Authentication successful!", severity: "success" });
                 } else {
                     setStatus("Student not registered for this course");
+                    setToast({ open: true, message: "Student is not registered for this course.", severity: "error" });
                 }
             } else {
                 setStatus("Not Authenticated");
+                setToast({ open: true, message: "Authentication failed.", severity: "error" });
             }
         } catch (error) {
             console.error("Error authenticating student:", error);
             setStatus("Error");
+            setToast({ open: true, message: "An error occurred during authentication.", severity: "error" });
         }
     };
 
@@ -167,7 +180,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
                         videoConstraints={videoConstraints}
-                        onUserMedia={() => setIsLoading(false)} // Hide spinner when camera is ready
+                        onUserMedia={() => setIsLoading(false)}
                     />
                 )}
                 {isLoading && (
@@ -199,16 +212,17 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 <button
                     className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
                     onClick={capture}
-                    disabled={!isCameraOn} // Disable capture button if camera is off
+                    disabled={!isCameraOn}
                 >
                     <span className="mr-2"><CenterFocusStrongIcon /></span>
                     Authenticate Now
                 </button>
             </div>
 
-            {/* File upload input */}
             <input type="file" accept="image/*" onChange={handleFileChange} />
-            {status && <h3>Authentication Status: {status}</h3>}
+            
+            {/* Toast Notification */}
+            <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} />
         </div>
     );
 };
