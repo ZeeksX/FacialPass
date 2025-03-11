@@ -28,7 +28,7 @@ const Student = () => {
   const examDates = student.courses.map((course) =>
     dayjs(course.examDate).utc().format("YYYY-MM-DD") // Ensure UTC formatting
   );
- 
+
   // Custom day component to highlight exam dates
   const ServerDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
@@ -66,21 +66,21 @@ const Student = () => {
         <MobileNav theme={theme} student={student} />
         <TopNav theme={theme} student={student} />
         <div className="flex flex-col max-lg:items-center justify-between w-full lg:w-full mt-8">
-          <div className="flex flex-row justify-between w-full mb-6">
+          <div className="flex flex-row max-lg:flex-col justify-between w-full mb-6">
             <div className="flex flex-col w-full lg:w-[61%]">
               <div className="flex items-center h-30 bg-gradient-to-r from-[#0061A2] to-[#0061a263] rounded-2xl">
                 <h1 className="flex text-2xl text-white font-medium ml-4">
                   Welcome back, {student.student.firstname}
                 </h1>
               </div>
-              <div className="flex md:flex-row flex-wrap flex-col w-full gap-8 items-center justify-between my-8">
-                <div className="flex flex-col justify-between items-end shadow rounded-md w-full lg:w-[47%] h-32 p-3">
+              <div className="flex flex-row max-md:flex-col w-full gap-8 items-center justify-between my-8">
+                <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
                   <span className="text-5xl font-bold">{student.totalCourses}</span>
                   <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                     Total Courses Registered
                   </h1>
                 </div>
-                <div className="flex flex-col justify-between items-end shadow rounded-md w-full lg:w-[47%] h-32 p-3">
+                <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
                   <span className="text-5xl font-bold">
                     {student.authenticated ? student.authenticated : 0}
                   </span>
@@ -91,21 +91,24 @@ const Student = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[50vh]">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DateCalendar", "DateCalendar"]}>
-                  <DemoItem label="">
-                    <DateCalendar
-                      defaultValue={dayjs(getTodayDate())}
-                      showDaysOutsideCurrentMonth
-                      slots={{
-                        day: ServerDay, // Use the custom day component
-                      }}
-                    />
-                  </DemoItem>
-                </DemoContainer>
-              </LocalizationProvider>
+            <div className="flex max-lg:justify-center">
+              <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[50vh]">
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer components={["DateCalendar", "DateCalendar"]}>
+                    <DemoItem label="">
+                      <DateCalendar
+                        defaultValue={dayjs(getTodayDate())}
+                        showDaysOutsideCurrentMonth
+                        slots={{
+                          day: ServerDay, // Use the custom day component
+                        }}
+                      />
+                    </DemoItem>
+                  </DemoContainer>
+                </LocalizationProvider>
+              </div>
             </div>
+
           </div>
           <Notifications student={student} />
         </div>
