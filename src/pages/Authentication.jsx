@@ -74,7 +74,7 @@ const Authentication = () => {
       </div>
 
       {/* Toast Notification */}
-      <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} />
+      {/* <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} /> */}
     </div>
   );
 };

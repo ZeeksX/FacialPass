@@ -206,18 +206,32 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 )}
             </div>
 
+            {/* Buttons for camera control */}
             <div className="flex flex-row justify-center items-center gap-8 mt-2 w-full">
                 {!isCameraOn ? (
-                    <button className="btn" onClick={startCamera}>
-                        <CameraAltIcon className="mr-2" /> Start Camera
+                    <button
+                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                        onClick={startCamera}
+                    >
+                        <span className="mr-2"><CameraAltIcon /></span>
+                        Start Camera
                     </button>
                 ) : (
-                    <button className="btn" onClick={stopCamera}>
-                        <CameraAltIcon className="mr-2" /> Stop Camera
+                    <button
+                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                        onClick={stopCamera}
+                    >
+                        <span className="mr-2"><CameraAltIcon /></span>
+                        Stop Camera
                     </button>
                 )}
-                <button className="btn" onClick={capture} disabled={!isCameraOn}>
-                    <CenterFocusStrongIcon className="mr-2" /> Authenticate Now
+                <button
+                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                    onClick={capture}
+                    disabled={!isCameraOn}
+                >
+                    <span className="mr-2"><CenterFocusStrongIcon /></span>
+                    Authenticate Now
                 </button>
             </div>
 
