@@ -136,8 +136,8 @@ const FacialRecognition = () => {
     };
 
     return (
-        <div className="flex pt-4 justify-center items-center min-h-screen w-full bg-gradient-to-b from-white to-[#0061A2]">
-            <div className="rounded-md h-[80vh] shadow bg-white flex flex-col items-center w-2/5">
+        <div className="flex pt-4 max-lg:p-4 justify-center lg:items-center min-h-screen w-full bg-gradient-to-b from-white to-[#0061A2]">
+            <div className="rounded-md max-md:h-[90vh] h-[90vh] xl:h-[80vh] shadow bg-white flex flex-col items-center max-lg:w-full w-3/5 xl:w-2/5">
                 <div className="flex text-white flex-col w-full rounded-t-md h-30 gap-2 bg-gradient-to-r from-[#0061A2] to-[#0061a263] p-4">
                     <h1 className="flex items-center justify-center gap-2">
                         <HowToRegIcon />  <strong className="text-xl">Facial Registration</strong>
@@ -149,10 +149,10 @@ const FacialRecognition = () => {
                 </div>
                 <div className="w-full p-4">
                     <div className="flex w-full flex-col items-center">
-                        <div className="relative rounded-lg h-[328px] w-full bg-black">
+                        <div className="relative rounded-lg h-[328px] max-md:h-[250px] w-full bg-black">
                             {cameraActive ? (
                                 <Webcam
-                                    className="rounded-lg w-full object-fill"
+                                    className="rounded-lg w-full h-full object-fill"
                                     audio={false}
                                     ref={webcamRef}
                                     screenshotFormat="image/jpeg"
@@ -172,40 +172,45 @@ const FacialRecognition = () => {
                         </div>
 
                         {/* Buttons for camera control */}
-                        <div className="flex flex-row justify-center items-center gap-8 mt-4 w-full">
-                            {!cameraActive ? (
+                        <div className="flex flex-row max-md:flex-col justify-center items-center gap-4 max-md:gap-2 mt-4 w-full">
+                            <div className='flex flex-row max-md:flex-col justify-center items-center max-md:gap-2 gap-4'>
+                                {!cameraActive ? (
+                                    <button
+                                        className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                        onClick={startCamera}
+                                    >
+                                        <span className="mr-2"><CameraAltIcon /></span>
+                                        Start Camera
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                        onClick={stopCamera}
+                                    >
+                                        <span className="mr-2"><CameraAltIcon /></span>
+                                        Stop Camera
+                                    </button>
+                                )}
                                 <button
-                                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                                    onClick={startCamera}
+                                    className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                    onClick={captureImage}
+                                    disabled={!cameraActive}
                                 >
-                                    <span className="mr-2"><CameraAltIcon /></span>
-                                    Start Camera
+                                    <span className="mr-2"><CenterFocusStrongIcon /></span>
+                                    Capture Image
                                 </button>
-                            ) : (
+                            </div>
+                            <div>
                                 <button
-                                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                                    onClick={stopCamera}
+                                    className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                    onClick={handleSubmit}
+                                    disabled={!imageBlob}
                                 >
-                                    <span className="mr-2"><CameraAltIcon /></span>
-                                    Stop Camera
+                                    <span className='mr-2'><SendIcon /> </span>
+                                    Submit
                                 </button>
-                            )}
-                            <button
-                                className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                                onClick={captureImage}
-                                disabled={!cameraActive}
-                            >
-                                <span className="mr-2"><CenterFocusStrongIcon /></span>
-                                Capture Image
-                            </button>
-                            <button
-                                className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                                onClick={handleSubmit}
-                                disabled={!imageBlob}
-                            >
-                                <span className='mr-2'><SendIcon /> </span>
-                                Submit
-                            </button>
+                            </div>
+
                         </div>
 
                         {/* Toast Notification */}
