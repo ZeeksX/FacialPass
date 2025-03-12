@@ -11,7 +11,7 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchStudent = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/students/me", {
+                const response = await fetch("https://facialpass-backend.onrender.com/api/students/me", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const StudentDashboard = () => {
     useEffect(() => {
         const getCourses = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/students/get-courses", {
+                const response = await fetch("https://facialpass-backend.onrender.com/api/students/get-courses", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

@@ -32,7 +32,7 @@ const SelectCourses = () => {
   // Handle course selection
   const handleSelectCourse = async (course) => {
     try {
-      const response = await fetch("http://localhost:5000/api/students/select-course", {
+      const response = await fetch("https://facialpass-backend.onrender.com/api/students/select-course", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

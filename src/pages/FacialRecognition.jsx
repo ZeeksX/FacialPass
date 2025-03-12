@@ -98,7 +98,7 @@ const FacialRecognition = () => {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/students/register", {
+            const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
                 method: "POST",
                 body: formData,
             });

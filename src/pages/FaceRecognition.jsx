@@ -25,7 +25,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 console.log("Models loaded successfully!");
 
                 console.log("Fetching known faces from API...");
-                const response = await fetch("http://localhost:5000/api/auth/known-faces");
+                const response = await fetch("https://facialpass-backend.onrender.com/api/auth/known-faces");
                 const knownFacesData = await response.json();
                 console.log("Known faces data:", knownFacesData);
 
@@ -130,7 +130,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
 
             const [firstName, lastName] = recognizedName.split("-");
             console.log("Authenticating with backend...");
-            const response = await fetch("http://localhost:5000/api/auth/authenticate", {
+            const response = await fetch("https://facialpass-backend.onrender.com/api/auth/authenticate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

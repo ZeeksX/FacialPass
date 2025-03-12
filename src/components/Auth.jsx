@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const response = await fetch("http://localhost:5000/api/auth/validate-token", {
+                const response = await fetch("https://facialpass-backend.onrender.com/api/auth/validate-token", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

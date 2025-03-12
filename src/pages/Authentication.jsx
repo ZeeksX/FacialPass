@@ -20,7 +20,7 @@ const Authentication = () => {
     setStudent(authenticatedStudent);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/save-authentication", {
+      const response = await fetch("https://facialpass-backend.onrender.com/api/auth/save-authentication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -66,7 +66,7 @@ const UploadImage = () => {
     formData.append("facial_image", selectedFile); // Send file directly
 
     try {
-      const res = await fetch("http://localhost:5000/api/students/register", {
+      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
         method: "POST",
         body: formData, // No need to set Content-Type
       });

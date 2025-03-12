@@ -13,7 +13,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admins/me", {
+        const response = await fetch("https://facialpass-backend.onrender.com/api/admins/me", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAllStudents = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admins/students", {
+        const response = await fetch("https://facialpass-backend.onrender.com/api/admins/students", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchAllCourses = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/admins/courses", {
+        const response = await fetch("https://facialpass-backend.onrender.com/api/admins/courses", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

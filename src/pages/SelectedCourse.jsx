@@ -11,7 +11,7 @@ const SelectedCourse = () => {
   useEffect(() => {
     const fetchSelectedCourses = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/students/me", {
+        const response = await fetch("https://facialpass-backend.onrender.com/api/students/me", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -34,7 +34,7 @@ const SelectedCourse = () => {
   // Function to handle dropping a course
   const handleDropCourse = async (courseId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/students/drop-course`, {
+      const response = await fetch(`https://facialpass-backend.onrender.com/api/students/drop-course`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
