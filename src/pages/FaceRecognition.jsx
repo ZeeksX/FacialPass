@@ -136,7 +136,6 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 body: JSON.stringify({
                     firstname: firstName,
                     lastname: lastName,
-                    courseId: selectedExam.id,
                 }),
             });
 

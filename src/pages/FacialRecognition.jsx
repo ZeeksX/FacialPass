@@ -1,81 +1,84 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
 import * as faceapi from "face-api.js";
+import Webcam from "react-webcam";
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import Toast from "../components/Toast";
+import spinner from '../assets/spinner.svg';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import SendIcon from '@mui/icons-material/Send';
 
 const FacialRecognition = () => {
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
+    const webcamRef = useRef(null);
     const [imageBlob, setImageBlob] = useState(null);
     const [cameraActive, setCameraActive] = useState(false);
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     const [toastSeverity, setToastSeverity] = useState("success");
-    const [loader, setLoader] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const startCamera = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            videoRef.current.srcObject = stream;
-            setCameraActive(true);
-        } catch (err) {
-            console.error("Error accessing the camera", err);
-            setToastMessage("Unable to access camera.");
-            setToastSeverity("error");
-            setToastOpen(true);
-        }
+    // Load Face API models on component mount
+    useEffect(() => {
+        const loadModels = async () => {
+            try {
+                await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+                await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+                await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+            } catch (err) {
+                console.error("Error loading Face API models:", err);
+                setToastMessage("Failed to load face detection models.");
+                setToastSeverity("error");
+                setToastOpen(true);
+            }
+        };
+        loadModels();
+    }, []);
+
+    const startCamera = () => {
+        setCameraActive(true);
+        setIsLoading(true);
+    };
+
+    const stopCamera = () => {
+        setCameraActive(false);
     };
 
     const captureImage = async () => {
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
+        const imageSrc = webcamRef.current.getScreenshot();
+        if (!imageSrc) return;
 
-        if (video && canvas) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Convert base64 to Blob
+        const res = await fetch(imageSrc);
+        const blob = await res.blob();
 
-            // Load Face API models
-            await Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-                faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
-                faceapi.nets.faceRecognitionNet.loadFromUri("/models")
-            ]);
+        // Compress the image
+        const compressedBlob = await imageCompression(blob, {
+            maxSizeMB: 1, // Max size 1MB
+            maxWidthOrHeight: 1920, // Max width/height
+        });
 
-            // Convert canvas to Blob
-            canvas.toBlob(async (blob) => {
-                if (!blob) return;
+        // Convert blob to a canvas for Face API
+        const img = await faceapi.bufferToImage(compressedBlob);
+        const imgCanvas = faceapi.createCanvasFromMedia(img);
+        const detections = await faceapi
+            .detectSingleFace(imgCanvas, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptor();
 
-                // Compress the image
-                const compressedBlob = await imageCompression(blob, {
-                    maxSizeMB: 1, // Max size 1MB
-                    maxWidthOrHeight: 1920, // Max width/height
-                });
-
-                // Convert blob to a canvas for Face API
-                const img = await faceapi.bufferToImage(compressedBlob);
-                const imgCanvas = faceapi.createCanvasFromMedia(img);
-                const detections = await faceapi
-                    .detectSingleFace(imgCanvas, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-
-                if (!detections) {
-                    setToastMessage("No face detected. Please upload a clearer image.");
-                    setToastSeverity("warning");
-                    setToastOpen(true);
-                    return;
-                }
-
-                setImageBlob(compressedBlob);
-                setToastMessage("Face detected successfully.");
-                setToastSeverity("success");
-                setToastOpen(true);
-            }, "image/png");
+        if (!detections) {
+            setToastMessage("No face detected. Please capture again.");
+            setToastSeverity("warning");
+            setToastOpen(true);
+            return;
         }
+
+        setImageBlob(compressedBlob);
+        setToastMessage("Face detected successfully.");
+        setToastSeverity("success");
+        setToastOpen(true);
     };
 
     const handleSubmit = async () => {
@@ -110,7 +113,6 @@ const FacialRecognition = () => {
                 setToastOpen(true);
                 localStorage.setItem("token", data.token);
                 localStorage.removeItem("userData");
-                setLoader(true);
                 setTimeout(() => {
                     navigate("/login");
                 }, 2000);
@@ -118,69 +120,104 @@ const FacialRecognition = () => {
                 setToastMessage(data.message || "Registration failed. Please try again.");
                 setToastSeverity("error");
                 setToastOpen(true);
-                setLoader(false);
             }
         } catch (error) {
             setToastMessage("An error occurred. Please try again.");
             setToastSeverity("error");
             setToastOpen(true);
-            setLoader(false);
         }
     };
 
     const handleToastClose = () => setToastOpen(false);
 
+    const videoConstraints = {
+        width: 1050,
+        facingMode: "user", // Use front-facing camera
+    };
+
     return (
-        <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-gradient-to-b from-white to-[#0061A2]">
-            <div className="flex flex-col w-4/5 items-center gap-4">
-                <div className="flex flex-row gap-8 w-[90%] justify-between">
-                    {/* Video Placeholder */}
-                    <div className="w-1/2 h-80 bg-gray-200 rounded flex items-center justify-center overflow-hidden relative">
-                        {!cameraActive && (
-                            <span className="text-gray-500 absolute">Camera Preview</span>
-                        )}
-                        <video ref={videoRef} autoPlay className={`absolute object-fill inset-0 w-full h-full ${cameraActive ? 'block' : 'hidden'}`}></video>
-                    </div>
+        <div className="flex pt-4 justify-center items-center min-h-screen w-full bg-gradient-to-b from-white to-[#0061A2]">
+            <div className="rounded-md h-[80vh] shadow bg-white flex flex-col items-center w-2/5">
+                <div className="flex text-white flex-col w-full rounded-t-md h-30 gap-2 bg-gradient-to-r from-[#0061A2] to-[#0061a263] p-4">
+                    <h1 className="flex items-center justify-center gap-2">
+                        <HowToRegIcon />  <strong className="text-xl">Facial Registration</strong>
+                    </h1>
+                    <h1 className="flex items-center justify-center gap-2">
+                        Please upload a clear image of your face
+                    </h1>
 
-                    <canvas ref={canvasRef} className="hidden"></canvas>
-
-                    {/* Image Placeholder */}
-                    <div className="w-1/2 h-80 bg-gray-200 rounded flex items-center justify-center overflow-hidden relative">
-                        {imageBlob && (
-                            <img src={URL.createObjectURL(imageBlob)} alt="Captured" className="absolute object-fill inset-0 w-full h-full" />
-                        )}
-                        {!imageBlob && <span className="text-gray-500 absolute">Captured Image</span>}
-                    </div>
                 </div>
+                <div className="w-full p-4">
+                    <div className="flex w-full flex-col items-center">
+                        <div className="relative rounded-lg h-[328px] w-full bg-black">
+                            {cameraActive ? (
+                                <Webcam
+                                    className="rounded-lg w-full object-fill"
+                                    audio={false}
+                                    ref={webcamRef}
+                                    screenshotFormat="image/jpeg"
+                                    videoConstraints={videoConstraints}
+                                    onUserMedia={() => setIsLoading(false)}
+                                />
+                            ) : (
+                                <div className="absolute inset-0 flex justify-center items-center text-gray-500">
+                                    Camera Preview
+                                </div>
+                            )}
+                            {isLoading && (
+                                <div className="absolute inset-0 flex justify-center items-center">
+                                    <img src={spinner} alt="Loading..." className="w-12 h-12" />
+                                </div>
+                            )}
+                        </div>
 
-                <div className="flex flex-col gap-4 max-w-md w-4/5">
-                    <button
-                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                        onClick={startCamera}>
-                        Start Camera
-                    </button>
-                    <button
-                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                        onClick={captureImage}
-                        disabled={!cameraActive}>
-                        Capture Image
-                    </button>
-                    <button
-                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                        onClick={handleSubmit}
-                        disabled={!imageBlob}>
-                        Submit
-                    </button>
+                        {/* Buttons for camera control */}
+                        <div className="flex flex-row justify-center items-center gap-8 mt-4 w-full">
+                            {!cameraActive ? (
+                                <button
+                                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                    onClick={startCamera}
+                                >
+                                    <span className="mr-2"><CameraAltIcon /></span>
+                                    Start Camera
+                                </button>
+                            ) : (
+                                <button
+                                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                    onClick={stopCamera}
+                                >
+                                    <span className="mr-2"><CameraAltIcon /></span>
+                                    Stop Camera
+                                </button>
+                            )}
+                            <button
+                                className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                onClick={captureImage}
+                                disabled={!cameraActive}
+                            >
+                                <span className="mr-2"><CenterFocusStrongIcon /></span>
+                                Capture Image
+                            </button>
+                            <button
+                                className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
+                                onClick={handleSubmit}
+                                disabled={!imageBlob}
+                            >
+                                <span className='mr-2'><SendIcon /> </span>
+                                Submit
+                            </button>
+                        </div>
+
+                        {/* Toast Notification */}
+                        <Toast
+                            open={toastOpen}
+                            message={toastMessage}
+                            severity={toastSeverity}
+                            onClose={handleToastClose}
+                        />
+                    </div>
                 </div>
             </div>
-
-            {/* Toast Notification */}
-            <Toast
-                open={toastOpen}
-                message={toastMessage}
-                severity={toastSeverity}
-                onClose={handleToastClose}
-            />
         </div>
     );
 };
