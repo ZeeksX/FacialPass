@@ -130,7 +130,7 @@ const UploadImage = () => {
                   />
                 </Button>
                 {imagePreview && (
-                  <div className="image-preview rounded-md h-40 flex flex-col gap-2 w-full items-center">
+                  <div className="image-preview rounded-md shadow-lg h-72 flex flex-col gap-2 w-[90%] items-center">
                     <p className="text-[#0061A2]">Selected Image:</p>
                     <img
                       src={imagePreview}

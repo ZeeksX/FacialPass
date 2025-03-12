@@ -1,12 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import imageCompression from 'browser-image-compression';
+import * as faceapi from "face-api.js";
+import Toast from "../components/Toast";
 
 const FacialRecognition = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [imageBlob, setImageBlob] = useState(null);
     const [cameraActive, setCameraActive] = useState(false);
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastSeverity, setToastSeverity] = useState("success");
+    const [loader, setLoader] = useState(false);
     const navigate = useNavigate();
 
     const startCamera = async () => {
@@ -16,6 +22,9 @@ const FacialRecognition = () => {
             setCameraActive(true);
         } catch (err) {
             console.error("Error accessing the camera", err);
+            setToastMessage("Unable to access camera.");
+            setToastSeverity("error");
+            setToastOpen(true);
         }
     };
 
@@ -29,17 +38,42 @@ const FacialRecognition = () => {
             const ctx = canvas.getContext("2d");
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+            // Load Face API models
+            await Promise.all([
+                faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+                faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+                faceapi.nets.faceRecognitionNet.loadFromUri("/models")
+            ]);
+
             // Convert canvas to Blob
             canvas.toBlob(async (blob) => {
-                if (blob) {
-                    // Optionally compress the image
-                    const compressedBlob = await imageCompression(blob, {
-                        maxSizeMB: 1, // Set max size to 1MB
-                        maxWidthOrHeight: 1920, // Set max width or height
-                    });
+                if (!blob) return;
 
-                    setImageBlob(compressedBlob); // Store the compressed Blob
+                // Compress the image
+                const compressedBlob = await imageCompression(blob, {
+                    maxSizeMB: 1, // Max size 1MB
+                    maxWidthOrHeight: 1920, // Max width/height
+                });
+
+                // Convert blob to a canvas for Face API
+                const img = await faceapi.bufferToImage(compressedBlob);
+                const imgCanvas = faceapi.createCanvasFromMedia(img);
+                const detections = await faceapi
+                    .detectSingleFace(imgCanvas, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+
+                if (!detections) {
+                    setToastMessage("No face detected. Please upload a clearer image.");
+                    setToastSeverity("warning");
+                    setToastOpen(true);
+                    return;
                 }
+
+                setImageBlob(compressedBlob);
+                setToastMessage("Face detected successfully.");
+                setToastSeverity("success");
+                setToastOpen(true);
             }, "image/png");
         }
     };
@@ -55,29 +89,46 @@ const FacialRecognition = () => {
 
         // Append the image Blob
         if (imageBlob) {
-            formData.append('facial_image', imageBlob, 'facial_image.png'); // Append the image blob
+            formData.append('facial_image', imageBlob, 'facial_image.png');
         } else {
-            console.error("No image captured");
+            setToastMessage("No valid face detected. Please capture again.");
+            setToastSeverity("error");
+            setToastOpen(true);
             return;
         }
 
         try {
             const res = await fetch("http://localhost:5000/api/students/register", {
                 method: "POST",
-                body: formData, // Send FormData directly
+                body: formData,
             });
 
             const data = await res.json();
             if (res.ok) {
-                localStorage.setItem('token', data.token);
-                navigate("/dashboard");
+                setToastMessage("Registration successful! Redirecting...");
+                setToastSeverity("success");
+                setToastOpen(true);
+                localStorage.setItem("token", data.token);
+                localStorage.removeItem("userData");
+                setLoader(true);
+                setTimeout(() => {
+                    navigate("/login");
+                }, 2000);
             } else {
-                console.error("Registration failed:", data.message || res.statusText);
+                setToastMessage(data.message || "Registration failed. Please try again.");
+                setToastSeverity("error");
+                setToastOpen(true);
+                setLoader(false);
             }
         } catch (error) {
-            console.error("Error during registration:", error.message);
+            setToastMessage("An error occurred. Please try again.");
+            setToastSeverity("error");
+            setToastOpen(true);
+            setLoader(false);
         }
     };
+
+    const handleToastClose = () => setToastOpen(false);
 
     return (
         <div className="flex flex-col items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-gradient-to-b from-white to-[#0061A2]">
@@ -104,24 +155,32 @@ const FacialRecognition = () => {
 
                 <div className="flex flex-col gap-4 max-w-md w-4/5">
                     <button
-                        className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                         onClick={startCamera}>
                         Start Camera
                     </button>
                     <button
-                        className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                         onClick={captureImage}
                         disabled={!cameraActive}>
                         Capture Image
                     </button>
                     <button
-                        className="w-full flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                        className="w-full flex items-center cursor-pointer justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                         onClick={handleSubmit}
                         disabled={!imageBlob}>
                         Submit
                     </button>
                 </div>
             </div>
+
+            {/* Toast Notification */}
+            <Toast
+                open={toastOpen}
+                message={toastMessage}
+                severity={toastSeverity}
+                onClose={handleToastClose}
+            />
         </div>
     );
 };

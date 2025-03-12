@@ -89,7 +89,7 @@ const Signup = () => {
       password,
     };
     localStorage.setItem('userData', JSON.stringify(userData));
-    navigate("/signup/upload-image");
+    navigate("/onboarding");
   };
 
   const handleToastClose = () => {

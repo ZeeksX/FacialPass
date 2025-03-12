@@ -3,8 +3,8 @@ import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
-import spinner from '../assets/spinner.svg'; // Import the spinner image
-import Toast from "../components/Toast"; // Import Toast component
+import spinner from '../assets/spinner.svg';
+import Toast from "../components/Toast";
 
 const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
     const webcamRef = useRef(null);
@@ -15,20 +15,24 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
 
-    // Load models and known faces on mount
     useEffect(() => {
         const loadModelsAndKnownFaces = async () => {
             try {
+                console.log("Loading face-api models...");
                 await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
                 await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
                 await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+                console.log("Models loaded successfully!");
 
+                console.log("Fetching known faces from API...");
                 const response = await fetch("http://localhost:5000/api/auth/known-faces");
                 const knownFacesData = await response.json();
+                console.log("Known faces data:", knownFacesData);
 
                 const knownFacesWithDescriptors = await Promise.all(
                     knownFacesData.map(async (face) => {
                         try {
+                            console.log(`Processing face: ${face.name}`);
                             const res = await fetch(`data:image/jpeg;base64,${face.image}`);
                             const blob = await res.blob();
                             const img = await faceapi.bufferToImage(blob);
@@ -47,6 +51,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 );
 
                 setKnownFaces(knownFacesWithDescriptors.filter((face) => face !== null));
+                console.log("Known faces processed successfully!");
             } catch (error) {
                 console.error("Error loading models or known faces:", error);
                 setToast({ open: true, message: "Failed to load face models.", severity: "error" });
@@ -60,37 +65,38 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
         setToast({ ...toast, open: false });
     };
 
-    // Start the camera
     const startCamera = () => {
+        console.log("Starting camera...");
         setIsLoading(true);
         setIsCameraOn(true);
     };
 
-    // Stop the camera
     const stopCamera = () => {
+        console.log("Stopping camera...");
         setIsCameraOn(false);
     };
 
-    // Capture image from webcam
     const capture = () => {
+        console.log("Capturing image...");
         const imageSrc = webcamRef.current.getScreenshot();
+        console.log("Captured Image:", imageSrc);
         setImage(imageSrc);
         authenticateStudent(imageSrc, "base64");
     };
 
-    // Handle file upload
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            console.log("File selected:", file.name);
             const imageURL = URL.createObjectURL(file);
             setImage(imageURL);
             authenticateStudent(file, "file");
         }
     };
 
-    // Perform face authentication
     const authenticateStudent = async (imageSrc, type) => {
         try {
+            console.log("Starting authentication...");
             let img;
             if (type === "base64") {
                 const res = await fetch(imageSrc);
@@ -100,18 +106,22 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 img = await faceapi.bufferToImage(imageSrc);
             }
 
+            console.log("Detecting faces...");
             const detections = await faceapi
                 .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
                 .withFaceDescriptors();
 
+            console.log("Face detection result:", detections);
             if (detections.length === 0) {
                 setStatus("No face detected");
                 setToast({ open: true, message: "No face detected in the image.", severity: "warning" });
                 return;
             }
 
+            console.log("Recognizing face...");
             const recognizedName = await recognizeFace(detections[0].descriptor);
+            console.log("Recognized name:", recognizedName);
             if (!recognizedName) {
                 setStatus("Face not recognized");
                 setToast({ open: true, message: "Face not recognized. Please try again.", severity: "error" });
@@ -119,6 +129,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
             }
 
             const [firstName, lastName] = recognizedName.split("-");
+            console.log("Authenticating with backend...");
             const response = await fetch("http://localhost:5000/api/auth/authenticate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -130,38 +141,44 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
             });
 
             const data = await response.json();
+            console.log("Backend response:", data);
+
             if (data.success) {
                 if (data.isRegistered) {
                     setStatus("Authenticated");
                     onAuthenticate(data.student);
-                    setToast({ open: true, message: "Authentication successful!", severity: "success" });
+                    setToast({ open: true, message: data.message, severity: "success" });
                 } else {
                     setStatus("Student not registered for this course");
-                    setToast({ open: true, message: "Student is not registered for this course.", severity: "error" });
+                    setToast({ open: true, message: data.message, severity: "error" });
                 }
             } else {
                 setStatus("Not Authenticated");
-                setToast({ open: true, message: "Authentication failed.", severity: "error" });
+                setToast({ open: true, message: data.message, severity: "error" });
             }
         } catch (error) {
             console.error("Error authenticating student:", error);
             setStatus("Error");
-            setToast({ open: true, message: "An error occurred during authentication.", severity: "error" });
+            setToast({ open: true, message: data.message, severity: "error" });
         }
     };
 
-    // Recognize face using Euclidean distance
     const recognizeFace = async (descriptor) => {
+        console.log("Comparing face descriptor with known faces...");
         let minDistance = Infinity;
         let recognizedName = null;
 
         for (const face of knownFaces) {
             const distance = faceapi.euclideanDistance(descriptor, face.descriptor);
-            if (distance < minDistance && distance < 0.4) {
+            console.log(`Comparing with ${face.name}, Distance: ${distance}`);
+
+            if (distance < minDistance && distance < 0.6) {
                 minDistance = distance;
                 recognizedName = face.name;
             }
         }
+
+        console.log("Best match:", recognizedName);
         return recognizedName;
     };
 
@@ -171,7 +188,6 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
 
     return (
         <div className="flex w-full flex-col items-center">
-            {/* Webcam with spinner overlay */}
             <div className="relative rounded-lg h-[328px] w-full bg-black">
                 {isCameraOn && (
                     <Webcam
@@ -190,38 +206,22 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 )}
             </div>
 
-            {/* Buttons for camera control */}
             <div className="flex flex-row justify-center items-center gap-8 mt-2 w-full">
                 {!isCameraOn ? (
-                    <button
-                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                        onClick={startCamera}
-                    >
-                        <span className="mr-2"><CameraAltIcon /></span>
-                        Start Camera
+                    <button className="btn" onClick={startCamera}>
+                        <CameraAltIcon className="mr-2" /> Start Camera
                     </button>
                 ) : (
-                    <button
-                        className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                        onClick={stopCamera}
-                    >
-                        <span className="mr-2"><CameraAltIcon /></span>
-                        Stop Camera
+                    <button className="btn" onClick={stopCamera}>
+                        <CameraAltIcon className="mr-2" /> Stop Camera
                     </button>
                 )}
-                <button
-                    className="flex flex-row cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
-                    onClick={capture}
-                    disabled={!isCameraOn}
-                >
-                    <span className="mr-2"><CenterFocusStrongIcon /></span>
-                    Authenticate Now
+                <button className="btn" onClick={capture} disabled={!isCameraOn}>
+                    <CenterFocusStrongIcon className="mr-2" /> Authenticate Now
                 </button>
             </div>
 
             <input type="file" accept="image/*" onChange={handleFileChange} />
-            
-            {/* Toast Notification */}
             <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} />
         </div>
     );

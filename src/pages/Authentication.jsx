@@ -34,7 +34,7 @@ const Authentication = () => {
       if (data.success) {
         setToast({ open: true, message: "Authentication successful!", severity: "success" });
       } else {
-        setToast({ open: true, message: "Failed to save authentication details.", severity: "error" });
+        setToast({ open: true, message: data.message, severity: "error" });
       }
     } catch (error) {
       setToast({ open: true, message: "An error occurred. Please try again.", severity: "error" });
