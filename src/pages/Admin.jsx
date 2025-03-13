@@ -26,7 +26,7 @@ const Admin = () => {
           <div className="flex flex-col w-full lg:w-[61%]">
             <div className="flex items-center h-30 bg-gradient-to-r from-[#0061A2] to-[#0061a263] rounded-2xl">
               <h1 className="flex text-2xl text-white font-medium ml-4">
-                Welcome back, {admin.admin.firstname}
+                Welcome back, Prof. {admin.admin.firstname}
               </h1>
             </div>
             <div className="flex md:flex-row flex-col gap-8 items-center justify-between lg:h-20 my-8">
@@ -37,7 +37,7 @@ const Admin = () => {
                 </h1>
               </div>
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{admin.admin.length}</span>
+                <span className="text-5xl font-bold">{admin.admin.length ? admin.admin.length : 0}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                   Total Courses
                 </h1>

@@ -145,32 +145,6 @@ const AdminProfile = () => {
             </List>
           </Paper>
 
-          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography
-              variant="h6"
-              sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}
-            >
-              Facial Authentication Details
-            </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Avatar
-                  src={profileData.facialScanPreview}
-                  sx={{ width: 150, height: 150, mx: "auto" }}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography>
-                  <strong>Last Authentication Date:</strong>{" "}
-                  {profileData.lastAuthenticationDate}
-                </Typography>
-                <Typography>
-                  <strong>Status:</strong>{" "}
-                  {profileData.lastAuthenticationStatus}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
         </Box>
       </div>
     </div>
