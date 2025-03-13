@@ -92,7 +92,7 @@ const FacialRecognition = () => {
 
         // Append the image Blob
         if (imageBlob) {
-            formData.append('facial_image', imageBlob, 'facial_image.png');
+            formData.append('facial_image', imageBlob);
         } else {
             setToastMessage("No valid face detected. Please capture again.");
             setToastSeverity("error");
