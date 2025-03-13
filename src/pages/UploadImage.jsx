@@ -177,7 +177,7 @@ const UploadImage = () => {
         <div className="flex flex-row lg:w-3/5 lg:h-[90vh]">
           <div
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
-            style={{ backgroundImage: url(`${loginImage}`) }}
+            style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
           <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded-none bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
