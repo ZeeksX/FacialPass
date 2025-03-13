@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import * as faceapi from "face-api.js";
 import loginImage from "../assets/login-image.jpg";
 import logo from "../assets/logo.svg";
 import Toast from "../components/Toast";
@@ -15,8 +16,19 @@ const UploadImage = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [toastSeverity, setToastSeverity] = useState("success");
   const [loader, setLoader] = useState(false);
+  const [modelsLoaded, setModelsLoaded] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const loadModels = async () => {
+      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+      setModelsLoaded(true);
+    };
+    loadModels();
+  }, []);
 
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -30,16 +42,37 @@ const UploadImage = () => {
     width: 1,
   });
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         setImagePreview(reader.result);
+        const isFaceDetected = await detectFace(reader.result);
+        if (isFaceDetected) {
+          setToastMessage("Face detected successfully!");
+          setToastSeverity("success");
+          setToastOpen(true);
+        } else {
+          setToastMessage("No face detected. Please upload a valid face image.");
+          setToastSeverity("error");
+          setToastOpen(true);
+          setSelectedFile(null);
+          setImagePreview(null);
+        }
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const detectFace = async (imageData) => {
+    const img = await faceapi.fetchImage(imageData);
+    const detections = await faceapi
+      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+      .withFaceLandmarks()
+      .withFaceDescriptors();
+    return detections.length > 0;
   };
 
   const handleToastClose = () => setToastOpen(false);
@@ -54,21 +87,21 @@ const UploadImage = () => {
       return;
     }
 
+    setLoader(true);
     const userData = JSON.parse(localStorage.getItem("userData"));
     const formData = new FormData();
-
     formData.append("firstname", userData.firstname);
     formData.append("lastname", userData.lastname);
     formData.append("department", userData.department);
     formData.append("matricNumber", userData.matricNum);
     formData.append("email", userData.email);
     formData.append("password", userData.password);
-    formData.append("facial_image", selectedFile); // Send file directly
+    formData.append("facial_image", selectedFile);
 
     try {
       const res = await fetch("http://localhost:5000/api/students/register", {
         method: "POST",
-        body: formData, // No need to set Content-Type
+        body: formData,
       });
 
       const data = await res.json();
@@ -76,17 +109,15 @@ const UploadImage = () => {
         setToastMessage("Registration successful! Redirecting...");
         setToastSeverity("success");
         setToastOpen(true);
+        setLoader(true);
         localStorage.setItem("token", data.token);
         localStorage.removeItem("userData");
-        setLoader(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setToastMessage(data.message || "Registration failed. Please try again.");
         setToastSeverity("error");
         setToastOpen(true);
-        setLoader(false);
+        setLoader(false)
       }
     } catch (error) {
       setToastMessage("An error occurred. Please try again.");
@@ -104,58 +135,35 @@ const UploadImage = () => {
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded -none bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
+          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
               <img className="w-24" src={logo} alt="Facial Pass logo" />
               <p className="text-[#0061A2] text-xl font-medium text-center">
                 Please upload a clear photo of your face
               </p>
             </div>
-            <form
-              onSubmit={handleSubmit}
-              className="overflow-hidden flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto"
-            >
-              <div className="flex flex-col w-full justify-center items-center gap-4">
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                >
-                  Upload file
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={handleFileChange}
-                    accept="image/*"
-                    name="facial_image"
-                  />
-                </Button>
-                {imagePreview && (
-                  <div className="image-preview rounded-md shadow-lg h-72 flex flex-col gap-2 w-[90%] items-center">
-                    <p className="text-[#0061A2]">Selected Image:</p>
-                    <img
-                      src={imagePreview}
-                      alt="Selected"
-                      className="w-[90%] h-[70%]"
-                    />
-                  </div>
-                )}
-                <button
-                  className="w-full cursor-pointer flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
-                  type="submit"
-                >
-                  Sign up
-                </button>
-              </div>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center lg:w-4/5 w-4/5 mx-auto">
+              <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                Upload file
+                <VisuallyHiddenInput type="file" onChange={handleFileChange} accept="image/*" name="facial_image" />
+              </Button>
+              {imagePreview && (
+                <div className="image-preview rounded-md shadow-lg h-72 flex flex-col gap-2 w-[90%] items-center">
+                  <p className="text-[#0061A2]">Selected Image:</p>
+                  <img src={imagePreview} alt="Selected" className="w-[90%] h-[70%]" />
+                </div>
+              )}
+              <button
+                className="w-full cursor-pointer flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                type="submit"
+              >
+                Sign up
+              </button>
             </form>
           </div>
         </div>
       </div>
-      <Toast
-        open={toastOpen}
-        message={toastMessage}
-        severity={toastSeverity}
-        onClose={handleToastClose}
-      />
+      <Toast open={toastOpen} message={toastMessage} severity={toastSeverity} onClose={handleToastClose} />
       {loader && <Loader />}
     </>
   );
