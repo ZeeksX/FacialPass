@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -17,16 +17,40 @@ const UploadImage = () => {
   const [toastSeverity, setToastSeverity] = useState("success");
   const [loader, setLoader] = useState(false);
   const [modelsLoaded, setModelsLoaded] = useState(false);
+  const [isFaceDetected, setIsFaceDetected] = useState(false); // Track face detection status
+  const [isLoadingModels, setIsLoadingModels] = useState(true); // Track model loading state
+  const fileInputRef = useRef(null); // Ref for the file input
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadModels = async () => {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-      await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
-      setModelsLoaded(true);
+      try {
+        // Show loading toast
+        setToastMessage("Loading models...");
+        setToastSeverity("info");
+        setToastOpen(true);
+
+        // Load face-api.js models
+        await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+        await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
+        await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+
+        // Models loaded successfully
+        setModelsLoaded(true);
+        setIsLoadingModels(false);
+        setToastMessage("Models loaded successfully!");
+        setToastSeverity("success");
+        setToastOpen(true);
+      } catch (error) {
+        console.error("Error loading models:", error);
+        setToastMessage("Failed to load models. Please try again.");
+        setToastSeverity("error");
+        setToastOpen(true);
+        setIsLoadingModels(false);
+      }
     };
+
     loadModels();
   }, []);
 
@@ -43,14 +67,22 @@ const UploadImage = () => {
   });
 
   const handleFileChange = async (event) => {
+    if (!modelsLoaded) {
+      setToastMessage("Models are still loading. Please wait.");
+      setToastSeverity("warning");
+      setToastOpen(true);
+      return;
+    }
+
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = async () => {
         setImagePreview(reader.result);
-        const isFaceDetected = await detectFace(reader.result);
-        if (isFaceDetected) {
+        const faceDetected = await detectFace(reader.result);
+        setIsFaceDetected(faceDetected); // Update face detection status
+        if (faceDetected) {
           setToastMessage("Face detected successfully!");
           setToastSeverity("success");
           setToastOpen(true);
@@ -63,16 +95,28 @@ const UploadImage = () => {
         }
       };
       reader.readAsDataURL(file);
+    } else {
+      setToastMessage("File not uploaded");
+      setToastSeverity("error");
+      setToastOpen(true);
     }
   };
 
   const detectFace = async (imageData) => {
-    const img = await faceapi.fetchImage(imageData);
-    const detections = await faceapi
-      .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptors();
-    return detections.length > 0;
+    try {
+      const img = await faceapi.fetchImage(imageData);
+      const detections = await faceapi
+        .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+      return detections.length > 0;
+    } catch (error) {
+      console.error("Error detecting face:", error);
+      setToastMessage("Error detecting face. Please try again.");
+      setToastSeverity("error");
+      setToastOpen(true);
+      return false;
+    }
   };
 
   const handleToastClose = () => setToastOpen(false);
@@ -80,8 +124,8 @@ const UploadImage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!selectedFile) {
-      setToastMessage("Please select an image file.");
+    if (!selectedFile || !isFaceDetected) {
+      setToastMessage("Please select a valid image file with a detectable face.");
       setToastSeverity("error");
       setToastOpen(true);
       return;
@@ -106,9 +150,9 @@ const UploadImage = () => {
 
       const data = await res.json();
       if (res.ok) {
+        setToastOpen(true);
         setToastMessage("Registration successful! Redirecting...");
         setToastSeverity("success");
-        setToastOpen(true);
         setLoader(true);
         localStorage.setItem("token", data.token);
         localStorage.removeItem("userData");
@@ -117,7 +161,7 @@ const UploadImage = () => {
         setToastMessage(data.message || "Registration failed. Please try again.");
         setToastSeverity("error");
         setToastOpen(true);
-        setLoader(false)
+        setLoader(false);
       }
     } catch (error) {
       setToastMessage("An error occurred. Please try again.");
@@ -135,7 +179,7 @@ const UploadImage = () => {
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
           ></div>
-          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
+          <div className="flex flex-col w-full lg:w-3/5 rounded-xl md:rounded-r-xl md:rounded-none bg-white text-[#0061A2] px-4 lg:px-3 gap-4 py-8">
             <div className="flex flex-col justify-center items-center gap-2">
               <img className="w-24" src={logo} alt="Facial Pass logo" />
               <p className="text-[#0061A2] text-xl font-medium text-center">
@@ -143,9 +187,21 @@ const UploadImage = () => {
               </p>
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-center lg:w-4/5 w-4/5 mx-auto">
-              <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+              <Button
+                component="label"
+                variant="contained"
+                startIcon={<CloudUploadIcon />}
+                disabled={isLoadingModels} // Disable button while models are loading
+              >
                 Upload file
-                <VisuallyHiddenInput type="file" onChange={handleFileChange} accept="image/*" name="facial_image" />
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  name="facial_image"
+                  ref={fileInputRef}
+                  disabled={isLoadingModels} // Disable input while models are loading
+                />
               </Button>
               {imagePreview && (
                 <div className="image-preview rounded-md shadow-lg h-72 flex flex-col gap-2 w-[90%] items-center">
@@ -156,6 +212,7 @@ const UploadImage = () => {
               <button
                 className="w-full cursor-pointer flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                 type="submit"
+                disabled={isLoadingModels || !isFaceDetected} // Disable button while models are loading or no face is detected
               >
                 Sign up
               </button>
