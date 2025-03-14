@@ -101,39 +101,6 @@ const Settings = () => {
             </List>
           </Paper>
 
-          {/* 3️⃣ Security & Privacy */}
-          <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
-              Security & Privacy
-            </Typography>
-            <List>
-              <ListItem sx={{ color: "#0061A2" }}>
-                <ListItemIcon>
-                  <SecurityIcon sx={{ color: "#0061A2" }} />
-                </ListItemIcon>
-                <ListItemText primary="Manage Trusted Devices" />
-                <Button variant="outlined">Manage</Button>
-              </ListItem>
-              <ListItem sx={{ color: "#0061A2" }}>
-                <ListItemIcon>
-                  <ExitToAppIcon sx={{ color: "#0061A2" }} />
-                </ListItemIcon>
-                <ListItemText primary="Log Out of All Devices" />
-                <Button variant="outlined">Log Out</Button>
-              </ListItem>
-              <Divider />
-              <ListItem sx={{ color: "red" }}>
-                <ListItemIcon>
-                  <DeleteIcon sx={{ color: "red" }} />
-                </ListItemIcon>
-                <ListItemText primary="Delete Account" />
-                <Button variant="outlined" color="error">
-                  Delete
-                </Button>
-              </ListItem>
-            </List>
-          </Paper>
-
           {/* 4️⃣ System Preferences */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>

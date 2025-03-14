@@ -3,8 +3,7 @@ import AdminSidebar from "../components/sidebars/AdminSidebar";
 import AdminTopNav from "../components/topnav/AdminTopNav";
 import AdminMobileNav from "../components/topnav/AdminMobileNav";
 import { useOutletContext } from "react-router-dom";
-import { Card, CardContent, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid2"; // Use Grid2 instead of Grid
+import { Card, CardContent } from "@mui/material";
 
 const Students = () => {
   const { admin, theme, students } = useOutletContext();
@@ -30,18 +29,13 @@ const Students = () => {
         <AdminTopNav theme={theme} admin={admin} students={students} />
 
         <div className="mt-6">
-          <Typography
-            variant="h4"
-            className="text-[#0061A2] text-4xl font-semibold mb-4"
-          >
-            Students List
-          </Typography>
+          <h4 className="text-[#0061A2] text-4xl font-semibold mb-4">Students List</h4>
 
           {sortedStudents.length > 0 ? (
-            <Grid container spacing={3}>
+            <div className="flex flex-wrap max-lg:justify-center justify-between gap-3 max-md:gap-6 text-[#0061A2]">
               {sortedStudents.map((student) => (
-                <Grid key={student.id} xs={12} sm={6} md={4} lg={3}>
-                  <Card className="shadow-md rounded-lg">
+                <div key={student.id} className="w-full max-w-[280px] sm:w-[48%] md:w-[40%] lg:w-[24%]">
+                  <Card className="shadow-md rounded-lg w-full flex justify-center items-center">
                     <CardContent>
                       {/* Display the student's image */}
                       {student.facial_image ? (
@@ -52,41 +46,24 @@ const Students = () => {
                         />
                       ) : (
                         <div className="w-full h-48 bg-gray-200 rounded-md mb-4 flex items-center justify-center">
-                          <Typography variant="body2" color="textSecondary">
-                            No Image
-                          </Typography>
+                          <p className="text-gray-500">No Image</p>
                         </div>
                       )}
-
-                      <Typography variant="h6" className="font-bold">
-                        {`${student?.firstname || "Guest"} ${
-                          student?.lastname || ""
-                        }`}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Full Name:{" "}
-                        {`${student?.firstname || "Guest"} ${
-                          student?.lastname || ""
-                        }`}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Matric Number: {student.matricNumber}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Email: {student.email}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        Department: {student.department}
-                      </Typography>
+                      <div className="flex flex-col h-30">
+                        <h1 className="font-bold text-[#0061A2] text-2xl mb-2">
+                          {`${student?.firstname || "Guest"} ${student?.lastname || ""}`}
+                        </h1>
+                        <p className="text-[#0061A2] text-[15px]">Full Name: {`${student?.firstname || "Guest"} ${student?.lastname || ""}`}</p>
+                        <p className="text-[#0061A2] text-[15px]">Matric Number: {student.matricNumber}</p>
+                        <p className="text-[#0061A2] text-[15px]">Department: {student.department}</p>
+                      </div>
                     </CardContent>
                   </Card>
-                </Grid>
+                </div>
               ))}
-            </Grid>
+            </div>
           ) : (
-            <Typography variant="body1" className="text-gray-500">
-              No students found.
-            </Typography>
+            <p className="text-gray-500">No students found.</p>
           )}
         </div>
       </div>

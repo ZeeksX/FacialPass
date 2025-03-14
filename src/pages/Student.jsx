@@ -82,7 +82,7 @@ const Student = () => {
                 </div>
                 <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
                   <span className="text-5xl font-bold">
-                    {student.authenticated ? student.authenticated : 0}
+                    {student.takenCourses ? student.takenCourses.length : 0}
                   </span>
                   <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                     Total Exams Authenticated

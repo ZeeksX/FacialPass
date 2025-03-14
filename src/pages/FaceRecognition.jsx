@@ -6,7 +6,7 @@ import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import spinner from '../assets/spinner.svg';
 import Toast from "../components/Toast";
 
-const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
+const FaceRecognition = ({ selectedExam, onAuthenticate, onImageCapture }) => {
     const webcamRef = useRef(null);
     const [image, setImage] = useState(null);
     const [status, setStatus] = useState(null);
@@ -77,10 +77,14 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
     };
 
     const capture = () => {
-        console.log("Capturing image...");
         const imageSrc = webcamRef.current.getScreenshot();
-        console.log("Captured Image:", imageSrc);
         setImage(imageSrc);
+
+        // Pass the captured image to the parent component
+        if (onImageCapture) {
+            onImageCapture(imageSrc);
+        }
+
         authenticateStudent(imageSrc, "base64");
     };
 
@@ -88,9 +92,19 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
         const file = event.target.files[0];
         if (file) {
             console.log("File selected:", file.name);
-            const imageURL = URL.createObjectURL(file);
-            setImage(imageURL);
-            authenticateStudent(file, "file");
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageURL = e.target.result;
+                setImage(imageURL);
+
+                // Pass the uploaded image to the parent component
+                if (onImageCapture) {
+                    onImageCapture(imageURL);
+                }
+
+                authenticateStudent(imageURL, "base64");
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -154,12 +168,12 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 }
             } else {
                 setStatus("Not Authenticated");
-                setToast({ open: true, message: data.message, severity: "error" });
+                setToast({ open: true, message: data.message || "Authentication failed", severity: "error" });
             }
         } catch (error) {
             console.error("Error authenticating student:", error);
             setStatus("Error");
-            setToast({ open: true, message: data.message, severity: "error" });
+            setToast({ open: true, message: "Authentication error. Please try again.", severity: "error" });
         }
     };
 
@@ -172,7 +186,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
             const distance = faceapi.euclideanDistance(descriptor, face.descriptor);
             console.log(`Comparing with ${face.name}, Distance: ${distance}`);
 
-            if (distance < minDistance && distance < 0.6) {
+            if (distance < minDistance && distance < 0.5) {
                 minDistance = distance;
                 recognizedName = face.name;
             }
@@ -191,7 +205,7 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
             <div className="relative rounded-lg h-[328px] w-full bg-black">
                 {isCameraOn && (
                     <Webcam
-                        className="rounded-lg w-full object-fill"
+                        className="rounded-lg w-full h-full object-fill"
                         audio={false}
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
@@ -235,8 +249,6 @@ const FaceRecognition = ({ selectedExam, onAuthenticate }) => {
                 </button>
             </div>
 
-            <input type="file" accept="image/*" onChange={handleFileChange} />
-            <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} />
         </div>
     );
 };
