@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
@@ -17,26 +17,30 @@ const UploadImage = () => {
   const [toastSeverity, setToastSeverity] = useState("success");
   const [loader, setLoader] = useState(false);
   const [modelsLoaded, setModelsLoaded] = useState(false);
-  const [isFaceDetected, setIsFaceDetected] = useState(false); // Track face detection status
-  const [isLoadingModels, setIsLoadingModels] = useState(true); // Track model loading state
-  const fileInputRef = useRef(null); // Ref for the file input
+  const [isFaceDetected, setIsFaceDetected] = useState(false);
+  const [isLoadingModels, setIsLoadingModels] = useState(true);
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
 
+  // Load models only when needed
   useEffect(() => {
+    console.log("Component mounted. Loading models...");
+
     const loadModels = async () => {
       try {
-        // Show loading toast
         setToastMessage("Loading models...");
         setToastSeverity("info");
         setToastOpen(true);
 
-        // Load face-api.js models
-        await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-        await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
-        await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+        // Load models in parallel
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+          faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+          faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+        ]);
 
-        // Models loaded successfully
+        console.log("Models loaded successfully!");
         setModelsLoaded(true);
         setIsLoadingModels(false);
         setToastMessage("Models loaded successfully!");
@@ -54,6 +58,134 @@ const UploadImage = () => {
     loadModels();
   }, []);
 
+  // Memoize the detectFace function
+  const detectFace = useCallback(async (imageData) => {
+    console.log("Detecting face in the image...");
+    try {
+      const img = await faceapi.fetchImage(imageData);
+      const detections = await faceapi
+        .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+        .withFaceLandmarks()
+        .withFaceDescriptors();
+      console.log("Face detection results:", detections);
+      return detections.length > 0;
+    } catch (error) {
+      console.error("Error detecting face:", error);
+      setToastMessage("Error detecting face. Please try again.");
+      setToastSeverity("error");
+      setToastOpen(true);
+      return false;
+    }
+  }, []);
+
+  const handleFileChange = async (event) => {
+    console.log("File input changed");
+    if (!modelsLoaded) {
+      console.log("Models are still loading. Cannot process file.");
+      setToastMessage("Models are still loading. Please wait.");
+      setToastSeverity("warning");
+      setToastOpen(true);
+      return;
+    }
+
+    const file = event.target.files[0];
+    if (file) {
+      console.log("File selected:", file.name);
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        console.log("File read complete. Setting image preview...");
+        setImagePreview(reader.result);
+        const faceDetected = await detectFace(reader.result);
+        setIsFaceDetected(faceDetected);
+        if (faceDetected) {
+          console.log("Face detected in the image.");
+          setToastMessage("Face detected successfully!");
+          setToastSeverity("success");
+          setToastOpen(true);
+        } else {
+          console.log("No face detected in the image.");
+          setToastMessage("No face detected. Please upload a valid face image.");
+          setToastSeverity("error");
+          setToastOpen(true);
+          setSelectedFile(null);
+          setImagePreview(null);
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log("No file selected.");
+      setToastMessage("File not uploaded");
+      setToastSeverity("error");
+      setToastOpen(true);
+    }
+  };
+
+  const handleToastClose = () => {
+    console.log("Toast closed.");
+    setToastOpen(false);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log("Form submission started.");
+
+    if (!selectedFile || !isFaceDetected) {
+      console.log("Invalid file or no face detected. Cannot submit.");
+      setToastMessage("Please select a valid image file with a detectable face.");
+      setToastSeverity("error");
+      setToastOpen(true);
+      return;
+    }
+
+    setLoader(true);
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    console.log("User data retrieved from localStorage:", userData);
+
+    const formData = new FormData();
+    formData.append("firstname", userData.firstname);
+    formData.append("lastname", userData.lastname);
+    formData.append("department", userData.department);
+    formData.append("matricNumber", userData.matricNum);
+    formData.append("email", userData.email);
+    formData.append("password", userData.password);
+    formData.append("facial_image", selectedFile);
+
+    try {
+      console.log("Sending registration request to the server...");
+      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
+        method: "POST",
+        body: formData,
+      });
+
+      console.log("Response status:", res.status);
+      const data = await res.json();
+      console.log("Server response:", data);
+
+      if (res.ok) {
+        console.log("Registration successful. Redirecting to login...");
+        setToastOpen(true);
+        setToastMessage("Registration successful! Redirecting...");
+        setToastSeverity("success");
+        localStorage.setItem("token", data.token);
+        localStorage.removeItem("userData");
+        setTimeout(() => navigate("/login"), 2000);
+      } else {
+        console.log("Registration failed:", data.message);
+        setToastMessage(data.message || "Registration failed. Please try again.");
+        setToastSeverity("error");
+        setToastOpen(true);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      setToastMessage("An error occurred. Please try again.");
+      setToastSeverity("error");
+      setToastOpen(true);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -65,111 +197,6 @@ const UploadImage = () => {
     whiteSpace: "nowrap",
     width: 1,
   });
-
-  const handleFileChange = async (event) => {
-    if (!modelsLoaded) {
-      setToastMessage("Models are still loading. Please wait.");
-      setToastSeverity("warning");
-      setToastOpen(true);
-      return;
-    }
-
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        setImagePreview(reader.result);
-        const faceDetected = await detectFace(reader.result);
-        setIsFaceDetected(faceDetected); // Update face detection status
-        if (faceDetected) {
-          setToastMessage("Face detected successfully!");
-          setToastSeverity("success");
-          setToastOpen(true);
-        } else {
-          setToastMessage("No face detected. Please upload a valid face image.");
-          setToastSeverity("error");
-          setToastOpen(true);
-          setSelectedFile(null);
-          setImagePreview(null);
-        }
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setToastMessage("File not uploaded");
-      setToastSeverity("error");
-      setToastOpen(true);
-    }
-  };
-
-  const detectFace = async (imageData) => {
-    try {
-      const img = await faceapi.fetchImage(imageData);
-      const detections = await faceapi
-        .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceDescriptors();
-      return detections.length > 0;
-    } catch (error) {
-      console.error("Error detecting face:", error);
-      setToastMessage("Error detecting face. Please try again.");
-      setToastSeverity("error");
-      setToastOpen(true);
-      return false;
-    }
-  };
-
-  const handleToastClose = () => setToastOpen(false);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!selectedFile || !isFaceDetected) {
-      setToastMessage("Please select a valid image file with a detectable face.");
-      setToastSeverity("error");
-      setToastOpen(true);
-      return;
-    }
-
-    setLoader(true);
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    const formData = new FormData();
-    formData.append("firstname", userData.firstname);
-    formData.append("lastname", userData.lastname);
-    formData.append("department", userData.department);
-    formData.append("matricNumber", userData.matricNum);
-    formData.append("email", userData.email);
-    formData.append("password", userData.password);
-    formData.append("facial_image", selectedFile);
-
-    try {
-      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setToastOpen(true);
-        setToastMessage("Registration successful! Redirecting...");
-        setToastSeverity("success");
-        setLoader(true);
-        localStorage.setItem("token", data.token);
-        localStorage.removeItem("userData");
-        setTimeout(() => navigate("/login"), 2000);
-      } else {
-        setToastMessage(data.message || "Registration failed. Please try again.");
-        setToastSeverity("error");
-        setToastOpen(true);
-        setLoader(false)
-      }
-    } catch (error) {
-      setToastMessage("An error occurred. Please try again.");
-      setToastSeverity("error");
-      setToastOpen(true);
-      setLoader(false);
-    }
-  };
 
   return (
     <>
@@ -191,7 +218,7 @@ const UploadImage = () => {
                 component="label"
                 variant="contained"
                 startIcon={<CloudUploadIcon />}
-                disabled={isLoadingModels} // Disable button while models are loading
+                disabled={isLoadingModels}
               >
                 Upload file
                 <VisuallyHiddenInput
@@ -200,7 +227,7 @@ const UploadImage = () => {
                   accept="image/*"
                   name="facial_image"
                   ref={fileInputRef}
-                  disabled={isLoadingModels} // Disable input while models are loading
+                  disabled={isLoadingModels}
                 />
               </Button>
               {imagePreview && (
@@ -212,7 +239,7 @@ const UploadImage = () => {
               <button
                 className="w-full cursor-pointer flex items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
                 type="submit"
-                disabled={isLoadingModels || !isFaceDetected} // Disable button while models are loading or no face is detected
+                disabled={isLoadingModels || !isFaceDetected}
               >
                 Sign up
               </button>
