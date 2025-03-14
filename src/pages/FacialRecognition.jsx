@@ -129,18 +129,6 @@ const FacialRecognition = () => {
         // Append the image Blob
         formData.append('facial_image', imageBlob);
 
-        const userData = JSON.parse(localStorage.getItem("userData"));
-        const formData = new FormData();
-        formData.append("firstname", userData.firstname);
-        formData.append("lastname", userData.lastname);
-        formData.append("department", userData.department);
-        formData.append("matricNumber", userData.matricNum);
-        formData.append("email", userData.email);
-        formData.append("password", userData.password);
-
-        // Append the image Blob
-        formData.append('facial_image', imageBlob);
-
         try {
             const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
                 method: "POST",
