@@ -25,7 +25,6 @@ const UploadImage = () => {
 
   // Load models only when needed
   useEffect(() => {
-    console.log("Component mounted. Loading models...");
 
     const loadModels = async () => {
       try {
@@ -40,7 +39,6 @@ const UploadImage = () => {
           faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
         ]);
 
-        console.log("Models loaded successfully!");
         setModelsLoaded(true);
         setIsLoadingModels(false);
         setToastMessage("Models loaded successfully!");
@@ -60,14 +58,12 @@ const UploadImage = () => {
 
   // Memoize the detectFace function
   const detectFace = useCallback(async (imageData) => {
-    console.log("Detecting face in the image...");
     try {
       const img = await faceapi.fetchImage(imageData);
       const detections = await faceapi
         .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
         .withFaceDescriptors();
-      console.log("Face detection results:", detections);
       return detections.length > 0;
     } catch (error) {
       console.error("Error detecting face:", error);
@@ -79,9 +75,7 @@ const UploadImage = () => {
   }, []);
 
   const handleFileChange = async (event) => {
-    console.log("File input changed");
     if (!modelsLoaded) {
-      console.log("Models are still loading. Cannot process file.");
       setToastMessage("Models are still loading. Please wait.");
       setToastSeverity("warning");
       setToastOpen(true);
@@ -90,21 +84,17 @@ const UploadImage = () => {
 
     const file = event.target.files[0];
     if (file) {
-      console.log("File selected:", file.name);
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = async () => {
-        console.log("File read complete. Setting image preview...");
         setImagePreview(reader.result);
         const faceDetected = await detectFace(reader.result);
         setIsFaceDetected(faceDetected);
         if (faceDetected) {
-          console.log("Face detected in the image.");
           setToastMessage("Face detected successfully!");
           setToastSeverity("success");
           setToastOpen(true);
         } else {
-          console.log("No face detected in the image.");
           setToastMessage("No face detected. Please upload a valid face image.");
           setToastSeverity("error");
           setToastOpen(true);
@@ -114,7 +104,6 @@ const UploadImage = () => {
       };
       reader.readAsDataURL(file);
     } else {
-      console.log("No file selected.");
       setToastMessage("File not uploaded");
       setToastSeverity("error");
       setToastOpen(true);
@@ -122,16 +111,13 @@ const UploadImage = () => {
   };
 
   const handleToastClose = () => {
-    console.log("Toast closed.");
     setToastOpen(false);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Form submission started.");
 
     if (!selectedFile || !isFaceDetected) {
-      console.log("Invalid file or no face detected. Cannot submit.");
       setToastMessage("Please select a valid image file with a detectable face.");
       setToastSeverity("error");
       setToastOpen(true);
@@ -140,7 +126,6 @@ const UploadImage = () => {
 
     setLoader(true);
     const userData = JSON.parse(localStorage.getItem("userData"));
-    console.log("User data retrieved from localStorage:", userData);
 
     const formData = new FormData();
     formData.append("firstname", userData.firstname);
@@ -152,38 +137,33 @@ const UploadImage = () => {
     formData.append("facial_image", selectedFile);
 
     try {
-      console.log("Sending registration request to the server...");
       const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
         method: "POST",
         body: formData,
       });
 
-      console.log("Response status:", res.status);
       const data = await res.json();
-      console.log("Server response:", data);
-
       if (res.ok) {
-        console.log("Registration successful. Redirecting to login...");
         setToastOpen(true);
         setToastMessage("Registration successful! Redirecting...");
+        setLoader(true);
         setToastSeverity("success");
         localStorage.setItem("token", data.token);
         localStorage.removeItem("userData");
-        setTimeout(() => navigate("/login"), 2000);
+        setTimeout(() => navigate("/login"), 1000);
       } else {
-        console.log("Registration failed:", data.message);
         setToastMessage(data.message || "Registration failed. Please try again.");
         setToastSeverity("error");
         setToastOpen(true);
+        setLoader(false);
       }
     } catch (error) {
       console.error("Error during registration:", error);
       setToastMessage("An error occurred. Please try again.");
       setToastSeverity("error");
       setToastOpen(true);
-    } finally {
       setLoader(false);
-    }
+    } 
   };
 
   const VisuallyHiddenInput = styled("input")({
