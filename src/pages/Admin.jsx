@@ -8,10 +8,12 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { useOutletContext } from "react-router-dom";
 import AdminMobileNav from "../components/topnav/AdminMobileNav";
 import AdminTopNav from "../components/topnav/AdminTopNav";
+import AdminNotifications from "../components/AdminNotifications"; // Import the Notifications component
 
 const Admin = () => {
-  const { admin, theme, students } = useOutletContext();
-  console.log("Admins: ", admin)
+  const { admin, theme, students, courses } = useOutletContext();
+
+  // Get today's date in the required format
   const getTodayDate = () => {
     return dayjs(new Date()).format("YYYY-MM-DD");
   };
@@ -37,7 +39,7 @@ const Admin = () => {
                 </h1>
               </div>
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{admin.admin.length ? admin.admin.length : 0}</span>
+                <span className="text-5xl font-bold">{courses.length ? courses.length : 0}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                   Total Courses
                 </h1>
@@ -55,6 +57,9 @@ const Admin = () => {
             </LocalizationProvider>
           </div>
         </div>
+
+        {/* Render Notifications Component */}
+        <AdminNotifications admin={admin} courses={courses} />
       </div>
     </div>
   );

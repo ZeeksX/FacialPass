@@ -2,17 +2,24 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import FaceRecognition from "./FaceRecognition";
 import HowToRegIcon from '@mui/icons-material/HowToReg';
-import Toast from "../components/Toast"; // Import the Toast component
+import Toast from "../components/Toast";
 
 const Authentication = () => {
   const location = useLocation();
   const selectedExam = location.state?.selectedExam;
   const [student, setStudent] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
   const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
 
   // Handle closing the toast
   const handleCloseToast = () => {
     setToast({ ...toast, open: false });
+  };
+
+  // Handle capture of image from FaceRecognition component
+  const handleImageCapture = (imageData) => {
+    console.log("Image captured in parent:", imageData);
+    setCapturedImage(imageData);
   };
 
   // Handle successful authentication
@@ -27,6 +34,9 @@ const Authentication = () => {
           matricNumber: authenticatedStudent.matricNumber,
           courseCode: selectedExam.course_code,
           courseName: selectedExam.course_name,
+          firstname: authenticatedStudent.firstname,
+          lastname: authenticatedStudent.lastname,
+          imageData: capturedImage // Send the captured image
         }),
       });
 
@@ -43,24 +53,28 @@ const Authentication = () => {
 
   return (
     <div className="flex pt-4 justify-center min-h-screen w-full bg-gray-100">
-      <div className="rounded-md h-[90vh] shadow bg-white flex flex-col items-center w-2/5">
-        <div className="flex text-white flex-col w-full rounded-t-md h-30 gap-2 bg-gradient-to-r from-[#0061A2] to-[#0061a263] p-4">
+      <div className="rounded-md h-[90vh] max-lg:h-auto max-md:mb-2 shadow bg-white flex flex-col items-center w-3/5 lg:w-2/5 max-md:w-[90vw]">
+        <div className="flex text-white flex-col w-full rounded-t-md h-30 max-lg:h-40 gap-2 bg-gradient-to-r from-[#0061A2] to-[#0061a263] p-4">
           <h1 className="flex items-center justify-center gap-2">
             <HowToRegIcon /> <strong className="text-xl">Exam Authentication</strong>
           </h1>
           <div className="flex justify-between w-full items-center">
-            <h2>Course Code: <strong>{selectedExam.course_code}</strong></h2>
-            <h2>Course Title: <strong>{selectedExam.course_name}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-left">Course Code: <strong>{selectedExam?.course_code}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-right">Course Title: <strong>{selectedExam?.course_name}</strong></h2>
           </div>
           <div className="flex justify-between w-full items-center">
-            <h2>Credits: <strong>{selectedExam.credit_unit}</strong></h2>
-            <h2>Exam Date: <strong>{selectedExam.examDate}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-left">Credits: <strong>{selectedExam?.credit_unit}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-right">Exam Date: <strong>{selectedExam?.examDate}</strong></h2>
           </div>
         </div>
 
         {selectedExam ? (
           <div className="w-full p-4">
-            <FaceRecognition selectedExam={selectedExam} onAuthenticate={handleAuthentication} />
+            <FaceRecognition
+              selectedExam={selectedExam}
+              onAuthenticate={handleAuthentication}
+              onImageCapture={handleImageCapture}
+            />
             {student && (
               <div className="mt-4 text-center">
                 <h3 className="text-green-600 text-lg font-semibold">Authentication Successful</h3>
@@ -74,7 +88,7 @@ const Authentication = () => {
       </div>
 
       {/* Toast Notification */}
-      {/* <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} /> */}
+      <Toast open={toast.open} message={toast.message} severity={toast.severity} onClose={handleCloseToast} />
     </div>
   );
 };
