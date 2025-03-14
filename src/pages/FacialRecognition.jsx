@@ -177,7 +177,7 @@ const FacialRecognition = () => {
                 </div>
                 <div className="w-full p-4">
                     <div className="flex w-full flex-col items-center">
-                        <div className="relative rounded-lg h-[328px] max-md:h-[250px] w-full bg-black">
+                        <div className="relative rounded-lg h-[328px] w-full bg-black">
                             {cameraActive && !imagePreview ? (
                                 <Webcam
                                     className="rounded-lg w-full h-full object-fill"
