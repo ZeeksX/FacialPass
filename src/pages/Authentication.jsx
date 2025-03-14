@@ -6,7 +6,7 @@ import Toast from "../components/Toast";
 
 const Authentication = () => {
   const location = useLocation();
-  const selectedExam = location.state?.selectedExam;
+  const selectedCourse = location.state?.selectedCourse;
   const [student, setStudent] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [toast, setToast] = useState({ open: false, message: "", severity: "info" });
@@ -18,7 +18,6 @@ const Authentication = () => {
 
   // Handle capture of image from FaceRecognition component
   const handleImageCapture = (imageData) => {
-    console.log("Image captured in parent:", imageData);
     setCapturedImage(imageData);
   };
 
@@ -32,8 +31,8 @@ const Authentication = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matricNumber: authenticatedStudent.matricNumber,
-          courseCode: selectedExam.course_code,
-          courseName: selectedExam.course_name,
+          courseCode: selectedCourse.course_code,
+          courseName: selectedCourse.course_name,
           firstname: authenticatedStudent.firstname,
           lastname: authenticatedStudent.lastname,
           imageData: capturedImage // Send the captured image
@@ -59,19 +58,19 @@ const Authentication = () => {
             <HowToRegIcon /> <strong className="text-xl">Exam Authentication</strong>
           </h1>
           <div className="flex justify-between w-full items-center">
-            <h2 className="max-lg:flex flex-col text-left">Course Code: <strong>{selectedExam?.course_code}</strong></h2>
-            <h2 className="max-lg:flex flex-col text-right">Course Title: <strong>{selectedExam?.course_name}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-left">Course Code: <strong>{selectedCourse?.course_code}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-right">Course Title: <strong>{selectedCourse?.course_name}</strong></h2>
           </div>
           <div className="flex justify-between w-full items-center">
-            <h2 className="max-lg:flex flex-col text-left">Credits: <strong>{selectedExam?.credit_unit}</strong></h2>
-            <h2 className="max-lg:flex flex-col text-right">Exam Date: <strong>{selectedExam?.examDate}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-left">Credits: <strong>{selectedCourse?.credit_unit}</strong></h2>
+            <h2 className="max-lg:flex flex-col text-right">Exam Date: <strong>{selectedCourse?.examDate}</strong></h2>
           </div>
         </div>
 
-        {selectedExam ? (
+        {selectedCourse ? (
           <div className="w-full p-4">
             <FaceRecognition
-              selectedExam={selectedExam}
+              selectedCourse={selectedCourse}
               onAuthenticate={handleAuthentication}
               onImageCapture={handleImageCapture}
             />

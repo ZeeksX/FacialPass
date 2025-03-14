@@ -31,6 +31,7 @@ import Students from "./pages/Students"
 import AdminSettings from "./pages/AdminSettings";
 import AdminProfile from "./pages/AdminProfile";
 import Authentication from "./pages/Authentication";
+import ExamStudents from "./pages/ExamStudents";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -98,9 +99,10 @@ const App = () => {
             <Route path="adminDashboard" element={<Admin isMobile={isMobile} />} />
             <Route path="Exams" element={<Exams isMobile={isMobile} />} />
             <Route path="Students" element={<Students isMobile={isMobile} />} />
+            <Route path="/:exam/students" element={<ExamStudents />} />
             <Route path="/admin/profile" element={<AdminProfile isMobile={isMobile} />} />
             <Route path="/admin/settings" element={<AdminSettings isMobile={isMobile} />} />
-            <Route path="authenticate" element={<Authentication isMobile={isMobile} />} />
+            <Route path="/exams/:courseName/authenticate" element={<Authentication isMobile={isMobile} />} />
           </Route>
 
           <Route

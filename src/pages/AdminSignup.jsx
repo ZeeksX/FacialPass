@@ -77,7 +77,6 @@ const AdminSignup = () => {
       });
 
       const data = await res.json();
-      console.log("API Response:", data);
 
       if (res.ok) {
         setUser({ id: data.admin.id, email: data.admin.email, role: data.admin.role });
@@ -98,7 +97,7 @@ const AdminSignup = () => {
         setToastOpen(true);
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setToastSeverity("error");
       setToastMessage("An error occurred. Please try again.");
       setToastOpen(true);

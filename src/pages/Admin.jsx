@@ -11,8 +11,9 @@ import AdminTopNav from "../components/topnav/AdminTopNav";
 import AdminNotifications from "../components/AdminNotifications"; // Import the Notifications component
 
 const Admin = () => {
-  const { admin, theme, students, courses } = useOutletContext();
-
+  const { admin, theme } = useOutletContext();
+  const students = admin.allStudents;
+  const courses = admin.allCourses;
   // Get today's date in the required format
   const getTodayDate = () => {
     return dayjs(new Date()).format("YYYY-MM-DD");
@@ -33,7 +34,7 @@ const Admin = () => {
             </div>
             <div className="flex md:flex-row flex-col gap-8 items-center justify-between lg:h-20 my-8">
               <div className="flex flex-col justify-between items-end shadow-md rounded-md w-full lg:w-[48%] h-32 p-3">
-                <span className="text-5xl font-bold">{students ? students.length : 0}</span>
+                <span className="text-5xl font-bold">{students.length ? students.length : 0}</span>
                 <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                   Total Students Registered
                 </h1>
@@ -59,7 +60,7 @@ const Admin = () => {
         </div>
 
         {/* Render Notifications Component */}
-        <AdminNotifications admin={admin} courses={courses} />
+        <AdminNotifications courses={courses} />
       </div>
     </div>
   );
