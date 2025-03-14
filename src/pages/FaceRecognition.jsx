@@ -99,7 +99,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
             }
 
             const [firstName, lastName] = recognizedName.split(" ");
-            const response = await fetch("http://localhost:5000/api/auth/authenticate", {
+            const response = await fetch("https://facialpass-backend.onrender.com/api/auth/authenticate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

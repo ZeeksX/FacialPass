@@ -46,7 +46,7 @@ const AdminDashboard = () => {
         await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
         await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
 
-        const response = await fetch("http://localhost:5000/api/auth/known-faces");
+        const response = await fetch("https://facialpass-backend.onrender.com/api/auth/known-faces");
         const knownFacesData = await response.json();
         // Compute descriptors for each known face
         const knownFacesWithDescriptors = await Promise.all(
