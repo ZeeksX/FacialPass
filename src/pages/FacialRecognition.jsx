@@ -18,26 +18,46 @@ const FacialRecognition = () => {
     const [toastMessage, setToastMessage] = useState("");
     const [toastSeverity, setToastSeverity] = useState("success");
     const [isLoading, setIsLoading] = useState(false);
+    const [modelsLoaded, setModelsLoaded] = useState(false); // Track if models are loaded
+    const [imagePreview, setImagePreview] = useState(null); // Preview captured image
     const navigate = useNavigate();
 
     // Load Face API models on component mount
     useEffect(() => {
         const loadModels = async () => {
             try {
+                setIsLoading(true);
+                setToastMessage("Loading face detection models...");
+                setToastSeverity("info");
+                setToastOpen(true);
+
                 await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
                 await faceapi.nets.faceLandmark68Net.loadFromUri("/models");
                 await faceapi.nets.faceRecognitionNet.loadFromUri("/models");
+
+                setModelsLoaded(true); // Models are loaded
+                setIsLoading(false);
+                setToastMessage("Models loaded successfully!");
+                setToastSeverity("success");
+                setToastOpen(true);
             } catch (err) {
                 console.error("Error loading Face API models:", err);
                 setToastMessage("Failed to load face detection models.");
                 setToastSeverity("error");
                 setToastOpen(true);
+                setIsLoading(false);
             }
         };
         loadModels();
     }, []);
 
     const startCamera = () => {
+        if (!modelsLoaded) {
+            setToastMessage("Face detection models are still loading. Please wait.");
+            setToastSeverity("warning");
+            setToastOpen(true);
+            return;
+        }
         setCameraActive(true);
         setIsLoading(true);
     };
@@ -47,6 +67,13 @@ const FacialRecognition = () => {
     };
 
     const captureImage = async () => {
+        if (!modelsLoaded) {
+            setToastMessage("Face detection models are still loading. Please wait.");
+            setToastSeverity("warning");
+            setToastOpen(true);
+            return;
+        }
+
         const imageSrc = webcamRef.current.getScreenshot();
         if (!imageSrc) return;
 
@@ -76,29 +103,43 @@ const FacialRecognition = () => {
         }
 
         setImageBlob(compressedBlob);
+        setImagePreview(imageSrc); // Set image preview
         setToastMessage("Face detected successfully.");
         setToastSeverity("success");
         setToastOpen(true);
     };
 
     const handleSubmit = async () => {
-        const userData = JSON.parse(localStorage.getItem('userData'));
-        const formData = new FormData();
-
-        // Append user data
-        Object.keys(userData).forEach(key => {
-            formData.append(key, userData[key]);
-        });
-
-        // Append the image Blob
-        if (imageBlob) {
-            formData.append('facial_image', imageBlob);
-        } else {
+        if (!imageBlob) {
             setToastMessage("No valid face detected. Please capture again.");
             setToastSeverity("error");
             setToastOpen(true);
             return;
         }
+
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        const formData = new FormData();
+        formData.append("firstname", userData.firstname);
+        formData.append("lastname", userData.lastname);
+        formData.append("department", userData.department);
+        formData.append("matricNumber", userData.matricNum);
+        formData.append("email", userData.email);
+        formData.append("password", userData.password);
+
+        // Append the image Blob
+        formData.append('facial_image', imageBlob);
+
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        const formData = new FormData();
+        formData.append("firstname", userData.firstname);
+        formData.append("lastname", userData.lastname);
+        formData.append("department", userData.department);
+        formData.append("matricNumber", userData.matricNum);
+        formData.append("email", userData.email);
+        formData.append("password", userData.password);
+
+        // Append the image Blob
+        formData.append('facial_image', imageBlob);
 
         try {
             const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
@@ -145,12 +186,11 @@ const FacialRecognition = () => {
                     <h1 className="flex items-center justify-center gap-2">
                         Please upload a clear image of your face
                     </h1>
-
                 </div>
                 <div className="w-full p-4">
                     <div className="flex w-full flex-col items-center">
-                        <div className="relative rounded-lg h-[328px] max-md:h-[250px] w-full bg-black">
-                            {cameraActive ? (
+                        <div className="relative rounded-lg h-[328px] w-full bg-black">
+                            {cameraActive && !imagePreview ? (
                                 <Webcam
                                     className="rounded-lg w-full h-full object-fill"
                                     audio={false}
@@ -158,6 +198,12 @@ const FacialRecognition = () => {
                                     screenshotFormat="image/jpeg"
                                     videoConstraints={videoConstraints}
                                     onUserMedia={() => setIsLoading(false)}
+                                />
+                            ) : imagePreview ? (
+                                <img
+                                    src={imagePreview}
+                                    alt="Captured"
+                                    className="rounded-lg w-full h-full object-fill"
                                 />
                             ) : (
                                 <div className="absolute inset-0 flex justify-center items-center text-gray-500">
@@ -178,6 +224,7 @@ const FacialRecognition = () => {
                                     <button
                                         className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
                                         onClick={startCamera}
+                                        disabled={!modelsLoaded || isLoading}
                                     >
                                         <span className="mr-2"><CameraAltIcon /></span>
                                         Start Camera
@@ -194,7 +241,7 @@ const FacialRecognition = () => {
                                 <button
                                     className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
                                     onClick={captureImage}
-                                    disabled={!cameraActive}
+                                    disabled={!cameraActive || isLoading}
                                 >
                                     <span className="mr-2"><CenterFocusStrongIcon /></span>
                                     Capture Image
@@ -204,13 +251,12 @@ const FacialRecognition = () => {
                                 <button
                                     className="flex flex-row max-md:w-44 cursor-pointer rounded-md py-2 px-3 font-medium text-base text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"
                                     onClick={handleSubmit}
-                                    disabled={!imageBlob}
+                                    disabled={!imageBlob || isLoading}
                                 >
                                     <span className='mr-2'><SendIcon /> </span>
                                     Submit
                                 </button>
                             </div>
-
                         </div>
 
                         {/* Toast Notification */}

@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -28,13 +30,13 @@ const Onboarding = () => {
             onClick={handleUploadImage}
             className="w-full flex items-center cursor-pointer justify-center h-12 font-semibold rounded-lg bg-[#0061A2] hover:bg-[#1836B2] text-white py-2 px-4 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
           >
-            Upload an Image
+            <span className="mr-2"><CloudUploadIcon /></span>Upload an Image
           </button>
           <button
             onClick={handleTakePicture}
             className="w-full flex items-center cursor-pointer justify-center h-12 font-semibold rounded-lg bg-[#0061A2] hover:bg-[#1836B2] text-white py-2 px-4 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
           >
-            Take a Picture
+            <span className="mr-2"><CameraAltIcon /></span>Take a Picture
           </button>
         </div>
       </div>
