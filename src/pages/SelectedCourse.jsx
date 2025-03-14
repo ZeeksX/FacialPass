@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useOutletContext } from "react-router-dom";
 import StudentSidebar from "../components/sidebars/StudentSidebar";
 import MobileNav from "../components/topnav/MobileNav";
@@ -6,30 +6,7 @@ import TopNav from "../components/topnav/TopNav";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 
 const SelectedCourse = () => {
-  const { student, theme, selectedCourses, setSelectedCourses } = useOutletContext();
-
-  useEffect(() => {
-    const fetchSelectedCourses = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/students/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch selected courses");
-        }
-
-        const data = await response.json();
-        setSelectedCourses(data.courses);
-      } catch (error) {
-        console.error("Error fetching selected courses:", error);
-      }
-    };
-
-    fetchSelectedCourses();
-  }, [setSelectedCourses]);
+  const { student, setStudent, theme } = useOutletContext();
 
   // Function to handle dropping a course
   const handleDropCourse = async (courseId) => {
@@ -47,8 +24,13 @@ const SelectedCourse = () => {
         throw new Error("Failed to drop course");
       }
 
-      // Update the selected courses state
-      setSelectedCourses((prev) => prev.filter(course => course.id !== courseId));
+      // Update the student's registeredCourses array
+      setStudent((prevStudent) => ({
+        ...prevStudent,
+        registeredCourses: prevStudent.registeredCourses.filter(
+          (course) => course.id !== courseId
+        ),
+      }));
     } catch (error) {
       console.error("Error dropping course:", error);
     }
@@ -70,11 +52,11 @@ const SelectedCourse = () => {
                   <TableCell sx={{ color: "#0061A2", fontWeight: "bold" }}>Course Title</TableCell>
                   <TableCell sx={{ color: "#0061A2", fontWeight: "bold" }}>Credits</TableCell>
                   <TableCell sx={{ color: "#0061A2", fontWeight: "bold" }}>Exam Date</TableCell>
-                  <TableCell sx={{ color: "#0061A2", fontWeight: "bold" }}>Actions</TableCell> {/* New column for actions */}
+                  <TableCell sx={{ color: "#0061A2", fontWeight: "bold" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {selectedCourses.map((course) => (
+                {student.registeredCourses.map((course) => (
                   <TableRow key={course.id}>
                     <TableCell sx={{ color: "#0061A2" }}>{course.course_code}</TableCell>
                     <TableCell sx={{ color: "#0061A2" }}>{course.course_name}</TableCell>
@@ -83,7 +65,7 @@ const SelectedCourse = () => {
                     <TableCell>
                       <button
                         className="h-10 flex cursor-pointer items-center justify-center rounded-md font-bold text-white bg-[#0061A2] w-16 hover:bg-red-600"
-                        onClick={() => handleDropCourse(course.id)} // Call drop function
+                        onClick={() => handleDropCourse(course.id)}
                       >
                         Drop
                       </button>

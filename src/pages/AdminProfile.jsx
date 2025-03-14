@@ -26,7 +26,6 @@ import {
 
 const AdminProfile = () => {
   const { admin, theme, students = [] } = useOutletContext();
-  console.log("Admin Data:", admin);
 
   const profileData = {
     email: `${admin.admin.email}`,

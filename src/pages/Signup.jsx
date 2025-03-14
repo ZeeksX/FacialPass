@@ -61,7 +61,6 @@ const Signup = () => {
       });
 
       const data = await res.json();
-      console.log("API Response:", data);
 
       if (res.ok) {
         setUser({ id: data.user.id, email: data.user.email, role: data.user.role });

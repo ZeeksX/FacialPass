@@ -6,8 +6,8 @@ import { useOutletContext } from "react-router-dom";
 import { Card, CardContent } from "@mui/material";
 
 const Students = () => {
-  const { admin, theme, students } = useOutletContext();
-
+  const { admin, theme } = useOutletContext();
+  const students = admin.allStudents;
   // Sort students by ID in ascending order
   const sortedStudents = students ? [...students].sort((a, b) => a.id - b.id) : [];
 

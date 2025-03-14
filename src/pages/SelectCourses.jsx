@@ -7,7 +7,8 @@ import CustomPagination from "../components/Pagination";
 import Toast from "../components/Toast"; // Import the Toast component
 
 const SelectCourses = () => {
-  const { student, theme, courses, selectedCourses, setSelectedCourses } = useOutletContext();
+  const { student, theme, setStudent } = useOutletContext();
+  const courses = student.allCourses;
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
 
@@ -32,6 +33,20 @@ const SelectCourses = () => {
   // Handle course selection
   const handleSelectCourse = async (course) => {
     try {
+      // Check if the course is already registered
+      const isCourseRegistered = student.registeredCourses.some(
+        (registeredCourse) => registeredCourse.id === course.id
+      );
+
+      if (isCourseRegistered) {
+        // Show a warning toast if the course is already registered
+        setToastMessage("You have already registered for this course.");
+        setToastSeverity("warning");
+        setToastOpen(true);
+        return; // Exit the function early
+      }
+
+      // Send a request to the backend to register the course
       const response = await fetch("http://localhost:5000/api/students/select-course", {
         method: "POST",
         headers: {
@@ -47,10 +62,12 @@ const SelectCourses = () => {
       }
 
       const data = await response.json();
-      console.log(data.message);
 
-      // Update the selected courses state
-      setSelectedCourses((prev) => [...prev, course]);
+      // Update the student's registeredCourses array
+      setStudent((prevStudent) => ({
+        ...prevStudent,
+        registeredCourses: [...prevStudent.registeredCourses, course],
+      }));
 
       // Show success toast
       setToastMessage("Course selected successfully!");

@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 const Notifications = ({ student }) => {
-  if (!student || !student.courses || student.courses.length === 0) {
+  if (!student || !student.registeredCourses || student.registeredCourses.length === 0) {
     return (
       <Typography variant="h6" align="center" sx={{ mt: 2, color: "#0061A2" }}>
         No upcoming exams.
@@ -38,7 +38,7 @@ const Notifications = ({ student }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {student.courses.map((course, index) => {
+            {student.registeredCourses.map((course, index) => {
               const examDate = new Date(course.examDate); // Convert string to Date object
               const formattedDate = examDate.toLocaleDateString(); // Extract only the date
               const formattedTime = examDate.toLocaleTimeString(); // Extract only the time

@@ -17,7 +17,7 @@ import Notifications from "../components/Notifications"
 dayjs.extend(utc);
 
 const Student = () => {
-  const { student, theme } = useOutletContext();
+  const { student, theme, selectedCources, setSelectedCourses } = useOutletContext();
 
   // Get today's date in the required format
   const getTodayDate = () => {
@@ -25,7 +25,7 @@ const Student = () => {
   };
 
   // Extract exam dates from student.courses and format them as 'YYYY-MM-DD'
-  const examDates = student.courses.map((course) =>
+  const examDates = student.registeredCourses.map((course) =>
     dayjs(course.examDate).utc().format("YYYY-MM-DD") // Ensure UTC formatting
   );
 
@@ -75,7 +75,7 @@ const Student = () => {
               </div>
               <div className="flex flex-row max-md:flex-col w-full gap-8 items-center justify-between my-8">
                 <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
-                  <span className="text-5xl font-bold">{student.totalCourses}</span>
+                  <span className="text-5xl font-bold">{student.registeredCourses.length}</span>
                   <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
                     Total Courses Registered
                   </h1>

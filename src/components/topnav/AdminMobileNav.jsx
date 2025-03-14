@@ -22,7 +22,6 @@ const AdminMobileNav
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
-    console.log(showSidebar);
   };
 
   useEffect(() => {

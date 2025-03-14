@@ -30,7 +30,6 @@ import {
 
 const Profile = () => {
   const { student, theme } = useOutletContext();
-  console.log("Student data:", student);
 
   const getLastAuthenticationDate = (takenCourses) => {
     if (!takenCourses || takenCourses.length === 0) return "Not Available";
