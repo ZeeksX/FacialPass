@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import PersonIcon from '@mui/icons-material/Person';
@@ -6,62 +6,172 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider } from "@mui/material";
+import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider, createTheme } from "@mui/material";
 import Toast from '../components/Toast';
-import { createTheme } from "@mui/material";
 import signupImage from "../assets/login-image.jpg";
 import logo from "../assets/logo.svg";
 
+const theme = createTheme({
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          color: "#0061A2",
+          "& fieldset": {
+            borderColor: "#0061A2",
+          },
+          "&:hover fieldset": {
+            borderColor: "#0061A2",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "#0061A2",
+          },
+          "&.Mui-error fieldset": {
+            borderColor: "#d32f2f",
+          },
+          height: "2.75rem",
+        },
+        input: {
+          color: "#0061A2",
+          padding: "8.5px 12px",
+          "&::placeholder": {
+            color: "#0061A2",
+            opacity: 0.5,
+          },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          color: "#0061A2",
+          height: "2.75rem",
+        },
+        input: {
+          color: "#0061A2",
+          padding: "8.5px 12px",
+          "&::placeholder": {
+            color: "#0061A2",
+            opacity: 1,
+          },
+        },
+      },
+    },
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          color: "#0061A2",
+        },
+      },
+    },
+  },
+});
+
 const Signup = () => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [matricNum, setMatricNum] = useState("");
-  const [department, setDepartment] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    matricNum: "",
+    department: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const [errors, setErrors] = useState({
+    firstname: "",
+    lastname: "",
+    matricNum: "",
+    department: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [confirmShowPassword, setConfirmShowPassword] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
   const auth = useAuth();
   const { setUser } = auth;
   const navigate = useNavigate();
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickConfirmShowPassword = () => setConfirmShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-  const handleSubmit = async (e) => {
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  }, [errors]);
+
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Validate required fields
+    Object.keys(formData).forEach(field => {
+      if (!formData[field]) {
+        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        isValid = false;
+      }
+    });
+
+    // Email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    // Matric number validation (2 digits/slash/4 digits)
+    if (formData.matricNum && !/^\d{2}\/\d{4}$/.test(formData.matricNum)) {
+      newErrors.matricNum = "Matric number must be in format: 00/0000";
+      isValid = false;
+    }
+
+    // Password match validation
+    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  }, [formData]);
+
+  const handleClickShowPassword = useCallback(() => setShowPassword(prev => !prev), []);
+  const handleClickConfirmShowPassword = useCallback(() => setConfirmShowPassword(prev => !prev), []);
+  const handleMouseDownPassword = useCallback((event) => {
+    event.preventDefault();
+  }, []);
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setToastMessage("Passwords do not match.");
-      setToastOpen(true);
+    if (!validateForm()) {
       return;
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/students/register", {
+      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstname,
-          lastname,
-          matricNum,
-          department,
-          email,
-          password,
+          firstname: formData.firstname,
+          lastname: formData.lastname,
+          matricNum: formData.matricNum,
+          department: formData.department,
+          email: formData.email,
+          password: formData.password,
           role: "student",
         }),
       });
 
       const data = await res.json();
-      console.log("API Response:", data);
 
       if (res.ok) {
         setUser({ id: data.user.id, email: data.user.email, role: data.user.role });
@@ -77,87 +187,38 @@ const Signup = () => {
       setToastMessage("An error occurred. Please try again.");
       setToastOpen(true);
     }
-  };
+  }, [formData, validateForm, setUser]);
 
-  const handleNext = () => {
-    const userData = {
-      firstname,
-      lastname,
-      matricNum,
-      department,
-      email,
-      password,
-    };
-    localStorage.setItem('userData', JSON.stringify(userData));
-    navigate("/onboarding");
-  };
+  const handleNext = useCallback(() => {
+    if (validateForm()) {
+      localStorage.setItem('userData', JSON.stringify({
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        matricNum: formData.matricNum,
+        department: formData.department,
+        email: formData.email,
+        password: formData.password,
+      }));
+      navigate("/onboarding");
+    } else {
+      setToastMessage("Please fix the errors before proceeding.");
+      setToastOpen(true);
+    }
+  }, [formData, validateForm, navigate]);
 
-  const handleToastClose = () => {
+  const handleToastClose = useCallback(() => {
     setToastOpen(false);
-  };
-
-  const theme = createTheme({
-    components: {
-      MuiOutlinedInput: {
-        styleOverrides: {
-          root: {
-            color: "#0061A2",
-            "& fieldset": {
-              borderColor: "#0061A2",
-            },
-            "&:hover fieldset": {
-              borderColor: "#0061A2",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#0061A2",
-            },
-            height: "2.75rem",
-          },
-          input: {
-            color: "#0061A2",
-            padding: "8.5px 12px",
-            "&::placeholder": {
-              color: "#0061A2",
-              opacity: 0.5,
-            },
-          },
-        },
-      },
-      MuiInputBase: {
-        styleOverrides: {
-          root: {
-            color: "#0061A2",
-            height: "2.75rem",
-          },
-          input: {
-            color: "#0061A2",
-            padding: "8.5px 12px",
-            "&::placeholder": {
-              color: "#0061A2",
-              opacity: 1,
-            },
-          },
-        },
-      },
-      MuiInputAdornment: {
-        styleOverrides: {
-          root: {
-            color: "#0061A2",
-          },
-        },
-      },
-    },
-  });
+  }, []);
 
   return (
     <>
-      <div className="flex flex-col overflow-hidden items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
+      <div className="flex flex-col overflow-hidden items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2]">
         <div className="flex flex-row justify-center lg:w-[70%] lg:h-[94vh]">
           <div
             className="lg:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${signupImage})` }}
           ></div>
-          <div className="signup flex flex-col w-full md:w-[70%] lg:w-4/5 rounded-xl lg:rounded-r-xl lg:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4 pb-6">
+          <div className="signup flex flex-col w-full md:w-[70%] lg:w-4/5 rounded-xl lg:rounded-r-xl lg:rounded-none bg-[white] text-[#0061A2] px-2 lg:px-3 gap-2 py-4 pb-6">
             <div className="flex flex-col justify-center items-center gap-1">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-16" src={logo} alt="Facial Pass logo" />
@@ -182,8 +243,11 @@ const Signup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="First Name"
-                    value={firstname}
-                    onChange={(event) => setFirstname(event.target.value)}
+                    name="firstname"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                    error={!!errors.firstname}
+                    helperText={errors.firstname}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -201,8 +265,11 @@ const Signup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Surname"
-                    value={lastname}
-                    onChange={(event) => setLastname(event.target.value)}
+                    name="lastname"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                    error={!!errors.lastname}
+                    helperText={errors.lastname}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -219,9 +286,12 @@ const Signup = () => {
                   <TextField
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
-                    placeholder="Matric Number"
-                    value={matricNum}
-                    onChange={(event) => setMatricNum(event.target.value)}
+                    placeholder="Matric Number (00/0000)"
+                    name="matricNum"
+                    value={formData.matricNum}
+                    onChange={handleChange}
+                    error={!!errors.matricNum}
+                    helperText={errors.matricNum}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -239,8 +309,11 @@ const Signup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Department"
-                    value={department}
-                    onChange={(event) => setDepartment(event.target.value)}
+                    name="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    error={!!errors.department}
+                    helperText={errors.department}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -259,8 +332,11 @@ const Signup = () => {
                   fullWidth
                   variant="outlined"
                   placeholder="Email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -274,19 +350,18 @@ const Signup = () => {
               </ThemeProvider>
 
               <ThemeProvider theme={theme}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl variant="outlined" fullWidth error={!!errors.password}>
                   <OutlinedInput
                     id="outlined-adornment-password"
                     placeholder="Password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
                     type={showPassword ? "text" : "password"}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
-                          aria-label={
-                            showPassword ? "Hide password" : "Show password"
-                          }
+                          aria-label={showPassword ? "Hide password" : "Show password"}
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="start"
@@ -300,25 +375,23 @@ const Signup = () => {
                       </InputAdornment>
                     }
                   />
+                  {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                 </FormControl>
               </ThemeProvider>
 
               <ThemeProvider theme={theme}>
-                <FormControl variant="outlined" fullWidth>
+                <FormControl variant="outlined" fullWidth error={!!errors.confirmPassword}>
                   <OutlinedInput
                     id="outlined-adornment-confirm-password"
                     placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
                     type={confirmShowPassword ? "text" : "password"}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
-                          aria-label={
-                            confirmShowPassword
-                              ? "Hide password"
-                              : "Show password"
-                          }
+                          aria-label={confirmShowPassword ? "Hide password" : "Show password"}
                           onClick={handleClickConfirmShowPassword}
                           onMouseDown={handleMouseDownPassword}
                           edge="start"
@@ -332,6 +405,7 @@ const Signup = () => {
                       </InputAdornment>
                     }
                   />
+                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                 </FormControl>
               </ThemeProvider>
 
@@ -346,8 +420,8 @@ const Signup = () => {
               </div>
             </form>
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
       <Toast
         open={toastOpen}
         message={toastMessage}

@@ -7,7 +7,8 @@ import { useOutletContext } from "react-router-dom";
 import CustomPagination from "../components/Pagination";
 
 const Exams = () => {
-  const { admin, students, theme, courses } = useOutletContext();
+  const { admin, theme } = useOutletContext();
+  const courses = admin.allCourses;
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
@@ -25,17 +26,18 @@ const Exams = () => {
     setCurrentPage(page);
   };
 
-  // Navigate to authentication page with selected exam details
-  const handleStartExam = (selectedExam) => {
-    navigate("/authenticate", { state: { selectedExam } });
+  // Navigate to registered students page for that course
+  const handleViewStudents = (course) => {
+    const formattedCourseName = course.course_name.replace(/\s+/g, "-").toLowerCase(); // Format course name for URL
+    navigate(`/${formattedCourseName}/students`, { state: { selectedCourse: course } });
   };
 
   return (
     <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
       <AdminSidebar />
       <div className="flex flex-col lg:ml-[20%] w-full px-6 py-4">
-        <AdminMobileNav theme={theme} admin={admin} students={students} />
-        <AdminTopNav theme={theme} admin={admin} students={students} />
+        <AdminMobileNav theme={theme} admin={admin} />
+        <AdminTopNav theme={theme} admin={admin} />
         <div className="mt-8">
           <h1 className="flex inter text-2xl font-bold">All Courses</h1>
           <div className="flex flex-wrap gap-8 justify-between flex-row w-full">
@@ -64,10 +66,10 @@ const Exams = () => {
                 </div>
                 <div className="flex flex-row mt-2 items-center justify-end">
                   <button
-                    onClick={() => handleStartExam(item)} // Pass exam details when clicked
+                    onClick={() => handleViewStudents(item)} //see students registered for the course
                     className="w-28 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white"
                   >
-                    Start Exam
+                    See Students
                   </button>
                 </div>
               </div>

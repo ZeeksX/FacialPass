@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import StudentSidebar from "../components/sidebars/StudentSidebar";
 import TopNav from "../components/topnav/TopNav";
 import dayjs from "dayjs";
@@ -11,8 +11,9 @@ import MobileNav from "../components/topnav/MobileNav";
 import { useOutletContext } from "react-router-dom";
 import Badge from "@mui/material/Badge";
 import { PickersDay } from "@mui/x-date-pickers/PickersDay";
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import Notifications from "../components/Notifications"
+import MenuBookIcon from "@mui/icons-material/MenuBook";
+import Notifications from "../components/Notifications";
+
 // Enable the UTC plugin
 dayjs.extend(utc);
 
@@ -25,16 +26,18 @@ const Student = () => {
   };
 
   // Extract exam dates from student.courses and format them as 'YYYY-MM-DD'
-  const examDates = student.courses.map((course) =>
-    dayjs(course.examDate).utc().format("YYYY-MM-DD") // Ensure UTC formatting
-  );
+  const examDates = useMemo(() => {
+    return student.registeredCourses.map((course) =>
+      dayjs(course.examDate).utc().format("YYYY-MM-DD")
+    );
+  }, [student.registeredCourses]);
 
   // Custom day component to highlight exam dates
   const ServerDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
 
     // Format the current day as 'YYYY-MM-DD' for comparison
-    const formattedDay = day.utc().format("YYYY-MM-DD"); // Ensure UTC formatting
+    const formattedDay = day.utc().format("YYYY-MM-DD");
 
     // Check if the current day is an exam date
     const isExamDate = examDates.includes(formattedDay);
@@ -43,9 +46,10 @@ const Student = () => {
       <Badge
         key={day.toString()}
         overlap="circular"
-        badgeContent={isExamDate ? <MenuBookIcon sx={{ fontSize: "12px" }} /> : undefined} // Use an emoji or custom badge
+        badgeContent={isExamDate ? <MenuBookIcon sx={{ fontSize: "12px" }} /> : undefined}
       >
-        <PickersDay {...other}
+        <PickersDay
+          {...other}
           outsideCurrentMonth={outsideCurrentMonth}
           day={day}
           sx={{
@@ -58,6 +62,51 @@ const Student = () => {
       </Badge>
     );
   };
+
+  // Memoize the calendar component to avoid unnecessary re-renders
+  const CalendarComponent = useMemo(() => {
+    return (
+      <div className="flex max-lg:justify-center">
+        <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[50vh]">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DateCalendar", "DateCalendar"]}>
+              <DemoItem label="">
+                <DateCalendar
+                  defaultValue={dayjs(getTodayDate())}
+                  showDaysOutsideCurrentMonth
+                  slots={{
+                    day: ServerDay, // Use the custom day component
+                  }}
+                />
+              </DemoItem>
+            </DemoContainer>
+          </LocalizationProvider>
+        </div>
+      </div>
+    );
+  }, [getTodayDate, ServerDay]);
+
+  // Memoize the stats section to avoid unnecessary re-renders
+  const StatsSection = useMemo(() => {
+    return (
+      <div className="flex flex-row max-md:flex-col w-full gap-8 items-center justify-between my-8">
+        <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
+          <span className="text-5xl font-bold">{student.registeredCourses.length}</span>
+          <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
+            Total Courses Registered
+          </h1>
+        </div>
+        <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
+          <span className="text-5xl font-bold">
+            {student.takenCourses ? student.takenCourses.length : 0}
+          </span>
+          <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
+            Total Exams Authenticated
+          </h1>
+        </div>
+      </div>
+    );
+  }, [student.registeredCourses.length, student.takenCourses]);
 
   return (
     <div className="flex flex-row min-h-screen w-full bg-gray-100 text-[#0061A2]">
@@ -73,42 +122,9 @@ const Student = () => {
                   Welcome back, {student.student.firstname}
                 </h1>
               </div>
-              <div className="flex flex-row max-md:flex-col w-full gap-8 items-center justify-between my-8">
-                <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
-                  <span className="text-5xl font-bold">{student.totalCourses}</span>
-                  <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
-                    Total Courses Registered
-                  </h1>
-                </div>
-                <div className="flex flex-col justify-between items-end shadow rounded-md max-md:w-full max-lg:w-1/2 lg:w-[47%] h-32 p-3">
-                  <span className="text-5xl font-bold">
-                    {student.authenticated ? student.authenticated : 0}
-                  </span>
-                  <h1 className="font-bold text-[18px] leading-7 lg:text-xl">
-                    Total Exams Authenticated
-                  </h1>
-                </div>
-              </div>
+              {StatsSection}
             </div>
-
-            <div className="flex max-lg:justify-center">
-              <div className="flex flex-col items-center max-w-sm rounded-md shadow lg:h-[50vh]">
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer components={["DateCalendar", "DateCalendar"]}>
-                    <DemoItem label="">
-                      <DateCalendar
-                        defaultValue={dayjs(getTodayDate())}
-                        showDaysOutsideCurrentMonth
-                        slots={{
-                          day: ServerDay, // Use the custom day component
-                        }}
-                      />
-                    </DemoItem>
-                  </DemoContainer>
-                </LocalizationProvider>
-              </div>
-            </div>
-
+            {CalendarComponent}
           </div>
           <Notifications student={student} />
         </div>
@@ -117,4 +133,4 @@ const Student = () => {
   );
 };
 
-export default Student;
+export default React.memo(Student);

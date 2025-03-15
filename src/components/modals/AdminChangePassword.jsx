@@ -20,7 +20,7 @@ const AdminChangePasswordModal = ({ open, handleClose }) => {
             setToast({ open: false, message: "", severity: "info" });
 
             const response = await fetch(
-                "http://localhost:5000/api/admins/change-password",
+                "https://facialpass-backend.onrender.com/api/admins/change-password",
                 {
                     method: "PUT",
                     headers: {

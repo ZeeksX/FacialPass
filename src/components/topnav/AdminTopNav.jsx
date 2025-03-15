@@ -47,7 +47,7 @@ const AdminTopNav = ({ theme, admin }) => {
           {admin.admin.firstname ? admin.admin.firstname.charAt(0) : "E"}{" "}
           {/* Display the first letter of the admin's name */}
         </Avatar>
-        <h1 className="text-xl font-bold leading-10">{`${admin.admin.firstname} ${admin.admin.lastname}`}</h1>
+        <h1 className="text-xl font-bold leading-10">Prof. {`${admin.admin.firstname} ${admin.admin.lastname}`}</h1>
       </div>
     </div>
   );

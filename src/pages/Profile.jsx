@@ -30,7 +30,41 @@ import {
 
 const Profile = () => {
   const { student, theme } = useOutletContext();
-  console.log(student)
+
+  const getLastAuthenticationDate = (takenCourses) => {
+    if (!takenCourses || takenCourses.length === 0) return "Not Available";
+
+    const authDates = takenCourses
+      .map((course) => new Date(`${course.date} ${course.time}`))
+      .filter((date) => !isNaN(date));
+
+    if (authDates.length === 0) return "Not Available";
+
+    const latestDate = new Date(Math.max(...authDates));
+    return latestDate.toLocaleString(); // Format date & time
+  };
+
+  // Get the most recent authentication course
+  const getLatestAuthCourse = (takenCourses) => {
+    if (!takenCourses || takenCourses.length === 0) return null;
+
+    // Sort courses by date and time (most recent first)
+    const sortedCourses = [...takenCourses].sort((a, b) => {
+      const dateA = new Date(`${a.date} ${a.time}`);
+      const dateB = new Date(`${b.date} ${b.time}`);
+      return dateB - dateA; // Descending order
+    });
+
+    return sortedCourses[0];
+  };
+
+  // Get authentication status for display
+  const getAuthenticationStatus = (takenCourses) => {
+    if (!takenCourses || takenCourses.length === 0) return "Not Authenticated";
+    return "Success";
+  };
+
+  const latestAuthCourse = getLatestAuthCourse(student.takenCourses);
 
   const profileData = {
     fullName: `${student.student.firstname} ${student.student.lastname}`,
@@ -41,9 +75,11 @@ const Profile = () => {
     email: `${student.student.email}`,
     phone: "+123 456 7890",
     address: "123 Main St, Example City",
-    facialScanPreview: `${student.student.facialImage}`,// Placeholder image
-    lastAuthenticationDate: "2023-10-01",
-    lastAuthenticationStatus: "Success",
+    registrationImage: student.student.facialImage, // This is already in base64 format from getStudentDetails
+    lastAuthenticationImage: latestAuthCourse?.facial_image || null, // Use the image directly from takenCourses
+    lastAuthenticationDate: getLastAuthenticationDate(student.takenCourses),
+    lastAuthenticationStatus: getAuthenticationStatus(student.takenCourses),
+    latestCourse: latestAuthCourse ? latestAuthCourse.courseName : "None"
   };
 
   return (
@@ -67,7 +103,7 @@ const Profile = () => {
             <Grid container spacing={3}>
               <Grid xs={12} md={3}>
                 <Avatar
-                  src={profileData.facialScanPreview}
+                  src={profileData.registrationImage}
                   sx={{ width: 150, height: 150, mx: "auto" }}
                 />
               </Grid>
@@ -148,22 +184,47 @@ const Profile = () => {
             </Typography>
             <Grid container spacing={3}>
               <Grid xs={12} md={6}>
-                <Avatar
-                  src={profileData.facialScanPreview}
-                  sx={{ width: 150, height: 150, mx: "auto" }}
-                />
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong className="text-[#0061A2]">Registration Image</strong>
+                  </Typography>
+                  <Avatar
+                    src={profileData.registrationImage}
+                    sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+                  />
+                </Box>
               </Grid>
               <Grid xs={12} md={6}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong className="text-[#0061A2]">Latest Authentication Image</strong>
+                  </Typography>
+                  <Avatar
+                    src={profileData.lastAuthenticationImage}
+                    sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+                  />
+                  {!profileData.lastAuthenticationImage && (
+                    <Typography variant="body2" color="text.secondary">
+                      No authentication image available
+                    </Typography>
+                  )}
+                </Box>
+              </Grid>
+              <Grid xs={12}>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   <strong className="text-[#0061A2]">Last Authentication Date:</strong> {profileData.lastAuthenticationDate}
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ mb: 2 }}>
                   <strong className="text-[#0061A2]">Status:</strong> {profileData.lastAuthenticationStatus}
                 </Typography>
+                {latestAuthCourse && (
+                  <Typography variant="body1">
+                    <strong className="text-[#0061A2]">Last Authenticated Course:</strong> {profileData.latestCourse}
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </Paper>
-
         </Box>
       </div>
     </div>
