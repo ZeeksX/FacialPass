@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import EmailIcon from "@mui/icons-material/Email";
@@ -28,6 +28,7 @@ const AdminLogin = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [toastSeverity, setToastSeverity] = useState("");
   const [loader, setLoader] = useState(false);
+  const [errors, setErrors] = useState({});
   const auth = useAuth();
   const { login } = auth;
   const navigate = useNavigate();
@@ -37,8 +38,37 @@ const AdminLogin = () => {
     event.preventDefault();
   };
 
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Validate required fields
+    if (!email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    }
+
+    // Email validation
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  }, [email, password]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const res = await fetch("https://facialpass-backend.onrender.com/api/admins/login", {
@@ -124,6 +154,8 @@ const AdminLogin = () => {
                   placeholder="email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  error={!!errors.email}
+                  helperText={errors.email}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -143,6 +175,7 @@ const AdminLogin = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     type={showPassword ? "text" : "password"}
+                    error={!!errors.password}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
@@ -159,6 +192,9 @@ const AdminLogin = () => {
                       </InputAdornment>
                     }
                   />
+                  {errors.password && (
+                    <span className="text-red-500 text-sm">{errors.password}</span>
+                  )}
                 </FormControl>
               </ThemeProvider>
 

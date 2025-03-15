@@ -74,12 +74,6 @@ const Authentication = () => {
               onAuthenticate={handleAuthentication}
               onImageCapture={handleImageCapture}
             />
-            {student && (
-              <div className="mt-4 text-center">
-                <h3 className="text-green-600 text-lg font-semibold">Authentication Successful</h3>
-                <p>Welcome, {student.firstname} {student.lastname}!</p>
-              </div>
-            )}
           </div>
         ) : (
           <p>No exam selected.</p>

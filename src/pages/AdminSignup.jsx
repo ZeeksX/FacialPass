@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"; // Import useEffect
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import PersonIcon from '@mui/icons-material/Person';
@@ -15,19 +15,22 @@ import logo from "../assets/logo.svg";
 import Loader from "../components/Loader";
 
 const AdminSignup = () => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    office: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [confirmShowPassword, setConfirmShowPassword] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [toastSeverity, setToastSeverity] = useState("success");
   const [toastMessage, setToastMessage] = useState("");
-  const [loader, setLoader] = useState("");
-  const [office, setOffice] = useState('');
+  const [loader, setLoader] = useState(false);
   const [staffId, setStaffId] = useState(""); // State for staff_id
+  const [errors, setErrors] = useState({}); // State for validation errors
 
   const { setUser } = useAuth();
   const navigate = useNavigate();
@@ -51,19 +54,47 @@ const AdminSignup = () => {
     fetchNextStaffId();
   }, []); // Empty dependency array ensures this runs only once on mount
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleClickConfirmShowPassword = () => setConfirmShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Validate form fields
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+    let isValid = true;
+
+    // Validate required fields
+    Object.keys(formData).forEach((field) => {
+      if (!formData[field]) {
+        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required`;
+        isValid = false;
+      }
+    });
+
+    // Email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+      isValid = false;
+    }
+
+    // Password match validation
+    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  }, [formData]);
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setToastMessage("Passwords do not match.");
-      setToastSeverity("error");
-      setToastOpen(true);
+    // Validate form fields
+    if (!validateForm()) {
       return;
     }
 
@@ -73,7 +104,7 @@ const AdminSignup = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstname, lastname, office, email, staff_id: staffId, password, role: "admin" }),
+        body: JSON.stringify({ ...formData, staff_id: staffId, role: "admin" }),
       });
 
       const data = await res.json();
@@ -82,7 +113,7 @@ const AdminSignup = () => {
         setUser({ id: data.admin.id, email: data.admin.email, role: data.admin.role });
         setLoader(true);
 
-        // Ensure success toast message is set correctly
+        // Success toast message
         setToastSeverity("success");
         setToastMessage(data.message || "Signup successful! Redirecting...");
         setToastOpen(true);
@@ -97,7 +128,7 @@ const AdminSignup = () => {
         setToastOpen(true);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
       setToastSeverity("error");
       setToastMessage("An error occurred. Please try again.");
       setToastOpen(true);
@@ -105,58 +136,47 @@ const AdminSignup = () => {
     }
   };
 
+  // Handle toast close
   const handleToastClose = () => {
     setToastOpen(false);
   };
 
+  // Toggle password visibility
+  const togglePassword = () => setShowPassword((prev) => !prev);
+  const toggleConfirmPassword = () => setConfirmShowPassword((prev) => !prev);
+
+  // Theme for MUI components
   const theme = createTheme({
     components: {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
             color: "#0061A2",
-            "& fieldset": {
-              borderColor: "#0061A2",
-            },
-            "&:hover fieldset": {
-              borderColor: "#0061A2",
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "#0061A2",
-            },
+            "& fieldset": { borderColor: "#0061A2" },
+            "&:hover fieldset": { borderColor: "#0061A2" },
+            "&.Mui-focused fieldset": { borderColor: "#0061A2" },
             height: "2.75rem",
           },
           input: {
             color: "#0061A2",
             padding: "8.5px 12px",
-            "&::placeholder": {
-              color: "#0061A2",
-              opacity: 0.5,
-            },
+            "&::placeholder": { color: "#0061A2", opacity: 0.5 },
           },
         },
       },
       MuiInputBase: {
         styleOverrides: {
-          root: {
-            color: "#0061A2",
-            height: "2.75rem",
-          },
+          root: { color: "#0061A2", height: "2.75rem" },
           input: {
             color: "#0061A2",
             padding: "8.5px 12px",
-            "&::placeholder": {
-              color: "#0061A2",
-              opacity: 1,
-            },
+            "&::placeholder": { color: "#0061A2", opacity: 1 },
           },
         },
       },
       MuiInputAdornment: {
         styleOverrides: {
-          root: {
-            color: "#0061A2",
-          },
+          root: { color: "#0061A2" },
         },
       },
     },
@@ -164,23 +184,29 @@ const AdminSignup = () => {
 
   return (
     <>
-      <div className="flex flex-col overflow-hidden items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2] ">
+      <div className="flex flex-col overflow-hidden items-center lg:justify-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2]">
         <div className="flex flex-row lg:w-[70%] lg:h-[94vh]">
+          {/* Login image - hidden on mobile */}
           <div
             className="md:w-1/2 hidden md:flex bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${signupImage})` }}
-          >
-          </div>
-          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2]  px-2 lg:px-3 gap-2 py-4">
+          ></div>
+
+          {/* Signup form */}
+          <div className="signup flex flex-col w-full lg:w-4/5 rounded-xl md:rounded-r-xl md:rounded-none bg-[white] text-[#0061A2] px-2 lg:px-3 gap-2 py-6">
+            {/* Header */}
             <div className="flex flex-col justify-center items-center gap-1">
               <div className="flex flex-col justify-center items-center">
                 <img className="w-16" src={logo} alt="Facial Pass logo" />
               </div>
               <h3 className="text-[#0061A2] font-bold text-2xl">Create Your Account</h3>
-              <p className="text-[#0061A2] text-xl text-center">Already have an account?
+              <p className="text-[#0061A2] text-xl text-center">
+                Already have an account?
                 <Link className="ml-2 italic underline" to="/admin/login">Sign In</Link>
               </p>
             </div>
+
+            {/* Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start justify-center lg:w-4/5 w-4/5 mx-auto">
               <div className="flex flex-wrap justify-between flex-row w-full gap-2">
                 <ThemeProvider theme={theme}>
@@ -188,8 +214,11 @@ const AdminSignup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="First Name"
-                    value={firstname}
-                    onChange={(event) => setFirstname(event.target.value)}
+                    name="firstname"
+                    value={formData.firstname}
+                    onChange={handleChange}
+                    error={!!errors.firstname}
+                    helperText={errors.firstname}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -207,8 +236,11 @@ const AdminSignup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Surname"
-                    value={lastname}
-                    onChange={(event) => setLastname(event.target.value)}
+                    name="lastname"
+                    value={formData.lastname}
+                    onChange={handleChange}
+                    error={!!errors.lastname}
+                    helperText={errors.lastname}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -226,8 +258,8 @@ const AdminSignup = () => {
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Staff ID"
-                    value={staffId} // Display the staff_id here
-                    disabled // Disable the input field
+                    value={staffId}
+                    disabled
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -239,13 +271,17 @@ const AdminSignup = () => {
                     }}
                   />
                 </ThemeProvider>
+
                 <ThemeProvider theme={theme}>
                   <TextField
                     className="w-[49%] max-md:w-full lg:w-[48%]"
                     variant="outlined"
                     placeholder="Office"
-                    value={office}
-                    onChange={(event) => setOffice(event.target.value)}
+                    name="office"
+                    value={formData.office}
+                    onChange={handleChange}
+                    error={!!errors.office}
+                    helperText={errors.office}
                     slotProps={{
                       input: {
                         startAdornment: (
@@ -257,7 +293,6 @@ const AdminSignup = () => {
                     }}
                   />
                 </ThemeProvider>
-
               </div>
 
               <ThemeProvider theme={theme}>
@@ -265,8 +300,11 @@ const AdminSignup = () => {
                   fullWidth
                   variant="outlined"
                   placeholder="Email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -282,17 +320,18 @@ const AdminSignup = () => {
               <ThemeProvider theme={theme}>
                 <FormControl variant="outlined" fullWidth>
                   <OutlinedInput
-                    id="outlined-adornment-password"
                     placeholder="Password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
                     type={showPassword ? "text" : "password"}
+                    error={!!errors.password}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
                           aria-label={showPassword ? "Hide password" : "Show password"}
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
+                          onClick={togglePassword}
+                          onMouseDown={(e) => e.preventDefault()}
                           edge="start"
                         >
                           {showPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
@@ -306,17 +345,19 @@ const AdminSignup = () => {
               <ThemeProvider theme={theme}>
                 <FormControl variant="outlined" fullWidth>
                   <OutlinedInput
-                    id="outlined-adornment-confirm-password"
                     placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
                     type={confirmShowPassword ? "text" : "password"}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
                     startAdornment={
                       <InputAdornment position="start">
                         <IconButton
                           aria-label={confirmShowPassword ? "Hide password" : "Show password"}
-                          onClick={handleClickConfirmShowPassword}
-                          onMouseDown={handleMouseDownPassword}
+                          onClick={toggleConfirmPassword}
+                          onMouseDown={(e) => e.preventDefault()}
                           edge="start"
                         >
                           {confirmShowPassword ? <VisibilityOff sx={{ color: "#0061A2" }} /> : <Visibility sx={{ color: "#0061A2" }} />}
@@ -339,6 +380,8 @@ const AdminSignup = () => {
           </div>
         </div>
       </div>
+
+      {/* Toast and Loader */}
       <Toast severity={toastSeverity} open={toastOpen} message={toastMessage} onClose={handleToastClose} />
       {loader && <Loader />}
     </>
