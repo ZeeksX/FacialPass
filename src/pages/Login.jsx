@@ -120,7 +120,7 @@ const Login = () => {
   return (
     <>
       <div className="overflow-hidden flex flex-col items-center justify-center gap-2 lg:gap-0 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2]">
-        <div className="flex flex-row justify-center w-4/5 max-lg:max-w-md md:w-4/5 lg:w-3/5 lg:h-[90vh]">
+        <div className="flex flex-row justify-center w-[92vw] max-lg:max-w-lg md:w-4/5 lg:w-[70%] lg:h-[90vh]">
           {/* Login image - hidden on mobile */}
           <div
             className="md:w-1/2 hidden lg:flex bg-cover bg-center object-fill rounded-l-xl"
