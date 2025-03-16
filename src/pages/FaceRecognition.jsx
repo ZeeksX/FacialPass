@@ -14,6 +14,10 @@ const MODELS_PATH = "/models";
 
 const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => {
     const webcamRef = useRef(null);
+    const [studentName, setStudentName] = useState({
+        firstName: null,
+        lastName: null
+    });
 
     const [state, setState] = useState({
         imagePreview: null,
@@ -252,8 +256,19 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
             }
 
             // Authenticate with server
-            const [firstName, lastName] = recognizedName.split(" ");
-            const data = await authenticateWithServer(firstName, lastName);
+            const [first, last] = recognizedName.split(" ");
+            setStudentName({ firstName: first, lastName: last });
+
+            // Then use these in your authentication call:
+            const data = await authenticateWithServer(first, last);
+
+            // Update status display
+            setState(prev => ({
+                ...prev,
+                status: "Authenticated",
+                isLoading: false
+            }));
+
 
             // Handle authentication result
             if (data.success) {
@@ -337,7 +352,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                             status === 'Not Authenticated' ? 'bg-red-100 text-red-800' :
                                 'bg-yellow-100 text-yellow-800'
                             }`}>
-                            {status}
+                            {status} {studentName ? `- ${studentName.firstName} ${studentName.lastName}` : ''}
                         </div>
                     )}
 

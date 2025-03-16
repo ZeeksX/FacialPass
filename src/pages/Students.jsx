@@ -32,7 +32,7 @@ const Students = () => {
           <h4 className="text-[#0061A2] text-4xl font-semibold mb-4">Students List</h4>
 
           {sortedStudents.length > 0 ? (
-            <div className="flex flex-wrap max-lg:justify-center justify-between gap-3 max-md:gap-6 text-[#0061A2]">
+            <div className="flex flex-wrap max-lg:justify-center justify-start gap-3 max-md:gap-6 text-[#0061A2]">
               {sortedStudents.map((student) => (
                 <div key={student.id} className="w-full max-w-[280px] sm:w-[48%] md:w-[40%] lg:w-[24%]">
                   <Card className="shadow-md rounded-lg w-full flex justify-center items-center">
