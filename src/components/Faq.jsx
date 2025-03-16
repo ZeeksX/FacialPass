@@ -29,11 +29,12 @@ const Faq = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography className="text-[#0061A2] leading-relaxed">
-              - Identity Verification <br />
-              - Prevents Multiple Logins <br />
-              - Continuous Monitoring <br />- Anti-Spoofing Measures
-            </Typography>
+            <h1 className="text-[#0061A2] text-justify leading-relaxed">
+              Facial recognition enhances exam security by ensuring identity verification, allowing only registered students to access the exam.
+              It prevents multiple logins by ensuring that a single student cannot log in from multiple devices or share credentials.
+              Through continuous monitoring, the system can detect and flag suspicious activities, such as unauthorized presence or sudden changes in facial features.
+              Additionally, anti-spoofing measures like liveness detection help prevent fraudulent attempts using photos or videos, ensuring a fair and secure exam environment.
+            </h1>
           </AccordionDetails>
         </Accordion>
 
@@ -73,12 +74,11 @@ const Faq = () => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Typography className="text-[#0061A2] leading-relaxed">
-              - Secure Data Storage <br />
-              - Limited Access Control <br />
-              - Compliance with Privacy Regulations <br />- Regular Security
-              Audits
-            </Typography>
+            <h1 className="text-[#0061A2] text-justify leading-relaxed">
+              Your facial data is securely stored using encryption and strict access controls to protect your privacy.
+              Only authorized administrators have access to it, and all authentication processes comply with security best practices.
+              The system ensures that facial data is used solely for student authentication during exams and is not shared with unauthorized parties.
+            </h1>
           </AccordionDetails>
         </Accordion>
       </div>

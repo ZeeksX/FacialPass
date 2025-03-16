@@ -14,8 +14,9 @@ const Footer = () => {
     const resources = ["FAQs", "Blog", "Help Center"];
     const contact = [
         { icon: <PhoneAndroidIcon />, feature: "+2349064048598", link: "tel:+2349064048598" },
+        { icon: <PhoneAndroidIcon />, feature: "+2348104043652", link: "tel:+2348104043652" },
         { icon: <MailOutlineIcon />, feature: "zeeksacademy@gmail.com", link: "mailto:zeeksacademy@gmail.com" },
-        { icon: <LocationCityIcon />, feature: "131 Zeeks Avenue, Florida, United States", link: "https://www.google.com/maps/search/?api=1&query=131+Zeeks+Avenue,+Florida,+United+States" },
+        { icon: <LocationCityIcon />, feature: "Babcock University, Ilishan-Remo, Ogun State", link: "https://www.google.com/maps/search/?api=1&query=Babcock+University,+Ilishan-Remo,+Ogun+State" },
     ];
     const socials = [
         <InstagramIcon />, <LinkedInIcon />, <FacebookIcon />, <YouTubeIcon />, <XIcon />
