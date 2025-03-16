@@ -4,8 +4,8 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import * as faceapi from "face-api.js";
-import loginImage from "../assets/login-image.jpg";
-import logo from "../assets/logo.svg";
+import loginImage from "/assets/login-image.jpg";
+import logo from "/assets/logo.svg";
 import Toast from "../components/Toast";
 import Loader from "../components/Loader";
 

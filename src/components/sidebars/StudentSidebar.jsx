@@ -1,14 +1,17 @@
-import React from "react";
-import logo from "../../assets/logo.svg";
-import { Link } from "react-router-dom"
+import React, { useState } from "react";
+import logo from "/assets/logo.svg";
+import { Link } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Settings } from '@mui/icons-material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import LogoutModal from "../../components/modals/LogoutModal"; // Import the LogoutModal component
 
 const StudentSidebar = ({ toggleSidebar }) => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); //State to control the modal
+
   const navItems = [
     { name: "Dashboard", icon: <HomeIcon />, link: "/studentDashboard" },
     { name: "Select Courses", icon: <LibraryBooksIcon />, link: "/select-courses" },
@@ -29,18 +32,26 @@ const StudentSidebar = ({ toggleSidebar }) => {
         <ul className='mt-8 md:mt-8 max-w-52 flex flex-col gap-3'>
           {navItems.map((item) => (
             <li key={item.name} className="flex items-center py-2 px-4 text-[#0061A2] hover:text-white hover:bg-[#0061A2] rounded-lg">
-              <Link to={item.link} className="flex items-center w-full" onClick={toggleSidebar}> {/* Call toggleSidebar on click */}
+              <Link to={item.link} className="flex items-center w-full" onClick={toggleSidebar}>
                 <span className="mr-2">{item.icon}</span>
                 {item.name}
               </Link>
             </li>
           ))}
         </ul>
-        <Link to="/">
-          <h3 className="fixed left-8 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2]">
-            <span className="mr-2"><LogoutIcon /></span>Logout </h3>
-        </Link>
-      </div >
+        <div
+          className="fixed left-8 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2] cursor-pointer"
+          onClick={() => setIsLogoutModalOpen(true)} // Open the logout modal
+        >
+          <span className="mr-2"><LogoutIcon /></span>Logout
+        </div>
+      </div>
+
+      {/* Render the LogoutModal */}
+      <LogoutModal
+        open={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)} // Close the modal
+      />
     </>
   );
 };

@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -8,7 +7,7 @@ import {
 } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
-import { AuthProvider, useAuth } from "./components/Auth";
+import { AuthProvider } from "./components/Auth";
 import SignUp from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
 import ParticlesReact from "./pages/ParticlesReact";
@@ -21,27 +20,17 @@ import AdminSignup from "./pages/AdminSignup";
 import AdminLogin from "./pages/AdminLogin";
 import FacialRecognition from "./pages/FacialRecognition";
 import UploadImage from "./pages/UploadImage";
-import Loader from "./components/Loader";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import SelectedCourse from "./pages/SelectedCourse";
 import StudentDashboard from "./pages/StudentDashboard";
 import Exams from "./pages/Exams";
-import Students from "./pages/Students"
+import Students from "./pages/Students";
 import AdminSettings from "./pages/AdminSettings";
 import AdminProfile from "./pages/AdminProfile";
 import Authentication from "./pages/Authentication";
 import ExamStudents from "./pages/ExamStudents";
-
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  return isAuthenticated ? children : <Navigate to="/" />;
-};
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -77,7 +66,7 @@ const App = () => {
           {/* Nested routes under /studentDashboard */}
           <Route
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="student">
                 <StudentDashboard isMobile={isMobile} />
               </ProtectedRoute>
             }
@@ -89,9 +78,10 @@ const App = () => {
             <Route path="settings" element={<Settings isMobile={isMobile} />} />
           </Route>
 
+          {/* Nested routes under /adminDashboard */}
           <Route
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="admin">
                 <AdminDashboard isMobile={isMobile} />
               </ProtectedRoute>
             }
@@ -108,7 +98,7 @@ const App = () => {
           <Route
             path="/landing"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="student">
                 <HomePage
                   sidebarOpen={sidebarOpen}
                   toggleSidebar={toggleSidebar}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../assets/logo.svg";
+import logo from "/assets/logo.svg";
 import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -7,20 +7,15 @@ import { Settings } from "@mui/icons-material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Person2Icon from "@mui/icons-material/Person2";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import LogoutModal from "../../components/modals/LogoutModal";  // Import the LogoutModal component
 
 const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // State to control the modal
+
   const navItems = [
     { name: "Dashboard", icon: <HomeIcon />, link: "/adminDashboard" },
-    {
-      name: "Exams",
-      icon: <LibraryBooksIcon />,
-      link: "/Exams",
-    },
-    {
-      name: "Students",
-      icon: <Person2Icon />,
-      link: "/Students",
-    },
+    { name: "Exams", icon: <LibraryBooksIcon />, link: "/Exams" },
+    { name: "Students", icon: <Person2Icon />, link: "/Students" },
     { name: "Profile", icon: <AccountCircleIcon />, link: "/admin/profile" },
     { name: "Settings", icon: <Settings />, link: "/admin/settings" },
   ];
@@ -29,9 +24,8 @@ const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
     <>
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-64 bg-[#fff] text-white flex-col justify-between p-6 transform ${
-          showSidebar ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform duration-300 ease-in-out z-30`}
+        className={`fixed top-0 left-0 h-screen w-64 bg-[#fff] text-white flex-col justify-between p-6 transform ${showSidebar ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0 transition-transform duration-300 ease-in-out z-30`}
       >
         <div className="flex flex-row items-center mt-2">
           <img className="w-12" src={logo} alt="FacialPass logo" />
@@ -58,14 +52,15 @@ const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
             </li>
           ))}
         </ul>
-        <Link to="/">
-          <h3 className="fixed left-6 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2]">
-            <span className="mr-2">
-              <LogoutIcon />
-            </span>
-            Logout
-          </h3>
-        </Link>
+        <div
+          className="fixed left-6 items-center w-3/5 bottom-10 flex py-2 px-4 rounded-lg max-w-48 text-[#0061A2] hover:text-white hover:bg-[#0061A2] cursor-pointer"
+          onClick={() => setIsLogoutModalOpen(true)} // Open the logout modal
+        >
+          <span className="mr-2">
+            <LogoutIcon />
+          </span>
+          Logout
+        </div>
       </div>
 
       {/* Overlay */}
@@ -75,6 +70,12 @@ const MobileAdminSidebar = ({ showSidebar, toggleSidebar }) => {
           onClick={toggleSidebar}
         ></div>
       )}
+
+      {/* Render the LogoutModal */}
+      <LogoutModal
+        open={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)} // Close the modal
+      />
     </>
   );
 };

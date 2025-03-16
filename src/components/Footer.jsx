@@ -1,5 +1,5 @@
 import React from "react";
-import footerLogo from "../assets/footer-logo.svg";
+import footerLogo from "/assets/footer-logo.svg";
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import LocationCityIcon from '@mui/icons-material/LocationCity';

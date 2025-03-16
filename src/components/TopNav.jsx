@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import logo from "../assets/logo.svg";
-import BedtimeOutlinedIcon from "@mui/icons-material/BedtimeOutlined";
+import logo from "/assets/logo.svg";
 
 const TopNav = () => {
     const navLinks = ["Home", "About", "Contact"];
@@ -38,7 +37,7 @@ const TopNav = () => {
                 </ul>
             </div>
             <div className="flex gap-4 items-center">
-                <BedtimeOutlinedIcon />
+            
                 <button
                     onClick={handleLoginClick}
                     className="flex flex-row cursor-pointer w-20 rounded-lg py-2 px-3 font-medium text-sm text-white justify-center items-center bg-[#0061A2] hover:bg-[#1836B2]"

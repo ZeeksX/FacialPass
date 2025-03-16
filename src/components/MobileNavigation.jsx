@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DensityMediumOutlinedIcon from '@mui/icons-material/DensityMediumOutlined';
-import logo from '../assets/logo.svg';
+import logo from '/assets/logo.svg';
 import MobileSidebar from './MobileSidebar';
 
 const MobileNavigation = () => {

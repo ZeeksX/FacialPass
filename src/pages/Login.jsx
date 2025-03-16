@@ -8,8 +8,8 @@ import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, Them
 import ForgotPassword from '../components/ForgotPassword';
 import Toast from '../components/Toast';
 import Loader from "../components/Loader";
-import loginImage from "../assets/login-image.jpg";
-import logo from "../assets/logo.svg";
+import loginImage from "/assets/login-image.jpg";
+import logo from "/assets/logo.svg";
 
 // Move theme creation outside component to prevent recreation on every render
 const theme = createTheme({

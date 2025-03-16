@@ -25,7 +25,7 @@ const MobileNav = ({ student = {} }) => {
 
   const firstName = student?.student?.firstname || "Guest";
   const lastName = student?.student?.lastname || "";
-  const profileImage = student?.student?.facial_image || "/default-avatar.png"; // ✅ Default avatar
+  const profileImage = student?.student?.facialImage || "/default-avatar.png"; // ✅ Default avatar
 
   return (
     <>

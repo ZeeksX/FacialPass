@@ -10,8 +10,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider } from "@mui/material";
 import Toast from '../components/Toast';
 import { createTheme } from "@mui/material";
-import signupImage from "../assets/login-image.jpg";
-import logo from "../assets/logo.svg";
+import signupImage from "/assets/login-image.jpg";
+import logo from "/assets/logo.svg";
 import Loader from "../components/Loader";
 
 const AdminSignup = () => {

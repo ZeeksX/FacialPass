@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useOutletContext } from "react-router-dom";
 import Webcam from "react-webcam";
 import * as faceapi from "face-api.js";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import SendIcon from '@mui/icons-material/Send';
-import spinner from '../assets/spinner.svg';
+import spinner from '/assets/spinner.svg';
 import Toast from "../components/Toast";
 
 // Constants
@@ -309,6 +308,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                                 className="rounded-lg w-full h-full object-cover"
                                 audio={false}
                                 ref={webcamRef}
+                                mirrored={false}
                                 screenshotFormat="image/jpeg"
                                 videoConstraints={videoConstraints}
                                 onUserMedia={() => setState(prev => ({ ...prev, isLoading: false }))}

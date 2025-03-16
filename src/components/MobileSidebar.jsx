@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import DescriptionIcon from '@mui/icons-material/Description';
-import logo from "../assets/logo.svg";
+import logo from "/assets/logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import PhoneIcon from '@mui/icons-material/Phone';
 import CloseIcon from '@mui/icons-material/Close';

@@ -8,7 +8,7 @@ import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import SendIcon from '@mui/icons-material/Send';
 import Toast from "../components/Toast";
-import spinner from '../assets/spinner.svg';
+import spinner from '/assets/spinner.svg';
 import Loader from "../components/Loader";
 
 const FacialRecognition = () => {
@@ -240,6 +240,7 @@ const FacialRecognition = () => {
                                         className="rounded-lg w-full h-full object-cover"
                                         audio={false}
                                         ref={webcamRef}
+                                        mirrored={false}
                                         screenshotFormat="image/jpeg"
                                         videoConstraints={videoConstraints}
                                         onUserMedia={() => setState(prev => ({ ...prev, isLoading: false }))}

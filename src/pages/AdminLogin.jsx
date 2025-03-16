@@ -16,8 +16,8 @@ import ForgotPassword from "../components/ForgotPassword";
 import Toast from "../components/Toast";
 import Loader from "../components/Loader";
 import { createTheme } from "@mui/material";
-import loginImage from "../assets/login-image.jpg";
-import logo from "../assets/logo.svg";
+import loginImage from "/assets/login-image.jpg";
+import logo from "/assets/logo.svg";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");

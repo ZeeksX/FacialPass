@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../components/Auth";
 import PersonIcon from '@mui/icons-material/Person';
@@ -6,10 +6,10 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider, createTheme } from "@mui/material";
+import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider, createTheme, Select, MenuItem, InputLabel } from "@mui/material";
 import Toast from '../components/Toast';
-import signupImage from "../assets/login-image.jpg";
-import logo from "../assets/logo.svg";
+import signupImage from "/assets/login-image.jpg";
+import logo from "/assets/logo.svg";
 
 const theme = createTheme({
   components: {
@@ -78,6 +78,8 @@ const Signup = () => {
     confirmPassword: ""
   });
 
+  const [departments, setDepartments] = useState([]); // State to store departments
+
   const [errors, setErrors] = useState({
     firstname: "",
     lastname: "",
@@ -96,6 +98,25 @@ const Signup = () => {
   const auth = useAuth();
   const { setUser } = auth;
   const navigate = useNavigate();
+
+  // Fetch departments on component mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await fetch("https://facialpass-backend.onrender.com/api/students/get-departments"); // Replace with your API endpoint
+        const data = await res.json();
+        if (res.ok) {
+          setDepartments(data.data); // Assuming the API returns an array of department objects
+        } else {
+          console.error("Failed to fetch departments:", data.message || res.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error.message);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -305,25 +326,31 @@ const Signup = () => {
                 </ThemeProvider>
 
                 <ThemeProvider theme={theme}>
-                  <TextField
+                  <FormControl
                     className="w-[49%] max-md:w-full lg:w-[48%]"
-                    variant="outlined"
-                    placeholder="Department"
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
-                    error={!!errors.department}
-                    helperText={errors.department}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LocationCityIcon sx={{ color: "#0061A2" }} />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
+                    error={!!errors.department} >
+                    <InputLabel id="department-label">Department</InputLabel>
+                    <Select
+                      labelId="department-label"
+                      id="department"
+                      name="department"
+                      value={formData.department}
+                      onChange={handleChange}
+                      label="Department"
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <LocationCityIcon sx={{ color: "#0061A2" }} />
+                        </InputAdornment>
+                      }
+                    >
+                      {departments.map((dept) => (
+                        <MenuItem key={dept.id} value={dept.name}>
+                          {dept.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {errors.department && <p className="text-red-500 text-xs mt-1">{errors.department}</p>}
+                  </FormControl>
                 </ThemeProvider>
               </div>
 
