@@ -132,7 +132,7 @@ const AdminLogin = () => {
   return (
     <>
       <div className="overflow-hidden flex flex-col items-center justify-center gap-2 p-4 w-full min-h-screen bg-linear-to-b from-white to-[#0061A2]">
-        <div className="flex flex-row justify-center max-md:max-w-96 max-md:w-[90%] max-lg:w-1/2 lg:w-3/5 lg:h-[90vh]">
+        <div className="flex flex-row justify-center max-md:max-w-96 max-md:w-full max-lg:w-1/2 lg:w-3/5 lg:h-[90vh]">
           <div
             className="hidden lg:flex md:w-1/2 bg-cover bg-center object-fill rounded-l-xl"
             style={{ backgroundImage: `url(${loginImage})` }}
@@ -145,7 +145,7 @@ const AdminLogin = () => {
             </p>
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col gap-4 w-4/5 mx-auto"
+              className="flex flex-col gap-4 w-4/5 md:w-[90%] mx-auto"
             >
               <ThemeProvider theme={theme}>
                 <TextField
