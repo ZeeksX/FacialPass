@@ -57,7 +57,7 @@ const AdminMobileNav
             <Avatar
               alt="Profile-photo"
               src={admin.admin.facial_image}
-              className="flex items-center justify-center border p-2 rounded-[50%]"
+              className="flex items-center justify-center border rounded-[50%]"
               sx={{ backgroundColor: "#0061A2", color: "white" }}
             >
               {admin.admin.firstname

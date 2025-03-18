@@ -50,7 +50,7 @@ const MobileNav = ({ student = {} }) => {
             <Avatar
               alt="Profile-photo"
               src={profileImage}
-              className="flex items-center justify-center border p-2 rounded-[50%]"
+              className="flex items-center justify-center border rounded-[50%]"
               sx={{ backgroundColor: "#0061A2", color: "white" }}
             >
               {firstName.charAt(0)}{" "}
