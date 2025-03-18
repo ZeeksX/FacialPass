@@ -65,7 +65,7 @@ const Profile = () => {
   };
 
   const latestAuthCourse = getLatestAuthCourse(student.takenCourses);
-  console.log(latestAuthCourse)
+  
   const profileData = {
     fullName: `${student.student.firstname} ${student.student.lastname}`,
     studentId: `${student.student.matricNumber}`,
@@ -76,7 +76,7 @@ const Profile = () => {
     phone: "+123 456 7890",
     address: "123 Main St, Example City",
     registrationImage: student.student.facialImage, // This is already in base64 format from getStudentDetails
-    lastAuthenticationImage: latestAuthCourse?.facial_image || null, // Use the image directly from takenCourses
+    lastAuthenticationImage: latestAuthCourse? latestAuthCourse.facial_image : null, // Use the image directly from takenCourses
     lastAuthenticationDate: getLastAuthenticationDate(student.takenCourses),
     lastAuthenticationStatus: getAuthenticationStatus(student.takenCourses),
     latestCourse: latestAuthCourse ? latestAuthCourse.courseName : "None"
