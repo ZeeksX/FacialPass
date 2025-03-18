@@ -151,6 +151,15 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
         };
     }, []);
 
+    const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result.split(",")[1]); // Extract base64 data
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
     // Face detection and recognition
     const detectFaces = useCallback(async (img) => {
         return await faceapi
@@ -178,7 +187,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
     }, [knownFaces]);
 
     // Authentication process
-    const authenticateWithServer = useCallback(async (firstName, lastName) => {
+    const authenticateWithServer = useCallback(async (firstName, lastName, base64Image) => {
         if (!selectedCourse || !selectedCourse.id) {
             showToast("No course selected for authentication", "error");
             return { success: false };
@@ -190,7 +199,8 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
             body: JSON.stringify({
                 firstname: firstName,
                 lastname: lastName,
-                courseId: selectedCourse.id
+                courseId: selectedCourse.id,
+                imageData: base64Image // Send base64 image
             })
         });
 
@@ -234,7 +244,10 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
         setState(prev => ({ ...prev, isLoading: true }));
 
         try {
-            // Convert blob to image
+            // Convert blob to base64
+            const base64Image = await blobToBase64(imageBlob);
+
+            // Convert blob to image for face detection
             const img = await faceapi.bufferToImage(imageBlob);
 
             // Detect faces
@@ -259,8 +272,8 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
             const [first, last] = recognizedName.split(" ");
             setStudentName({ firstName: first, lastName: last });
 
-            // Then use these in your authentication call:
-            const data = await authenticateWithServer(first, last);
+            // Send base64 image to server
+            const data = await authenticateWithServer(first, last, base64Image);
 
             // Update status display
             setState(prev => ({
@@ -268,7 +281,6 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                 status: "Authenticated",
                 isLoading: false
             }));
-
 
             // Handle authentication result
             if (data.success) {

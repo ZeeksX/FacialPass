@@ -52,7 +52,7 @@ const Authentication = () => {
 
   return (
     <div className="flex pt-4 justify-center lg:items-center min-h-screen w-full bg-linear-to-b from-white to-[#0061A2]">
-      <div className="rounded-md h-[80vh] max-lg:h-auto max-md:mb-2 shadow bg-white flex flex-col items-center w-3/5 lg:w-2/5 max-md:w-[90vw]">
+      <div className="rounded-md h-[90vh] max-lg:h-auto max-md:mb-2 shadow bg-white flex flex-col items-center w-3/5 lg:w-2/5 max-md:w-[90vw]">
         <div className="flex text-white flex-col w-full rounded-t-md h-30 max-lg:h-40 gap-2 bg-gradient-to-r from-[#0061A2] to-[#0061a263] p-4">
           <h1 className="flex items-center justify-center gap-2">
             <HowToRegIcon /> <strong className="text-xl">Exam Authentication</strong>

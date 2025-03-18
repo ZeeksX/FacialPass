@@ -65,7 +65,7 @@ const Profile = () => {
   };
 
   const latestAuthCourse = getLatestAuthCourse(student.takenCourses);
-
+  console.log(latestAuthCourse)
   const profileData = {
     fullName: `${student.student.firstname} ${student.student.lastname}`,
     studentId: `${student.student.matricNumber}`,
@@ -94,7 +94,7 @@ const Profile = () => {
           <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold", color: "#0061A2" }}>
             Profile
           </Typography>
-
+          <img src={latestAuthCourse.facial_image} alt="Facial-Image" />
           {/* 1️⃣ Basic Information */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
