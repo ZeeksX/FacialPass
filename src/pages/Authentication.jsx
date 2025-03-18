@@ -28,7 +28,9 @@ const Authentication = () => {
     try {
       const response = await fetch("https://facialpass-backend-production.up.railway.app/api/auth/save-authentication", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           matricNumber: authenticatedStudent.matricNumber,
           courseCode: selectedCourse.course_code,

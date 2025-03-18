@@ -65,9 +65,39 @@ const Profile = () => {
   };
 
   const latestAuthCourse = getLatestAuthCourse(student.takenCourses);
-  console.log("Student", student)
-  console.log("Student taken courses", student.takenCourses)
-  console.log("last auth course", latestAuthCourse)
+
+  // Fixed function to properly handle image data
+  const bufferToImageUrl = (buffer) => {
+    if (!buffer || !buffer.data) return ""; // Handle missing or invalid buffer
+
+    // Convert Uint8Array (buffer.data) to Base64 using btoa
+    const binaryString = buffer.data.reduce((acc, byte) => acc + String.fromCharCode(byte), "");
+    const base64 = btoa(binaryString); // Encode to Base64
+    return `data:image/jpeg;base64,${base64}`; // Create a clean data URL
+  };
+
+  // Function to clean up malformed data URLs
+  const cleanImageUrl = (url) => {
+    if (!url) return "";
+
+    // Check if the URL contains redundant prefixes
+    if (url.includes("dataimage/jpegbase64")) {
+      // Fix the malformed URL by removing the extra text
+      return url.replace("dataimage/jpegbase64", "");
+    }
+
+    return url;
+  };
+
+  // Get the image URL safely
+  const getAuthImageUrl = () => {
+    if (!latestAuthCourse || !latestAuthCourse.facial_image) return "";
+
+    const rawUrl = bufferToImageUrl(latestAuthCourse.facial_image);
+    return cleanImageUrl(rawUrl);
+  };
+
+  const authImageUrl = getAuthImageUrl();
 
   const profileData = {
     fullName: `${student.student.firstname} ${student.student.lastname}`,
@@ -79,7 +109,7 @@ const Profile = () => {
     phone: "+123 456 7890",
     address: "123 Main St, Example City",
     registrationImage: student.student.facialImage, // This is already in base64 format from getStudentDetails
-    lastAuthenticationImage: latestAuthCourse? latestAuthCourse.facial_image : null, // Use the image directly from takenCourses
+    lastAuthenticationImage: authImageUrl, // Use the cleaned image URL
     lastAuthenticationDate: getLastAuthenticationDate(student.takenCourses),
     lastAuthenticationStatus: getAuthenticationStatus(student.takenCourses),
     latestCourse: latestAuthCourse ? latestAuthCourse.courseName : "None"
@@ -97,7 +127,9 @@ const Profile = () => {
           <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold", color: "#0061A2" }}>
             Profile
           </Typography>
-          {/* <img src={latestAuthCourse.facial_image} alt="Facial-Image" /> */}
+
+          {/* Removed the direct img rendering that was causing issues */}
+
           {/* 1️⃣ Basic Information */}
           <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold", color: "#0061A2" }}>
@@ -195,6 +227,22 @@ const Profile = () => {
                     src={profileData.registrationImage}
                     sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
                   />
+                </Box>
+              </Grid>
+              <Grid xs={12} md={6}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                    <strong className="text-[#0061A2]">Latest Authentication Image</strong>
+                  </Typography>
+                  <Avatar
+                    src={profileData.lastAuthenticationImage}
+                    sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
+                  />
+                  {!profileData.lastAuthenticationImage && (
+                    <Typography variant="body2" color="text.secondary">
+                      No authentication image available
+                    </Typography>
+                  )}
                 </Box>
               </Grid>
               <Grid xs={12}>
