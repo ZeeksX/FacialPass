@@ -197,22 +197,6 @@ const Profile = () => {
                   />
                 </Box>
               </Grid>
-              <Grid xs={12} md={6}>
-                <Box sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                    <strong className="text-[#0061A2]">Latest Authentication Image</strong>
-                  </Typography>
-                  <Avatar
-                    src={profileData.lastAuthenticationImage}
-                    sx={{ width: 150, height: 150, mx: "auto", mb: 2 }}
-                  />
-                  {!profileData.lastAuthenticationImage && (
-                    <Typography variant="body2" color="text.secondary">
-                      No authentication image available
-                    </Typography>
-                  )}
-                </Box>
-              </Grid>
               <Grid xs={12}>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   <strong className="text-[#0061A2]">Last Authentication Date:</strong> {profileData.lastAuthenticationDate}
