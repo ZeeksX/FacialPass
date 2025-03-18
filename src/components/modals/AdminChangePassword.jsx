@@ -20,7 +20,7 @@ const AdminChangePasswordModal = ({ open, handleClose }) => {
             setToast({ open: false, message: "", severity: "info" });
 
             const response = await fetch(
-                "https://facialpass-backend-production.up.railway.app/api/admins/change-password",
+                "https://facialpass-backend.onrender.com/api/admins/change-password",
                 {
                     method: "PUT",
                     headers: {

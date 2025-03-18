@@ -19,7 +19,7 @@ const ExamStudents = () => {
       try {
         if (!selectedCourse?.id) return;
 
-        const response = await fetch(`https://facialpass-backend-production.up.railway.app/api/courses/${selectedCourse.id}/students`, {
+        const response = await fetch(`https://facialpass-backend.onrender.com/api/courses/${selectedCourse.id}/students`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

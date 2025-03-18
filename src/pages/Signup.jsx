@@ -108,7 +108,7 @@ const Signup = () => {
       setToastOpen(true);
       
       try {
-        const res = await fetch("https://facialpass-backend-production.up.railway.app/api/students/get-departments");
+        const res = await fetch("https://facialpass-backend.onrender.com/api/students/get-departments");
         const data = await res.json();
         if (res.ok) {
           setDepartments(data.data);
@@ -190,7 +190,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch("https://facialpass-backend-production.up.railway.app/api/students/register", {
+      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

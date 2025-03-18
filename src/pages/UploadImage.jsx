@@ -137,7 +137,7 @@ const UploadImage = () => {
     formData.append("facial_image", selectedFile);
 
     try {
-      const res = await fetch("https://facialpass-backend-production.up.railway.app/api/students/register", {
+      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
         method: "POST",
         body: formData,
       });

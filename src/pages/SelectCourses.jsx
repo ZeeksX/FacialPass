@@ -54,7 +54,7 @@ const SelectCourses = () => {
       }
 
       // Send a request to the backend to register the course
-      const response = await fetch("https://facialpass-backend-production.up.railway.app/api/students/select-course", {
+      const response = await fetch("https://facialpass-backend.onrender.com/api/students/select-course", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

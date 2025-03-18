@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             try {
-                const response = await fetch("https://facialpass-backend-production.up.railway.app/api/auth/validate-token", {
+                const response = await fetch("https://facialpass-backend.onrender.com/api/auth/validate-token", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

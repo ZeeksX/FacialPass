@@ -55,7 +55,7 @@ const SelectedCourse = () => {
     try {
       setConfirmDialogOpen(false);
 
-      const response = await fetch(`https://facialpass-backend-production.up.railway.app/api/students/drop-course`, {
+      const response = await fetch(`https://facialpass-backend.onrender.com/api/students/drop-course`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -9,7 +9,7 @@ import Toast from "../components/Toast";
 
 // Constants
 const FACE_RECOGNITION_THRESHOLD = 0.5;
-const API_URL = "https://facialpass-backend-production.up.railway.app/api/auth/authenticate";
+const API_URL = "https://facialpass-backend.onrender.com/api/auth/authenticate";
 const MODELS_PATH = "/models";
 
 const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => {
@@ -81,7 +81,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                 ]);
 
                 // Fetch known faces
-                const response = await fetch("https://facialpass-backend-production.up.railway.app/api/auth/known-faces");
+                const response = await fetch("https://facialpass-backend.onrender.com/api/auth/known-faces");
                 const knownFacesData = await response.json();
 
                 // Compute descriptors for each known face

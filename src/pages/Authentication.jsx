@@ -26,7 +26,7 @@ const Authentication = () => {
     setStudent(authenticatedStudent);
 
     try {
-      const response = await fetch("https://facialpass-backend-production.up.railway.app/api/auth/save-authentication", {
+      const response = await fetch("https://facialpass-backend.onrender.com/api/auth/save-authentication", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
