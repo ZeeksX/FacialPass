@@ -9,7 +9,7 @@ import Toast from "../components/Toast";
 
 // Constants
 const FACE_RECOGNITION_THRESHOLD = 0.5;
-const API_URL = "https://facialpass-backend.onrender.com/api/auth/authenticate";
+const API_URL = "https://facialpass-backend-production.up.railway.app/api/auth/authenticate";
 const MODELS_PATH = "/models";
 
 const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => {
@@ -81,7 +81,7 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                 ]);
 
                 // Fetch known faces
-                const response = await fetch("https://facialpass-backend.onrender.com/api/auth/known-faces");
+                const response = await fetch("https://facialpass-backend-production.up.railway.app/api/auth/known-faces");
                 const knownFacesData = await response.json();
 
                 // Compute descriptors for each known face
@@ -275,18 +275,13 @@ const FaceRecognition = ({ selectedCourse, onAuthenticate, onImageCapture }) => 
                 if (data.isRegistered) {
                     setState(prev => ({ ...prev, status: "Authenticated", isLoading: false }));
                     onAuthenticate?.(data.student);
-                    showToast("Successfully authenticated!", "success");
                 } else {
-                    setState(prev => ({
-                        ...prev,
-                        status: "Student not registered for this course",
-                        isLoading: false
-                    }));
-                    showToast("Student not registered for this course", "warning");
+                    setState(prev => ({ ...prev, status: data.message, isLoading: false }));
+                    showToast(data.message, "warning");
                 }
             } else {
-                setState(prev => ({ ...prev, status: "Not Authenticated", isLoading: false }));
-                showToast("Authentication failed", "error");
+                setState(prev => ({ ...prev, status: data.message, isLoading: false }));
+                showToast(data.message, "error");
             }
         } catch (error) {
             console.error("Error authenticating student:", error);

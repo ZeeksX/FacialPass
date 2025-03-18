@@ -39,7 +39,7 @@ const AdminSignup = () => {
   useEffect(() => {
     const fetchNextStaffId = async () => {
       try {
-        const res = await fetch("https://facialpass-backend.onrender.com/api/admins/next-staff-id");
+        const res = await fetch("https://facialpass-backend-production.up.railway.app/api/admins/next-staff-id");
         const data = await res.json();
         if (res.ok) {
           setStaffId(data.nextStaffId);
@@ -99,7 +99,7 @@ const AdminSignup = () => {
     }
 
     try {
-      const res = await fetch("https://facialpass-backend.onrender.com/api/admins/register", {
+      const res = await fetch("https://facialpass-backend-production.up.railway.app/api/admins/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

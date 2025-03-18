@@ -6,7 +6,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
-import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider, createTheme, Select, MenuItem, InputLabel } from "@mui/material";
+import { TextField, InputAdornment, FormControl, OutlinedInput, IconButton, ThemeProvider, createTheme, Select, MenuItem, InputLabel, CircularProgress } from "@mui/material";
 import Toast from '../components/Toast';
 import signupImage from "/assets/login-image.jpg";
 import logo from "/assets/logo.svg";
@@ -79,6 +79,7 @@ const Signup = () => {
   });
 
   const [departments, setDepartments] = useState([]); // State to store departments
+  const [isLoadingDepartments, setIsLoadingDepartments] = useState(true); // Loading state for departments
 
   const [errors, setErrors] = useState({
     firstname: "",
@@ -102,16 +103,29 @@ const Signup = () => {
   // Fetch departments on component mount
   useEffect(() => {
     const fetchDepartments = async () => {
+      setIsLoadingDepartments(true);
+      setToastMessage("Loading departments...");
+      setToastOpen(true);
+      
       try {
-        const res = await fetch("https://facialpass-backend.onrender.com/api/students/get-departments"); // Replace with your API endpoint
+        const res = await fetch("https://facialpass-backend-production.up.railway.app/api/students/get-departments");
         const data = await res.json();
         if (res.ok) {
-          setDepartments(data.data); // Assuming the API returns an array of department objects
+          setDepartments(data.data);
+          setToastMessage("Departments loaded successfully");
         } else {
           console.error("Failed to fetch departments:", data.message || res.statusText);
+          setToastMessage("Failed to load departments. Please refresh the page.");
         }
       } catch (error) {
         console.error("Error fetching departments:", error.message);
+        setToastMessage("Error loading departments. Please check your connection.");
+      } finally {
+        setIsLoadingDepartments(false);
+        // Close the toast after a delay
+        setTimeout(() => {
+          setToastOpen(false);
+        }, 3000);
       }
     };
 
@@ -176,7 +190,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch("https://facialpass-backend.onrender.com/api/students/register", {
+      const res = await fetch("https://facialpass-backend-production.up.railway.app/api/students/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -328,18 +342,26 @@ const Signup = () => {
                 <ThemeProvider theme={theme}>
                   <FormControl
                     className="w-[49%] max-md:w-full lg:w-[48%]"
-                    error={!!errors.department} >
-                    <InputLabel id="department-label">Department</InputLabel>
+                    error={!!errors.department}
+                    disabled={isLoadingDepartments} 
+                  >
+                    <InputLabel id="department-label">
+                      {isLoadingDepartments ? "Loading Departments..." : "Department"}
+                    </InputLabel>
                     <Select
                       labelId="department-label"
                       id="department"
                       name="department"
                       value={formData.department}
                       onChange={handleChange}
-                      label="Department"
+                      label={isLoadingDepartments ? "Loading Departments..." : "Department"}
                       startAdornment={
                         <InputAdornment position="start">
-                          <LocationCityIcon sx={{ color: "#0061A2" }} />
+                          {isLoadingDepartments ? (
+                            <CircularProgress size={20} sx={{ color: "#0061A2", opacity: 0.7 }} />
+                          ) : (
+                            <LocationCityIcon sx={{ color: "#0061A2" }} />
+                          )}
                         </InputAdornment>
                       }
                     >
@@ -441,6 +463,7 @@ const Signup = () => {
                   type="button"
                   onClick={handleNext}
                   className="w-full flex cursor-pointer items-center justify-center h-11 font-semibold rounded-4xl bg-[#0061A2] hover:bg-[#1836B2] text-white py-1 px-3 border border-transparent text-base transition-all focus:outline-none focus:ring-2"
+                  disabled={isLoadingDepartments}
                 >
                   Next
                 </button>

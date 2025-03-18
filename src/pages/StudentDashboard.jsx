@@ -15,7 +15,7 @@ const StudentDashboard = () => {
     // Fetch student data on component mount
     const fetchStudent = useCallback(async () => {
         try {
-            const response = await fetch("https://facialpass-backend.onrender.com/api/students/me", {
+            const response = await fetch("https://facialpass-backend-production.up.railway.app/api/students/me", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

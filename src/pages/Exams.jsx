@@ -13,13 +13,18 @@ const Exams = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
 
+  // Sort courses by course_code in alphabetical order
+  const sortedCourses = [...courses].sort((a, b) =>
+    a.course_code.localeCompare(b.course_code)
+  );
+
   // Calculate total pages
-  const totalPages = Math.ceil(courses.length / coursesPerPage);
+  const totalPages = Math.ceil(sortedCourses.length / coursesPerPage);
 
   // Get courses for the current page
   const indexOfLastCourse = currentPage * coursesPerPage;
   const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+  const currentCourses = sortedCourses.slice(indexOfFirstCourse, indexOfLastCourse);
 
   // Handle page change
   const handlePageChange = (event, page) => {
@@ -30,6 +35,15 @@ const Exams = () => {
   const handleViewStudents = (course) => {
     const formattedCourseName = course.course_name.replace(/\s+/g, "-").toLowerCase(); // Format course name for URL
     navigate(`/${formattedCourseName}/students`, { state: { selectedCourse: course } });
+  };
+
+  const handleStartExam = (course) => {
+    const formattedCourseName = course.course_name
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .toLowerCase(); // Convert to lowercase
+    navigate(`/exams/${formattedCourseName}/authenticate`, {
+      state: { selectedCourse: course },
+    });
   };
 
   return (
@@ -44,7 +58,7 @@ const Exams = () => {
             {currentCourses.map((item) => (
               <div
                 key={item.id}
-                className="card p-4 gap-2 flex flex-col mt-2 max-w-80 md:max-w-64 w-1/4 max-md:w-full min-w-52 h-[330px] rounded-xl shadow-md"
+                className="card p-4 gap-2 flex flex-col mt-2 max-w-80 md:max-w-64 w-1/4 max-md:w-full min-w-52 h-[345px] rounded-xl shadow-md"
               >
                 <div className="h-60">
                   <h1 className="text-xl font-bold flex flex-col">
@@ -64,7 +78,13 @@ const Exams = () => {
                     <span className="text-base font-normal">{item.examDate}</span>
                   </h1>
                 </div>
-                <div className="flex flex-row mt-2 items-center justify-end">
+                <div className="flex flex-col mt-2 gap-2 items-end justify-center">
+                  <button
+                    onClick={() => handleStartExam(item)}// start the exam for the course
+                    className="w-28 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white"
+                  >
+                    Start Exam
+                  </button>
                   <button
                     onClick={() => handleViewStudents(item)} //see students registered for the course
                     className="w-28 font-semibold items-center flex cursor-pointer h-8 justify-center rounded-md bg-[#0061A2] text-white"

@@ -20,12 +20,17 @@ const SelectCourses = () => {
   // Calculate the total number of pages
   const totalPages = useMemo(() => Math.ceil(courses.length / coursesPerPage), [courses.length, coursesPerPage]);
 
+  // Sort courses by course_code in alphabetical order
+  const sortedCourses = useMemo(() => {
+    return [...courses].sort((a, b) => a.course_code.localeCompare(b.course_code));
+  }, [courses]);
+
   // Get the courses for the current page
   const currentCourses = useMemo(() => {
     const indexOfLastCourse = currentPage * coursesPerPage;
     const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-    return courses.slice(indexOfFirstCourse, indexOfLastCourse);
-  }, [courses, currentPage, coursesPerPage]);
+    return sortedCourses.slice(indexOfFirstCourse, indexOfLastCourse);
+  }, [sortedCourses, currentPage, coursesPerPage]);
 
   // Handle page change
   const handlePageChange = useCallback((event, page) => {
@@ -49,7 +54,7 @@ const SelectCourses = () => {
       }
 
       // Send a request to the backend to register the course
-      const response = await fetch("https://facialpass-backend.onrender.com/api/students/select-course", {
+      const response = await fetch("https://facialpass-backend-production.up.railway.app/api/students/select-course", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

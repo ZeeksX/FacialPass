@@ -49,9 +49,9 @@ const AdminMobileNav
           }`}
         >
           <DensityMediumOutlined onClick={handleClick} />
-          <div className="flex flex-row items-center justify-end gap-4 w-1/2">
+          <div className="flex flex-row items-center justify-end gap-4 max-sm:w-full w-1/2">
             <h1 className="flex flex-row text-xl font-bold leading-10">
-              {`${admin.admin.firstname}`}
+              Prof. {`${admin.admin.firstname}`}
               <span className="ml-2 hidden md:flex text-xl font-bold leading-10">{`${admin.admin.lastname}`}</span>
             </h1>
             <Avatar

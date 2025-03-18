@@ -71,7 +71,7 @@ const AdminLogin = () => {
     }
 
     try {
-      const res = await fetch("https://facialpass-backend.onrender.com/api/admins/login", {
+      const res = await fetch("https://facialpass-backend-production.up.railway.app/api/admins/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -46,7 +46,7 @@ const theme = createTheme({
 });
 
 // API endpoint as a constant
-const API_URL = "https://facialpass-backend.onrender.com/api/students/login";
+const API_URL = "https://facialpass-backend-production.up.railway.app/api/students/login";
 
 const Login = () => {
   const [formData, setFormData] = useState({

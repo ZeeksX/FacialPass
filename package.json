@@ -24,7 +24,6 @@
     "dayjs": "^1.11.13",
     "dayjs-plugin-utc": "^0.1.2",
     "face-api.js": "^0.22.2",
-    "framer-motion": "^12.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-material-ui-carousel": "^3.4.2",
