@@ -65,7 +65,10 @@ const Profile = () => {
   };
 
   const latestAuthCourse = getLatestAuthCourse(student.takenCourses);
-  
+  console.log("Student", student)
+  console.log("Student taken courses", student.takenCourses)
+  console.log("last auth course", latestAuthCourse)
+
   const profileData = {
     fullName: `${student.student.firstname} ${student.student.lastname}`,
     studentId: `${student.student.matricNumber}`,
