@@ -30,21 +30,19 @@ const MobileNav = ({ student = {} }) => {
   return (
     <>
       <div
-        className={`${
-          isScrolled && isMobile
+        className={`${isScrolled && isMobile
             ? "w-full bg-white fixed z-10 left-0 -top-0.5 px-2 flex items-center justify-center shadow-md"
             : "bg-transparent"
-        } transition-colors duration-1000`}
+          } transition-colors duration-1000`}
       >
         <div
-          className={`flex lg:hidden flex-row w-full items-center justify-between mb-4 ${
-            isScrolled && isMobile ? "my-1 mb-1" : ""
-          }`}
+          className={`flex lg:hidden flex-row w-full items-center justify-between mb-4 ${isScrolled && isMobile ? "my-1 mb-1" : ""
+            }`}
         >
           <DensityMediumOutlined onClick={handleClick} />
           <div className="flex flex-row items-center justify-end gap-4 w-1/2">
             <h1 className="flex flex-row text-xl font-bold leading-10">
-              Prof. {firstName}{" "}
+              {firstName}{" "}
               <span className="ml-2 hidden md:flex text-xl font-bold leading-10">
                 {lastName}
               </span>
